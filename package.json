@@ -1,0 +1,32 @@
+{
+  "name": "juliangut-doctrine-repositories",
+  "description": "Doctrine2 utility repositories",
+  "version": "0.0.1",
+  "keywords": [
+    "Doctrine2",
+    "entity repository",
+    "document repository",
+    "ORM",
+    "MongoDB",
+    "CouchDB"
+  ],
+  "homepage": "https://github.com/juliangut/doctrine-repositories",
+  "license": "BSD-3-Clause",
+  "bugs": "https://github.com/juliangut/doctrine-repositories/issues",
+  "author": {
+    "name": "Julián Gutiérrez",
+    "email": "juliangut@gmail.com",
+    "url": "http://juliangut.com"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-composer": "^0.4.0",
+    "gulp-phpcpd": "^1.0.0",
+    "gulp-phpcs": "^1.1.0",
+    "gulp-phplint": "~0.1.0",
+    "gulp-phpmd-plugin": "^1.1.4",
+    "gulp-phpunit": "~0.14.0",
+    "run-sequence": "^1.2.1"
+  }
+}

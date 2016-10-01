@@ -1,0 +1,60 @@
+{
+  "name": "juliangut/doctrine-repositories",
+  "description": "Doctrine2 utility repositories",
+  "keywords": [
+    "Doctrine2",
+    "entity repository",
+    "document repository",
+    "ORM",
+    "MongoDB",
+    "CouchDB"
+  ],
+  "homepage": "https://github.com/juliangut/doctrine-repositories",
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Julián Gutiérrez",
+      "email": "juliangut@gmail.com",
+      "homepage": "http://juliangut.com",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "source": "https://github.com/juliangut/doctrine-repositories",
+    "issues": "https://github.com/juliangut/doctrine-repositories/issues"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": ">=5.6",
+    "symfony/polyfill-php70": "^1.0",
+    "doctrine/common": "^2.6"
+  },
+  "require-dev": {
+    "doctrine/orm": "^2.0",
+    "doctrine/mongodb-odm": "^1.0",
+    "doctrine/couchdb-odm": "dev-master",
+    "friendsofphp/php-cs-fixer": "^1.0",
+    "phpmd/phpmd": "^2.0",
+    "phpunit/phpunit": "^4.5|^5.0",
+    "sebastian/phpcpd": "^2.0",
+    "squizlabs/php_codesniffer": "^2.0"
+  },
+  "suggest": {
+  },
+  "autoload": {
+    "psr-4": {
+      "Jgut\\Doctrine\\Repository\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Jgut\\Doctrine\\Repository\\Tests\\": "tests/Repository/"
+    }
+  },
+  "bin": [
+  ],
+  "config": {
+    "preferred-install": "dist"
+  }
+}
