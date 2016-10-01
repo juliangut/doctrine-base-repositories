@@ -1,0 +1,7 @@
+!.gitignore
+composer.lock
+vendor/
+node_modules/
+.yo-rc.json
+.php_cs.cache
+build/
