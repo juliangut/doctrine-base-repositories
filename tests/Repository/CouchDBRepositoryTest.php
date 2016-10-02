@@ -35,4 +35,58 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
 
         self::assertEquals('RepositoryDocument', $repository->getClassName());
     }
+
+    /**
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessageRegExp /^Undefined method: "noMethod"/
+     */
+    public function testCallNoMethod()
+    {
+        $manager = $this->getMockBuilder(DocumentManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var DocumentManager $manager */
+
+        $repository = new CouchDBRepository($manager, new ClassMetadata('RepositoryDocument'));
+
+        $repository->noMethod();
+    }
+
+    /**
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessageRegExp /^You need to pass a parameter to "removeByParameter"$/
+     */
+    public function testCallNoArguments()
+    {
+        $manager = $this->getMockBuilder(DocumentManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var DocumentManager $manager */
+
+        $repository = new CouchDBRepository($manager, new ClassMetadata('RepositoryDocument'));
+
+        $repository->removeByParameter();
+    }
+
+    /**
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessageRegExp /^Invalid remove by call/
+     */
+    public function testCallNoField()
+    {
+        $manager = $this->getMockBuilder(DocumentManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var DocumentManager $manager */
+
+        $metadata = $this->getMockBuilder(ClassMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $metadata->expects(self::once())->method('hasField')->will(self::returnValue(false));
+        /* @var ClassMetadata $metadata */
+
+        $repository = new CouchDBRepository($manager, $metadata);
+
+        $repository->removeOneByParameter(0);
+    }
 }

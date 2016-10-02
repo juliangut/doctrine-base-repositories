@@ -11,10 +11,12 @@
 
 namespace Jgut\Doctrine\Repository;
 
+use Jgut\Doctrine\Repository\Pager\Page;
+
 /**
  * Repository interface.
  */
-interface RepositoryInterface
+interface Repository
 {
     /**
      * Returns the class name of the object managed by the repository.
@@ -22,6 +24,32 @@ interface RepositoryInterface
      * @return string
      */
     public function getClassName();
+
+    /**
+     * Set page class name.
+     *
+     * @return string
+     */
+    public function getPageClassName();
+
+    /**
+     * Get page class name.
+     *
+     * @param string $className
+     */
+    public function setPageClassName($className);
+
+    /**
+     * Return paged elements filtered by criteria.
+     *
+     * @param array $criteria
+     * @param int   $limit
+     * @param int   $offset
+     * @param array $orderBy
+     *
+     * @return Page
+     */
+    public function findPagedBy(array $criteria, $limit = 10, $offset = 0, array $orderBy = null);
 
     /**
      * Find one object by a set of criteria or create a new one.

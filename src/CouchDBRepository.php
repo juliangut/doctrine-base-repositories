@@ -11,13 +11,14 @@
 
 namespace Jgut\Doctrine\Repository;
 
+use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\CouchDB\DocumentRepository;
 
 /**
  * CouchDB document repository.
  */
-class CouchDBRepository extends DocumentRepository implements RepositoryInterface
+class CouchDBRepository extends DocumentRepository implements Repository
 {
     use RepositoryTrait;
 
@@ -43,5 +44,55 @@ class CouchDBRepository extends DocumentRepository implements RepositoryInterfac
     public function countAll()
     {
         return $this->countBy([]);
+    }
+
+    /**
+     * Adds support for magic finders.
+     *
+     * @param string $method
+     * @param array  $arguments
+     *
+     * @throws \BadMethodCallException
+     *
+     * @return array|object
+     */
+    public function __call($method, $arguments)
+    {
+        if (strpos($method, 'removeBy') === 0) {
+            $byField = substr($method, 8, strlen($method));
+            $method = 'removeBy';
+        } elseif (strpos($method, 'removeOneBy') === 0) {
+            $byField = substr($method, 11, strlen($method));
+            $method = 'removeOneBy';
+        } else {
+            throw new \BadMethodCallException(sprintf(
+                'Undefined method: "%s". The method name must start with "findBy", "findOneBy"!',
+                $method
+            ));
+        }
+
+        if (count($arguments) === 0) {
+            throw new \BadMethodCallException(sprintf('You need to pass a parameter to "%s"', $method . $byField));
+        }
+
+        $fieldName = lcfirst(Inflector::classify($byField));
+
+        if ($this->getClassMetadata()->hasField($fieldName) || $this->getClassMetadata()->hasAssociation($fieldName)) {
+            // @codeCoverageIgnoreStart
+            $parameters = array_merge(
+                [$fieldName => $arguments[0]],
+                array_slice($arguments, 1)
+            );
+
+            return call_user_func_array([$this, $method], $parameters);
+            // @codeCoverageIgnoreEnd
+        }
+
+        throw new \BadMethodCallException(sprintf(
+            'Invalid remove by call %s::%s (%s)',
+            $this->getClassName(),
+            $fieldName,
+            $method . $byField
+        ));
     }
 }

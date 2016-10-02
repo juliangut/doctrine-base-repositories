@@ -13,6 +13,8 @@ namespace Jgut\Doctrine\Repository\Tests;
 
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManager;
+use Jgut\Doctrine\Repository\Pager\DefaultPage;
+use Jgut\Doctrine\Repository\Pager\Page;
 use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\EventStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\RepositoryStub;
@@ -117,6 +119,38 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $repository = new RepositoryStub($manager);
 
         $repository->disableEventListener('onFlush', new \stdClass);
+    }
+
+    public function testPageClassName()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        self::assertEquals(DefaultPage::class, $repository->getPageClassName());
+
+        $repository->setPageClassName(Page::class);
+
+        self::assertEquals(Page::class, $repository->getPageClassName());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessageRegExp /^Invalid page class/
+     */
+    public function testBadPageClassName()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $repository->setPageClassName(EventStub::class);
     }
 
     public function testFindOneOrCreate()

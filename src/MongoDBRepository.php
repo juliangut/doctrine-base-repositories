@@ -11,13 +11,14 @@
 
 namespace Jgut\Doctrine\Repository;
 
+use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 
 /**
  * MongoDB document repository.
  */
-class MongoDBRepository extends DocumentRepository implements RepositoryInterface
+class MongoDBRepository extends DocumentRepository implements Repository
 {
     use RepositoryTrait;
 
@@ -43,5 +44,51 @@ class MongoDBRepository extends DocumentRepository implements RepositoryInterfac
     public function countAll()
     {
         return (int) $this->createQueryBuilder()->refresh()->getQuery()->execute()->count();
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \BadMethodCallException
+     *
+     * @return array|object
+     */
+    public function __call($method, $arguments)
+    {
+        if (strpos($method, 'removeBy') === 0) {
+            $byField = substr($method, 8, strlen($method));
+            $method = 'removeBy';
+        } elseif (strpos($method, 'removeOneBy') === 0) {
+            $byField = substr($method, 11, strlen($method));
+            $method = 'removeOneBy';
+        } else {
+            // @codeCoverageIgnoreStart
+            return parent::__call($method, $arguments);
+            // @codeCoverageIgnoreEnd
+        }
+
+        if (count($arguments) === 0) {
+            throw new \BadMethodCallException(sprintf('You need to pass a parameter to "%s"', $method . $byField));
+        }
+
+        $fieldName = lcfirst(Inflector::classify($byField));
+
+        if ($this->getClassMetadata()->hasField($fieldName) || $this->getClassMetadata()->hasAssociation($fieldName)) {
+            // @codeCoverageIgnoreStart
+            $parameters = array_merge(
+                [$fieldName => $arguments[0]],
+                array_slice($arguments, 1)
+            );
+
+            return call_user_func_array([$this, $method], $parameters);
+            // @codeCoverageIgnoreEnd
+        }
+
+        throw new \BadMethodCallException(sprintf(
+            'Invalid remove by call %s::%s (%s)',
+            $this->getClassName(),
+            $fieldName,
+            $method . $byField
+        ));
     }
 }

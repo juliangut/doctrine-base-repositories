@@ -40,7 +40,7 @@ class RelationalRepositoryFactory extends AbstractRepositoryFactory implements R
      */
     public function getRepository(EntityManagerInterface $entityManager, $entityName)
     {
-        /** @var \Doctrine\ORM\EntityManager $entityManager */
+        /* @var \Doctrine\ORM\EntityManager $entityManager */
         $repositoryHash = $entityManager->getClassMetadata($entityName)->getName() . spl_object_hash($entityManager);
 
         if (array_key_exists($repositoryHash, $this->repositoryList)) {

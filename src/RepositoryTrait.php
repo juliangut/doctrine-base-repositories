@@ -13,6 +13,8 @@ namespace Jgut\Doctrine\Repository;
 
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
+use Jgut\Doctrine\Repository\Pager\DefaultPage;
+use Jgut\Doctrine\Repository\Pager\Page;
 
 /**
  * Repository trait.
@@ -32,6 +34,13 @@ trait RepositoryTrait
      * @var EventSubscriber[]
      */
     protected $disabledListeners = [];
+
+    /**
+     * Page class name.
+     *
+     * @var string
+     */
+    protected $pageClassName = DefaultPage::class;
 
     /**
      * Get object manager.
@@ -190,6 +199,46 @@ trait RepositoryTrait
         }
 
         unset($this->disabledListeners[$event]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPageClassName()
+    {
+        return $this->pageClassName;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function setPageClassName($className)
+    {
+        $reflectionClass = new \ReflectionClass($className);
+
+        if (!$reflectionClass->implementsInterface(Page::class)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid page class "%s". It must be a Jgut\Doctrine\Repository\Pager\Page.',
+                $className
+            ));
+        }
+
+        $this->pageClassName = $className;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findPagedBy(array $criteria, $limit = 10, $offset = 0, array $orderBy = null)
+    {
+        $totalElements = $this->findBy($criteria);
+        $pagedElements = $this->findBy($criteria, $orderBy, $limit, $offset);
+
+        $pageClassName = $this->getPageClassName();
+
+        return new $pageClassName($pagedElements, ($offset / $limit) + 1, $limit, count($totalElements));
     }
 
     /**
