@@ -35,12 +35,17 @@
     "doctrine/mongodb-odm": "^1.0",
     "doctrine/couchdb-odm": "dev-master",
     "friendsofphp/php-cs-fixer": "^1.0",
+    "juliangut/doctrine-manager-builder": "^1.2",
     "phpmd/phpmd": "^2.0",
     "phpunit/phpunit": "^4.5|^5.0",
     "sebastian/phpcpd": "^2.0",
     "squizlabs/php_codesniffer": "^2.0"
   },
   "suggest": {
+    "doctrine/orm": "^2.0",
+    "doctrine/mongodb-odm": "^1.0",
+    "doctrine/couchdb-odm": "dev-master",
+    "juliangut/doctrine-manager-builder": "^1.2"
   },
   "autoload": {
     "psr-4": {

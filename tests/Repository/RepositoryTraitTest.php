@@ -212,6 +212,6 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager, [new EntityDocumentStub, new EntityDocumentStub]);
 
-        self::assertEquals(2, $repository->count([]));
+        self::assertEquals(2, $repository->countBy([]));
     }
 }

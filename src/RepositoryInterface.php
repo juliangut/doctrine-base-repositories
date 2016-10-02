@@ -78,20 +78,6 @@ interface RepositoryInterface
     public function remove($object, $flush = true);
 
     /**
-     * Finds objects by a set of criteria and limited by pagination.
-     *
-     * @param array      $criteria
-     * @param array|null $orderBy
-     * @param int        $page
-     * @param int        $pageSize
-     *
-     * @throws \OutOfBoundsException
-     *
-     * @return array
-     */
-    public function paginatedFindBy(array $criteria, array $orderBy = null, $page = 1, $pageSize = 10);
-
-    /**
      * Get all objects count.
      *
      * @return int
@@ -105,5 +91,5 @@ interface RepositoryInterface
      *
      * @return int
      */
-    public function count(array $criteria);
+    public function countBy(array $criteria);
 }

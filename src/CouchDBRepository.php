@@ -42,6 +42,6 @@ class CouchDBRepository extends DocumentRepository implements RepositoryInterfac
      */
     public function countAll()
     {
-        return $this->count([]);
+        return $this->countBy([]);
     }
 }

@@ -303,26 +303,7 @@ trait RepositoryTrait
     /**
      * {@inheritdoc}
      */
-    public function paginatedFindBy(array $criteria, array $orderBy = null, $page = 1, $pageSize = 10)
-    {
-        if ($page < 1) {
-            throw new \OutOfBoundsException(sprintf('Page must be a positive, %d given', $page));
-        }
-
-        $totalObjects = $this->count($criteria);
-        $lastPage = ceil($totalObjects / $pageSize);
-
-        if ($page > $lastPage) {
-            throw new \OutOfBoundsException(sprintf('%d page is out of bounds, last page is %d', $page, $lastPage));
-        }
-
-        return $this->findBy($criteria, $orderBy, $pageSize, ($page - 1) * $pageSize);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function count(array $criteria)
+    public function countBy(array $criteria)
     {
         return count($this->findBy($criteria));
     }
