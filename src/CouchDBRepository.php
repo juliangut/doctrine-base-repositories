@@ -71,28 +71,6 @@ class CouchDBRepository extends DocumentRepository implements Repository
             ));
         }
 
-        if (count($arguments) === 0) {
-            throw new \BadMethodCallException(sprintf('You need to pass a parameter to "%s"', $method . $byField));
-        }
-
-        $fieldName = lcfirst(Inflector::classify($byField));
-
-        if ($this->getClassMetadata()->hasField($fieldName) || $this->getClassMetadata()->hasAssociation($fieldName)) {
-            // @codeCoverageIgnoreStart
-            $parameters = array_merge(
-                [$fieldName => $arguments[0]],
-                array_slice($arguments, 1)
-            );
-
-            return call_user_func_array([$this, $method], $parameters);
-            // @codeCoverageIgnoreEnd
-        }
-
-        throw new \BadMethodCallException(sprintf(
-            'Invalid remove by call %s::%s (%s)',
-            $this->getClassName(),
-            $fieldName,
-            $method . $byField
-        ));
+        return $this->removeByCall($method, lcfirst(Inflector::classify($byField)), $arguments);
     }
 }

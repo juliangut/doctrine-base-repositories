@@ -356,4 +356,43 @@ trait RepositoryTrait
     {
         return count($this->findBy($criteria));
     }
+
+    /**
+     * Internal remove magic finder.
+     *
+     * @param string $method
+     * @param string $fieldName
+     * @param array  $arguments
+     *
+     * @throws \BadMethodCallException
+     *
+     * @return array|object
+     */
+    protected function removeByCall($method, $fieldName, $arguments)
+    {
+        if (count($arguments) === 0) {
+            throw new \BadMethodCallException(sprintf(
+                'You need to pass a parameter to "%s"',
+                $method . ucfirst($fieldName)
+            ));
+        }
+
+        if ($this->getClassMetadata()->hasField($fieldName) || $this->getClassMetadata()->hasAssociation($fieldName)) {
+            // @codeCoverageIgnoreStart
+            $parameters = array_merge(
+                [$fieldName => $arguments[0]],
+                array_slice($arguments, 1)
+            );
+
+            return call_user_func_array([$this, $method], $parameters);
+            // @codeCoverageIgnoreEnd
+        }
+
+        throw new \BadMethodCallException(sprintf(
+            'Invalid remove by call %s::%s (%s)',
+            $this->getClassName(),
+            $fieldName,
+            $method . ucfirst($fieldName)
+        ));
+    }
 }

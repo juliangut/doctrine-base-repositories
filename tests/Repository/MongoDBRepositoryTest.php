@@ -84,6 +84,7 @@ class MongoDBRepositoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $metadata->expects(self::once())->method('hasField')->will(self::returnValue(false));
+        $metadata->expects(self::once())->method('hasAssociation')->will(self::returnValue(false));
         /* @var ClassMetadata $metadata */
 
         $repository = new MongoDBRepository($manager, $uow, $metadata);
