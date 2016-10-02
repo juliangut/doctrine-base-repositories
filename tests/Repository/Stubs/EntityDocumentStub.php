@@ -9,20 +9,11 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Jgut\Doctrine\Repository\Tests\Mocks;
-
-use Doctrine\Common\EventSubscriber;
+namespace Jgut\Doctrine\Repository\Tests\Stubs;
 
 /**
- * Event mock.
+ * Entity and document stub.
  */
-class EventMock implements EventSubscriber
+class EntityDocumentStub
 {
-    public function getSubscribedEvents()
-    {
-        return [
-            'prePersist',
-            'onFlush',
-        ];
-    }
 }

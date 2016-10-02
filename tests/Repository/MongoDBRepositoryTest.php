@@ -15,7 +15,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\UnitOfWork;
 use Jgut\Doctrine\Repository\MongoDBRepository;
-use Jgut\Doctrine\Repository\Tests\Mocks\EntityDocumentMock;
+use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;
 
 /**
  * MongoDB repository tests.
@@ -36,10 +36,10 @@ class MongoDBRepositoryTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         /* @var UnitOfWork $uow */
 
-        $repository = new MongoDBRepository($manager, $uow, new ClassMetadata(EntityDocumentMock::class));
+        $repository = new MongoDBRepository($manager, $uow, new ClassMetadata(EntityDocumentStub::class));
 
         $repository->restoreEventSubscribers();
 
-        self::assertEquals(EntityDocumentMock::class, $repository->getClassName());
+        self::assertEquals(EntityDocumentStub::class, $repository->getClassName());
     }
 }

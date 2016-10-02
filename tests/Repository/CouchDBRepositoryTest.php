@@ -18,7 +18,7 @@ use Jgut\Doctrine\Repository\CouchDBRepository;
 /**
  * CouchDB repository tests.
  *
- * @group mongodb
+ * @group couchdb
  */
 class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
 {

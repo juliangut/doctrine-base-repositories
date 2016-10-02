@@ -9,7 +9,7 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Jgut\Doctrine\Repository\Tests\Mocks;
+namespace Jgut\Doctrine\Repository\Tests\Stubs;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
@@ -17,9 +17,9 @@ use Jgut\Doctrine\Repository\RepositoryInterface;
 use Jgut\Doctrine\Repository\RepositoryTrait;
 
 /**
- * Repository mock.
+ * Repository stub.
  */
-class RepositoryMock implements RepositoryInterface, ObjectRepository
+class RepositoryStub implements RepositoryInterface, ObjectRepository
 {
     use RepositoryTrait;
 
@@ -29,7 +29,7 @@ class RepositoryMock implements RepositoryInterface, ObjectRepository
     protected $entityManager;
 
     /**
-     * @var EntityDocumentMock[]
+     * @var EntityDocumentStub[]
      */
     protected $entities;
 
@@ -58,7 +58,7 @@ class RepositoryMock implements RepositoryInterface, ObjectRepository
      */
     public function getClassName()
     {
-        return EntityDocumentMock::class;
+        return EntityDocumentStub::class;
     }
 
     /**

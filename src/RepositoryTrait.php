@@ -13,7 +13,6 @@ namespace Jgut\Doctrine\Repository;
 
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Repository trait.
@@ -35,7 +34,9 @@ trait RepositoryTrait
     protected $disabledListeners = [];
 
     /**
-     * @return ObjectManager
+     * Get object manager.
+     *
+     * @return \Doctrine\ORM\EntityManager|\Doctrine\ODM\MongoDB\DocumentManager|\Doctrine\ODM\CouchDB\DocumentManager
      */
     abstract protected function getManager();
 

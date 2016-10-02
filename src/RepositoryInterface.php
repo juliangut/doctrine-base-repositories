@@ -17,6 +17,13 @@ namespace Jgut\Doctrine\Repository;
 interface RepositoryInterface
 {
     /**
+     * Returns the class name of the object managed by the repository.
+     *
+     * @return string
+     */
+    public function getClassName();
+
+    /**
      * Find one object by a set of criteria or create a new one.
      *
      * @return object
