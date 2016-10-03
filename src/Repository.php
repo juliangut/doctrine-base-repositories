@@ -11,20 +11,13 @@
 
 namespace Jgut\Doctrine\Repository;
 
-use Jgut\Doctrine\Repository\Pager\Page;
+use Doctrine\Common\Persistence\ObjectRepository;
 
 /**
  * Repository interface.
  */
-interface Repository
+interface Repository extends ObjectRepository
 {
-    /**
-     * Returns the class name of the object managed by the repository.
-     *
-     * @return string
-     */
-    public function getClassName();
-
     /**
      * Set page class name.
      *
