@@ -22,6 +22,12 @@ Doctrine2 utility repositories
 composer require juliangut/doctrine-repositories
 ```
 
+If using MongoDB on PHP >= 7.0
+
+```
+composer require alcaeus/mongo-php-adapter --ignore-platform-reqs
+```
+
 ## Usage
 
 Require composer autoload file
