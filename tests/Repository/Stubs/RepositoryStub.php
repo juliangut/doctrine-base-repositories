@@ -11,7 +11,6 @@
 
 namespace Jgut\Doctrine\Repository\Tests\Stubs;
 
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Jgut\Doctrine\Repository\Repository;
 use Jgut\Doctrine\Repository\RepositoryTrait;
@@ -19,7 +18,7 @@ use Jgut\Doctrine\Repository\RepositoryTrait;
 /**
  * Repository stub.
  */
-class RepositoryStub implements Repository, ObjectRepository
+class RepositoryStub implements Repository
 {
     use RepositoryTrait;
 
