@@ -43,7 +43,13 @@ class RelationalRepository extends EntityRepository implements Repository
      */
     public function countAll()
     {
-        return (int) $this->createQueryBuilder('E')->select('COUNT(E)')->getQuery()->getSingleScalarResult();
+        $className = explode('\\', $this->getClassName());
+        $entityAlias = strtoupper(substr(end($className), 0, 1));
+
+        return (int) $this->createQueryBuilder($entityAlias)
+            ->select('COUNT(' . $entityAlias . ')')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     /**
