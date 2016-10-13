@@ -28,6 +28,12 @@ If using MongoDB on PHP >= 7.0
 composer require alcaeus/mongo-php-adapter --ignore-platform-reqs
 ```
 
+If using CouchDB
+
+```
+composer require juliangut/doctrine-manager-builder
+```
+
 ## Usage
 
 Require composer autoload file

@@ -11,8 +11,6 @@
 
 namespace Jgut\Doctrine\Repository\Factory;
 
-use Doctrine\Common\Persistence\ObjectRepository;
-
 /**
  * Abstract base repository factory.
  */
@@ -23,7 +21,17 @@ abstract class AbstractRepositoryFactory
      *
      * @var string
      */
-    protected $repositoryClassName = ObjectRepository::class;
+    protected $repositoryClassName;
+
+    /**
+     * AbstractRepositoryFactory constructor.
+     *
+     * @param string $repositoryClassName
+     */
+    public function __construct($repositoryClassName)
+    {
+        $this->repositoryClassName = $repositoryClassName;
+    }
 
     /**
      * Get default repository class.

@@ -22,18 +22,19 @@ use Jgut\Doctrine\Repository\RelationalRepository;
 class RelationalRepositoryFactory extends AbstractRepositoryFactory implements RepositoryFactory
 {
     /**
-     * Default repository class.
-     *
-     * @var string
-     */
-    protected $repositoryClassName = RelationalRepository::class;
-
-    /**
      * The list of EntityRepository instances.
      *
      * @var \Doctrine\Common\Persistence\ObjectRepository[]
      */
     private $repositoryList = [];
+
+    /**
+     * RelationalRepositoryFactory constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct(RelationalRepository::class);
+    }
 
     /**
      * {@inheritdoc}

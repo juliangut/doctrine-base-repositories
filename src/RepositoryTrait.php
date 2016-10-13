@@ -65,12 +65,12 @@ trait RepositoryTrait
      */
     public function disableEventSubscriber($subscriberClass)
     {
-        /* @var \Doctrine\Common\EventManager $eventManager */
-        $eventManager = $this->getManager()->getEventManager();
-
         if (!is_string($subscriberClass) && !is_a($subscriberClass, EventSubscriber::class)) {
             throw new \InvalidArgumentException('subscriberClass must be class implementing EventSubscriber');
         }
+
+        /* @var \Doctrine\Common\EventManager $eventManager */
+        $eventManager = $this->getManager()->getEventManager();
 
         foreach ($eventManager->getListeners() as $subscribers) {
             $found = false;
@@ -132,12 +132,12 @@ trait RepositoryTrait
      */
     public function disableEventListener($event, $subscriberClass)
     {
-        /* @var \Doctrine\Common\EventManager $eventManager */
-        $eventManager = $this->getManager()->getEventManager();
-
         if (!is_string($subscriberClass) && !is_a($subscriberClass, EventSubscriber::class)) {
             throw new \InvalidArgumentException('subscriberClass must be class implementing EventSubscriber');
         }
+
+        /* @var \Doctrine\Common\EventManager $eventManager */
+        $eventManager = $this->getManager()->getEventManager();
 
         foreach ($this->getEventListeners($eventManager, $event) as $listener) {
             if ($listener instanceof $subscriberClass) {

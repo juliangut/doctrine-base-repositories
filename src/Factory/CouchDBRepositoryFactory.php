@@ -21,18 +21,19 @@ use Jgut\Doctrine\Repository\CouchDBRepository;
 class CouchDBRepositoryFactory extends AbstractRepositoryFactory implements RepositoryFactory
 {
     /**
-     * Default repository class.
-     *
-     * @var string
-     */
-    protected $repositoryClassName = CouchDBRepository::class;
-
-    /**
      * The list of DocumentRepository instances.
      *
      * @var \Doctrine\Common\Persistence\ObjectRepository[]
      */
     private $repositoryList = [];
+
+    /**
+     * CouchDBRepositoryFactory constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct(CouchDBRepository::class);
+    }
 
     /**
      * {@inheritdoc}

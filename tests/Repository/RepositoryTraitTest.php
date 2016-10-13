@@ -55,11 +55,10 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $eventManager = new EventManager;
         $eventManager->addEventSubscriber(new EventStub);
 
+        /* @var EntityManager $manager */
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(self::once())->method('getEventManager')->will(self::returnValue($eventManager));
-        /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager);
 
@@ -110,11 +109,10 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $eventManager = new EventManager;
         $eventManager->addEventSubscriber(new EventStub);
 
+        /* @var EntityManager $manager */
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(self::once())->method('getEventManager')->will(self::returnValue($eventManager));
-        /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager);
 

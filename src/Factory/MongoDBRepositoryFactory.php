@@ -21,18 +21,19 @@ use Jgut\Doctrine\Repository\MongoDBRepository;
 class MongoDBRepositoryFactory extends AbstractRepositoryFactory implements RepositoryFactory
 {
     /**
-     * Default repository class.
-     *
-     * @var string
-     */
-    protected $repositoryClassName = MongoDBRepository::class;
-
-    /**
      * The list of DocumentRepository instances.
      *
      * @var \Doctrine\Common\Persistence\ObjectRepository[]
      */
     private $repositoryList = [];
+
+    /**
+     * MongoDBRepositoryFactory constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct(MongoDBRepository::class);
+    }
 
     /**
      * {@inheritdoc}
