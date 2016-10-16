@@ -36,7 +36,7 @@ interface Repository extends ObjectRepository
      * Return paged elements filtered by criteria.
      *
      * @param array|\Doctrine\ORM\QueryBuilder|\Doctrine\ODM\MongoDB\Query\Builder $criteria
-     * @param array                                                                $orderBy
+     * @param array|null                                                           $orderBy
      * @param int                                                                  $limit
      * @param int                                                                  $offset
      *
