@@ -69,7 +69,7 @@ class CouchDBRepository extends DocumentRepository implements Repository
      *
      * @param array $criteria
      *
-     * @return \Jgut\Doctrine\Repository\Pager\Page
+     * @return int
      */
     public function countBy($criteria)
     {
