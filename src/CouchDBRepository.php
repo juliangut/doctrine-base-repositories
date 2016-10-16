@@ -40,10 +40,36 @@ class CouchDBRepository extends DocumentRepository implements Repository
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $criteria
+     * @param array $orderBy
+     * @param int   $limit
+     * @param int   $offset
+     *
+     * @return \Jgut\Doctrine\Repository\Pager\Page
      */
-    public function countAll()
+    public function findPagedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0)
     {
-        return $this->countBy([]);
+        $pageClassName = $this->getPageClassName();
+
+        if (!is_array($criteria)) {
+            $criteria = [$criteria];
+        }
+
+        return new $pageClassName(
+            $this->findBy($criteria, $orderBy, $limit, $offset),
+            ($offset / $limit) + 1,
+            $limit,
+            $this->countBy($criteria)
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function countBy($criteria)
+    {
+        return count($this->findBy($criteria));
     }
 
     /**

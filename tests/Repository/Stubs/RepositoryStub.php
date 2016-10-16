@@ -63,9 +63,14 @@ class RepositoryStub implements Repository
     /**
      * {@inheritdoc}
      */
-    public function countAll()
+    public function countBy($criteria)
     {
-        return 100;
+        return count($this->entities);
+    }
+
+    public function findPagedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0)
+    {
+        // TODO: Implement findPagedBy() method.
     }
 
     /**

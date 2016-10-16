@@ -14,6 +14,7 @@ namespace Jgut\Doctrine\Repository\Tests;
 use Doctrine\ODM\CouchDB\DocumentManager;
 use Doctrine\ODM\CouchDB\Mapping\ClassMetadata;
 use Jgut\Doctrine\Repository\CouchDBRepository;
+use Jgut\Doctrine\Repository\Pager\Page;
 
 /**
  * CouchDB repository tests.
@@ -31,9 +32,48 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $repository = new CouchDBRepository($manager, new ClassMetadata('RepositoryDocument'));
 
-        $repository->restoreEventSubscribers();
+        static::assertEquals('RepositoryDocument', $repository->getClassName());
+    }
 
-        self::assertEquals('RepositoryDocument', $repository->getClassName());
+    public function testFindPaged()
+    {
+        $manager = $this->getMockBuilder(DocumentManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var DocumentManager $manager */
+
+        $repository = $this->getMockBuilder(CouchDBRepository::class)
+            ->setConstructorArgs([$manager, new ClassMetadata('RepositoryDocument')])
+            ->setMethodsExcept(['findPagedBy', 'getPageClassName'])
+            ->getMock();
+        $repository->expects(static::once())
+            ->method('findBy')
+            ->will(static::returnValue(['a', 'b']));
+        $repository->expects(static::once())
+            ->method('countBy')
+            ->will(static::returnValue(10));
+        /* @var CouchDBRepository $repository */
+
+        static::assertInstanceOf(Page::class, $repository->findPagedBy(''));
+    }
+
+    public function testCount()
+    {
+        $manager = $this->getMockBuilder(DocumentManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var DocumentManager $manager */
+
+        $repository = $this->getMockBuilder(CouchDBRepository::class)
+            ->setConstructorArgs([$manager, new ClassMetadata('RepositoryDocument')])
+            ->setMethodsExcept(['countBy'])
+            ->getMock();
+        $repository->expects(static::once())
+            ->method('findBy')
+            ->will(static::returnValue(['a', 'b']));
+        /* @var CouchDBRepository $repository */
+
+        static::assertEquals(2, $repository->countBy([]));
     }
 
     /**
@@ -82,7 +122,9 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
         $metadata = $this->getMockBuilder(ClassMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $metadata->expects(self::once())->method('hasField')->will(self::returnValue(false));
+        $metadata->expects(static::once())
+            ->method('hasField')
+            ->will(static::returnValue(false));
         /* @var ClassMetadata $metadata */
 
         $repository = new CouchDBRepository($manager, $metadata);

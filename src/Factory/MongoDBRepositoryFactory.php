@@ -65,6 +65,6 @@ class MongoDBRepositoryFactory extends AbstractRepositoryFactory implements Repo
         $metadata = $documentManager->getClassMetadata($documentName);
         $repositoryClassName = $metadata->customRepositoryClassName ?: $this->getDefaultRepositoryClassName();
 
-        return new $repositoryClassName($documentManager, $metadata);
+        return new $repositoryClassName($documentManager, $documentManager->getUnitOfWork(), $metadata);
     }
 }

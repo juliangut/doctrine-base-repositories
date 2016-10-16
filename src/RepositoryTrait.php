@@ -194,7 +194,10 @@ trait RepositoryTrait
         /* @var \Doctrine\Common\EventManager $eventManager */
         $eventManager = $this->getManager()->getEventManager();
 
-        foreach ($this->disabledListeners[$event] as $listener) {
+        /* @var EventSubscriber[] $listeners */
+        $listeners = $this->disabledListeners[$event];
+
+        foreach ($listeners as $listener) {
             $eventManager->addEventListener($event, $listener);
         }
 
@@ -220,25 +223,13 @@ trait RepositoryTrait
 
         if (!$reflectionClass->implementsInterface(Page::class)) {
             throw new \InvalidArgumentException(sprintf(
-                'Invalid page class "%s". It must be a Jgut\Doctrine\Repository\Pager\Page.',
-                $className
+                'Invalid page class "%s". It must be a %s.',
+                $className,
+                Page::class
             ));
         }
 
         $this->pageClassName = $className;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function findPagedBy(array $criteria, $limit = 10, $offset = 0, array $orderBy = null)
-    {
-        $totalElements = $this->findBy($criteria);
-        $pagedElements = $this->findBy($criteria, $orderBy, $limit, $offset);
-
-        $pageClassName = $this->getPageClassName();
-
-        return new $pageClassName($pagedElements, ($offset / $limit) + 1, $limit, count($totalElements));
     }
 
     /**
@@ -352,9 +343,9 @@ trait RepositoryTrait
     /**
      * {@inheritdoc}
      */
-    public function countBy(array $criteria)
+    public function countAll()
     {
-        return count($this->findBy($criteria));
+        return $this->countBy([]);
     }
 
     /**
@@ -377,7 +368,10 @@ trait RepositoryTrait
             ));
         }
 
-        if ($this->getClassMetadata()->hasField($fieldName) || $this->getClassMetadata()->hasAssociation($fieldName)) {
+        /** @var \Doctrine\Common\Persistence\Mapping\ClassMetadata $classMetadata */
+        $classMetadata = $this->getClassMetadata();
+
+        if ($classMetadata->hasField($fieldName) || $classMetadata->hasAssociation($fieldName)) {
             // @codeCoverageIgnoreStart
             $parameters = array_merge(
                 [$fieldName => $arguments[0]],

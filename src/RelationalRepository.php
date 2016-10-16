@@ -14,6 +14,7 @@ namespace Jgut\Doctrine\Repository;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * Relational entity repository.
@@ -31,6 +32,18 @@ class RelationalRepository extends EntityRepository implements Repository
     }
 
     /**
+     * Get class alias.
+     *
+     * @return string
+     */
+    protected function getClassAlias()
+    {
+        $className = explode('\\', $this->getClassName());
+
+        return strtoupper(substr(end($className), 0, 1));
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getClassName()
@@ -40,16 +53,98 @@ class RelationalRepository extends EntityRepository implements Repository
 
     /**
      * {@inheritdoc}
+     *
+     * @param array|QueryBuilder $criteria
+     * @param array              $orderBy
+     * @param int                $limit
+     * @param int                $offset
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return \Jgut\Doctrine\Repository\Pager\Page
      */
-    public function countAll()
+    public function findPagedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0)
     {
-        $className = explode('\\', $this->getClassName());
-        $entityAlias = strtoupper(substr(end($className), 0, 1));
+        $queryBuilder = $this->createQueryBuilderFromCriteria($criteria);
+        $entityAlias = count($queryBuilder->getRootAliases())
+            ? $queryBuilder->getRootAliases()[0]
+            : $this->getClassAlias();
 
-        return (int) $this->createQueryBuilder($entityAlias)
+        if (is_array($orderBy)) {
+            foreach ($orderBy as $field => $order) {
+                $queryBuilder->addOrderBy($entityAlias . '.' . $field, $order);
+            }
+        }
+
+        $queryBuilder->setFirstResult($offset);
+        $queryBuilder->setMaxResults($limit);
+
+        $pageClassName = $this->getPageClassName();
+
+        return new $pageClassName(
+            $queryBuilder->getQuery()->getResult(),
+            ($offset / $limit) + 1,
+            $limit,
+            $this->countBy($criteria)
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param array|QueryBuilder $criteria
+     *
+     * @return int
+     */
+    public function countBy($criteria)
+    {
+        $queryBuilder = $this->createQueryBuilderFromCriteria($criteria);
+        $entityAlias = count($queryBuilder->getRootAliases())
+            ? $queryBuilder->getRootAliases()[0]
+            : $this->getClassAlias();
+
+        return (int) $queryBuilder
             ->select('COUNT(' . $entityAlias . ')')
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    /**
+     * Create query builder based on provided simple criteria.
+     *
+     * @param array|QueryBuilder $criteria
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return QueryBuilder
+     */
+    protected function createQueryBuilderFromCriteria($criteria)
+    {
+        if ($criteria instanceof QueryBuilder) {
+            return $criteria;
+        } elseif (!is_array($criteria)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Criteria must be an array of query fields or a %s',
+                QueryBuilder::class
+            ));
+        }
+
+        $entityAlias = $this->getClassAlias();
+        $queryBuilder = $this->createQueryBuilder($entityAlias);
+
+        /** @var array $criteria */
+        foreach ($criteria as $field => $value) {
+            if (is_null($value)) {
+                $queryBuilder->andWhere(sprintf('%s.%s IS NULL', $entityAlias, $field));
+            } else {
+                $parameter = sprintf('%s_%s', $field, substr(sha1($field), 0, 4));
+
+                $queryBuilder->andWhere(sprintf('%s.%s = :%s', $entityAlias, $field, $parameter));
+                $queryBuilder->setParameter($parameter, $value);
+            }
+        }
+
+        return $queryBuilder;
     }
 
     /**

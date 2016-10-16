@@ -51,18 +51,18 @@ class DefaultPageTest extends \PHPUnit_Framework_TestCase
     {
         $page = new DefaultPage(['a', 'b', 'c', 'd'], 1, 4, 12);
 
-        self::assertEquals(4, $page->getPageSize());
-        self::assertEquals(12, $page->getTotalCount());
+        static::assertEquals(4, $page->getPageSize());
+        static::assertEquals(12, $page->getTotalCount());
 
-        self::assertEquals(1, $page->getCurrentPage());
-        self::assertTrue($page->isFirstPage());
-        self::assertEquals(0, $page->getCurrentPageOffsetStart());
-        self::assertEquals(4, $page->getCurrentPageOffsetEnd());
+        static::assertEquals(1, $page->getCurrentPage());
+        static::assertTrue($page->isFirstPage());
+        static::assertEquals(0, $page->getCurrentPageOffsetStart());
+        static::assertEquals(4, $page->getCurrentPageOffsetEnd());
 
-        self::assertNull($page->getPreviousPage());
-        self::assertEquals(2, $page->getNextPage());
+        static::assertNull($page->getPreviousPage());
+        static::assertEquals(2, $page->getNextPage());
 
-        self::assertEquals(3, $page->getTotalPages());
-        self::assertFalse($page->isLastPage());
+        static::assertEquals(3, $page->getTotalPages());
+        static::assertFalse($page->isLastPage());
     }
 }

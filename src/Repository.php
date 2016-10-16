@@ -35,34 +35,34 @@ interface Repository extends ObjectRepository
     /**
      * Return paged elements filtered by criteria.
      *
-     * @param array $criteria
-     * @param int   $limit
-     * @param int   $offset
-     * @param array $orderBy
+     * @param array|\Doctrine\ORM\QueryBuilder|\Doctrine\ODM\MongoDB\Query\Builder $criteria
+     * @param array                                                                $orderBy
+     * @param int                                                                  $limit
+     * @param int                                                                  $offset
      *
-     * @return Page
+     * @return \Jgut\Doctrine\Repository\Pager\Page
      */
-    public function findPagedBy(array $criteria, $limit = 10, $offset = 0, array $orderBy = null);
+    public function findPagedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0);
 
     /**
      * Find one object by a set of criteria or create a new one.
      *
-     * @return object
+     * @return \stdClass
      */
     public function findOneByOrCreateNew($criteria);
 
     /**
      * Get a new object instance.
      *
-     * @return object
+     * @return \stdClass
      */
     public function createNew();
 
     /**
      * Save object.
      *
-     * @param object $object
-     * @param bool   $flush
+     * @param \stdClass $object
+     * @param bool      $flush
      */
     public function save($object, $flush = true);
 
@@ -93,8 +93,8 @@ interface Repository extends ObjectRepository
     /**
      * Remove an object.
      *
-     * @param object|string $object
-     * @param bool          $flush
+     * @param \stdClass|string $object
+     * @param bool             $flush
      */
     public function remove($object, $flush = true);
 
@@ -108,9 +108,9 @@ interface Repository extends ObjectRepository
     /**
      * Get object count filtered by a set of criteria.
      *
-     * @param array $criteria
+     * @param array|\Doctrine\ORM\QueryBuilder|\Doctrine\ODM\MongoDB\Query\Builder $criteria
      *
      * @return int
      */
-    public function countBy(array $criteria);
+    public function countBy($criteria);
 }

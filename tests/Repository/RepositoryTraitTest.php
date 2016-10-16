@@ -12,9 +12,18 @@
 namespace Jgut\Doctrine\Repository\Tests;
 
 use Doctrine\Common\EventManager;
+use Doctrine\ODM\CouchDB\DocumentManager as CouchDBDocumentManager;
+use Doctrine\ODM\CouchDB\Mapping\ClassMetadata as CouchDBClassMetadata;
+use Doctrine\ODM\MongoDB\DocumentManager as MongoDBDocumentManager;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadata as MongoDBClassMetadata;
+use Doctrine\ODM\MongoDB\UnitOfWork;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Jgut\Doctrine\Repository\CouchDBRepository;
+use Jgut\Doctrine\Repository\MongoDBRepository;
 use Jgut\Doctrine\Repository\Pager\DefaultPage;
 use Jgut\Doctrine\Repository\Pager\Page;
+use Jgut\Doctrine\Repository\RelationalRepository;
 use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\EventStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\RepositoryStub;
@@ -31,19 +40,26 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $eventManager = new EventManager;
         $eventManager->addEventSubscriber(new EventStub);
 
-        $manager = $this->getMockBuilder(EntityManager::class)
+        $manager = $this->getMockBuilder(MongoDBDocumentManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(self::exactly(2))->method('getEventManager')->will(self::returnValue($eventManager));
-        /* @var EntityManager $manager */
+        $manager->expects(self::exactly(2))
+            ->method('getEventManager')
+            ->will(static::returnValue($eventManager));
+        /* @var MongoDBDocumentManager $manager */
 
-        $repository = new RepositoryStub($manager);
+        $uow = $this->getMockBuilder(UnitOfWork::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var UnitOfWork $uow */
+
+        $repository = new MongoDBRepository($manager, $uow, new MongoDBClassMetadata(EntityDocumentStub::class));
 
         $repository->disableEventSubscriber(EventStub::class);
-        self::assertCount(0, $eventManager->getListeners('prePersist'));
+        static::assertCount(0, $eventManager->getListeners('prePersist'));
 
         $repository->restoreEventSubscribers();
-        self::assertCount(1, $eventManager->getListeners('prePersist'));
+        static::assertCount(1, $eventManager->getListeners('prePersist'));
     }
 
     /**
@@ -72,31 +88,51 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $eventManager = new EventManager;
         $eventManager->addEventSubscriber($eventSubscriber);
 
-        $manager = $this->getMockBuilder(EntityManager::class)
+        $manager = $this->getMockBuilder(CouchDBDocumentManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(self::exactly(7))->method('getEventManager')->will(self::returnValue($eventManager));
-        /* @var EntityManager $manager */
+        $manager->expects(self::exactly(5))
+            ->method('getEventManager')
+            ->will(static::returnValue($eventManager));
+        /* @var CouchDBDocumentManager $manager */
 
-        $repository = new RepositoryStub($manager);
+        $repository = new CouchDBRepository($manager, new CouchDBClassMetadata('RepositoryDocument'));
 
         $repository->disableEventListeners('onFlush');
-        self::assertCount(0, $eventManager->getListeners('onFlush'));
-        self::assertCount(1, $eventManager->getListeners('prePersist'));
+        static::assertCount(0, $eventManager->getListeners('onFlush'));
+        static::assertCount(1, $eventManager->getListeners('prePersist'));
         $repository->disableEventListeners('onFlush');
 
         $repository->restoreAllEventListeners();
-        self::assertCount(1, $eventManager->getListeners('onFlush'));
+        static::assertCount(1, $eventManager->getListeners('onFlush'));
 
         $repository->disableEventListeners('onFlush');
-        self::assertCount(0, $eventManager->getListeners('onFlush'));
+        static::assertCount(0, $eventManager->getListeners('onFlush'));
 
         $repository->restoreEventListeners('onFlush');
-        self::assertCount(1, $eventManager->getListeners('onFlush'));
+        static::assertCount(1, $eventManager->getListeners('onFlush'));
         $repository->restoreEventListeners('onFlush');
+    }
+
+    public function testEventListenerManagement()
+    {
+        $eventSubscriber = new EventStub;
+
+        $eventManager = new EventManager;
+        $eventManager->addEventSubscriber($eventSubscriber);
+
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $manager->expects(self::exactly(2))
+            ->method('getEventManager')
+            ->will(static::returnValue($eventManager));
+        /* @var EntityManager $manager */
+
+        $repository = new RelationalRepository($manager, new ClassMetadata('RepositoryEntity'));
 
         $repository->disableEventListener('onFlush', $eventSubscriber);
-        self::assertCount(0, $eventManager->getListeners('onFlush'));
+        static::assertCount(0, $eventManager->getListeners('onFlush'));
         $repository->restoreEventListeners('onFlush');
     }
 
@@ -128,11 +164,11 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager);
 
-        self::assertEquals(DefaultPage::class, $repository->getPageClassName());
+        static::assertEquals(DefaultPage::class, $repository->getPageClassName());
 
         $repository->setPageClassName(Page::class);
 
-        self::assertEquals(Page::class, $repository->getPageClassName());
+        static::assertEquals(Page::class, $repository->getPageClassName());
     }
 
     /**
@@ -160,7 +196,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager);
 
-        self::assertInstanceOf(EntityDocumentStub::class, $repository->findOneByOrCreateNew([]));
+        static::assertInstanceOf(EntityDocumentStub::class, $repository->findOneByOrCreateNew([]));
     }
 
     public function testSave()
@@ -170,8 +206,8 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(self::once())->method('persist')->with(self::equalTo($entity));
-        $manager->expects(self::once())->method('flush');
+        $manager->expects(static::once())->method('persist')->with(self::equalTo($entity));
+        $manager->expects(static::once())->method('flush');
         /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager);
@@ -185,7 +221,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $manager->expects(self::exactly(2))->method('remove');
-        $manager->expects(self::once())->method('flush');
+        $manager->expects(static::once())->method('flush');
         /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager, [new EntityDocumentStub, new EntityDocumentStub]);
@@ -199,7 +235,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $manager->expects(self::exactly(2))->method('remove');
-        $manager->expects(self::once())->method('flush');
+        $manager->expects(static::once())->method('flush');
         /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager, [new EntityDocumentStub, new EntityDocumentStub]);
@@ -212,8 +248,8 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(self::once())->method('remove');
-        $manager->expects(self::once())->method('flush');
+        $manager->expects(static::once())->method('remove');
+        $manager->expects(static::once())->method('flush');
         /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager, [new EntityDocumentStub, new EntityDocumentStub]);
@@ -226,8 +262,8 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(self::once())->method('remove');
-        $manager->expects(self::once())->method('flush');
+        $manager->expects(static::once())->method('remove');
+        $manager->expects(static::once())->method('flush');
         /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager, [new EntityDocumentStub]);
@@ -244,6 +280,6 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager, [new EntityDocumentStub, new EntityDocumentStub]);
 
-        self::assertEquals(2, $repository->countBy([]));
+        static::assertEquals(2, $repository->countAll());
     }
 }
