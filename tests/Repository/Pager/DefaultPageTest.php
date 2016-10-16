@@ -64,5 +64,7 @@ class DefaultPageTest extends \PHPUnit_Framework_TestCase
 
         static::assertEquals(3, $page->getTotalPages());
         static::assertFalse($page->isLastPage());
+
+        static::assertEquals('b', $page[1]);
     }
 }
