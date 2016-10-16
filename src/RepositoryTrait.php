@@ -349,6 +349,15 @@ trait RepositoryTrait
     }
 
     /**
+     * Get object count filtered by a set of criteria.
+     *
+     * @param array|\Doctrine\ORM\QueryBuilder|\Doctrine\ODM\MongoDB\Query\Builder $criteria
+     *
+     * @return int
+     */
+    abstract public function countBy($criteria);
+
+    /**
      * Internal remove magic finder.
      *
      * @param string $method
@@ -389,4 +398,11 @@ trait RepositoryTrait
             $method . ucfirst($fieldName)
         ));
     }
+
+    /**
+     * Get class metadata.
+     *
+     * @return \Doctrine\Common\Persistence\Mapping\ClassMetadata
+     */
+    abstract protected function getClassMetadata();
 }

@@ -108,4 +108,14 @@ class RepositoryStub implements Repository
     {
         return count($this->entities) ? $this->entities[0] : null;
     }
+
+    /**
+     * Get class metadata.
+     *
+     * @return \Doctrine\Common\Persistence\Mapping\ClassMetadata
+     */
+    protected function getClassMetadata()
+    {
+        return new \Doctrine\ORM\Mapping\ClassMetadataInfo('EntityDocumentStub');
+    }
 }

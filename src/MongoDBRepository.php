@@ -43,7 +43,7 @@ class MongoDBRepository extends DocumentRepository implements Repository
      * {@inheritdoc}
      *
      * @param array|Builder $criteria
-     * @param array         $orderBy
+     * @param array|null    $orderBy
      * @param int           $limit
      * @param int           $offset
      *

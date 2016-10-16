@@ -41,10 +41,10 @@ class CouchDBRepository extends DocumentRepository implements Repository
     /**
      * {@inheritdoc}
      *
-     * @param array $criteria
-     * @param array $orderBy
-     * @param int   $limit
-     * @param int   $offset
+     * @param array      $criteria
+     * @param array|null $orderBy
+     * @param int        $limit
+     * @param int        $offset
      *
      * @return \Jgut\Doctrine\Repository\Pager\Page
      */

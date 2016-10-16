@@ -55,7 +55,7 @@ class RelationalRepository extends EntityRepository implements Repository
      * {@inheritdoc}
      *
      * @param array|QueryBuilder $criteria
-     * @param array              $orderBy
+     * @param array|null         $orderBy
      * @param int                $limit
      * @param int                $offset
      *
