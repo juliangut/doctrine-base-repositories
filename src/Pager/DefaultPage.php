@@ -70,7 +70,7 @@ class DefaultPage extends ArrayCollection implements Page
         }
         $this->totalSize = (int) $totalSize;
 
-        $this->totalPages = max(1, ceil($this->totalSize / $this->pageSize));
+        $this->totalPages = max(1, (int) ceil($this->totalSize / $this->pageSize));
 
         if ($this->currentPage > $this->totalPages) {
             throw new \OutOfBoundsException(sprintf(
