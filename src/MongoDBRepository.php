@@ -26,17 +26,17 @@ class MongoDBRepository extends DocumentRepository implements Repository
     /**
      * {@inheritdoc}
      */
-    protected function getManager()
+    public function getClassName()
     {
-        return $this->getDocumentManager();
+        return ClassUtils::getRealClass(parent::getClassName());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getClassName()
+    protected function getManager()
     {
-        return ClassUtils::getRealClass(parent::getClassName());
+        return $this->getDocumentManager();
     }
 
     /**

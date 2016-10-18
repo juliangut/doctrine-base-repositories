@@ -24,14 +24,6 @@ class RelationalRepository extends EntityRepository implements Repository
     use RepositoryTrait;
 
     /**
-     * {@inheritdoc}
-     */
-    protected function getManager()
-    {
-        return $this->getEntityManager();
-    }
-
-    /**
      * Get class alias.
      *
      * @return string
@@ -49,6 +41,14 @@ class RelationalRepository extends EntityRepository implements Repository
     public function getClassName()
     {
         return ClassUtils::getRealClass(parent::getClassName());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getManager()
+    {
+        return $this->getEntityManager();
     }
 
     /**

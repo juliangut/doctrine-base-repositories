@@ -43,6 +43,23 @@ trait RepositoryTrait
     protected $pageClassName = DefaultPage::class;
 
     /**
+     * Check if the object is of the proper type.
+     *
+     * @param object $object
+     *
+     * @return bool
+     */
+    protected function canBeManaged($object)
+    {
+        return is_a($object, $this->getClassName());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function getClassName();
+
+    /**
      * Get object manager.
      *
      * @return \Doctrine\ORM\EntityManager|\Doctrine\ODM\MongoDB\DocumentManager|\Doctrine\ODM\CouchDB\DocumentManager
@@ -50,23 +67,14 @@ trait RepositoryTrait
     abstract protected function getManager();
 
     /**
-     * Returns the class name of the object managed by the repository.
-     *
-     * @return string
-     */
-    abstract public function getClassName();
-
-    /**
-     * Disable event subscriber.
-     *
-     * @param string $subscriberClass
+     * {@inheritdoc}
      *
      * @throws \InvalidArgumentException
      */
     public function disableEventSubscriber($subscriberClass)
     {
         if (!is_string($subscriberClass) && !is_a($subscriberClass, EventSubscriber::class)) {
-            throw new \InvalidArgumentException('subscriberClass must be class implementing EventSubscriber');
+            throw new \InvalidArgumentException('subscriberClass must be a EventSubscriber');
         }
 
         /* @var \Doctrine\Common\EventManager $eventManager */
@@ -91,7 +99,7 @@ trait RepositoryTrait
     }
 
     /**
-     * Restore disabled event subscribers.
+     * {@inheritdoc}
      */
     public function restoreEventSubscribers()
     {
@@ -106,9 +114,7 @@ trait RepositoryTrait
     }
 
     /**
-     * Disable all listeners for an event.
-     *
-     * @param string $event
+     * {@inheritdoc}
      */
     public function disableEventListeners($event)
     {
@@ -123,17 +129,14 @@ trait RepositoryTrait
     }
 
     /**
-     * Disable listener for an event.
-     *
-     * @param string $event
-     * @param string $subscriberClass
+     * {@inheritdoc}
      *
      * @throws \InvalidArgumentException
      */
     public function disableEventListener($event, $subscriberClass)
     {
         if (!is_string($subscriberClass) && !is_a($subscriberClass, EventSubscriber::class)) {
-            throw new \InvalidArgumentException('subscriberClass must be class implementing EventSubscriber');
+            throw new \InvalidArgumentException('subscriberClass must be a EventSubscriber');
         }
 
         /* @var \Doctrine\Common\EventManager $eventManager */
@@ -171,7 +174,7 @@ trait RepositoryTrait
     }
 
     /**
-     * Restore all disabled listeners.
+     * {@inheritdoc}
      */
     public function restoreAllEventListeners()
     {
@@ -181,9 +184,7 @@ trait RepositoryTrait
     }
 
     /**
-     * Restore disabled listeners for an event.
-     *
-     * @param string $event
+     * {@inheritdoc}
      */
     public function restoreEventListeners($event)
     {
@@ -258,9 +259,15 @@ trait RepositoryTrait
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \InvalidArgumentException
      */
     public function save($object, $flush = true)
     {
+        if (!$this->canBeManaged($object)) {
+            throw new \InvalidArgumentException(sprintf('Managed object must be a %s', $this->getClassName()));
+        }
+
         $manager = $this->getManager();
 
         $manager->persist($object);
@@ -305,17 +312,25 @@ trait RepositoryTrait
     /**
      * {@inheritdoc}
      */
-    public function removeOneBy(array $criteria, array $orderBy = null, $flush = true)
+    public function removeOneBy(array $criteria, $flush = true)
     {
-        $object = $this->findOneBy($criteria, $orderBy);
+        $object = $this->findOneBy($criteria);
 
         if ($object !== null) {
-            $this->remove($object, $flush);
+            $manager = $this->getManager();
+
+            $manager->remove($object);
+
+            if ($flush === true) {
+                $manager->flush();
+            }
         }
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \InvalidArgumentException
      */
     public function remove($object, $flush = true)
     {
@@ -331,6 +346,10 @@ trait RepositoryTrait
             }
 
             foreach ($object as $obj) {
+                if (!$this->canBeManaged($obj)) {
+                    throw new \InvalidArgumentException(sprintf('Managed object must be a %s', $this->getClassName()));
+                }
+
                 $manager->remove($obj);
             }
 
@@ -377,7 +396,6 @@ trait RepositoryTrait
             ));
         }
 
-        /** @var \Doctrine\Common\Persistence\Mapping\ClassMetadata $classMetadata */
         $classMetadata = $this->getClassMetadata();
 
         if ($classMetadata->hasField($fieldName) || $classMetadata->hasAssociation($fieldName)) {

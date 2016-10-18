@@ -64,7 +64,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage subscriberClass must be class implementing EventSubscriber
+     * @expectedExceptionMessage subscriberClass must be a EventSubscriber
      */
     public function testBadEventSubscriber()
     {
@@ -138,7 +138,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage subscriberClass must be class implementing EventSubscriber
+     * @expectedExceptionMessage subscriberClass must be a EventSubscriber
      */
     public function testBadEventListener()
     {
@@ -199,6 +199,22 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         static::assertInstanceOf(EntityDocumentStub::class, $repository->findOneByOrCreateNew([]));
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessageRegExp /^Managed object must be a /
+     */
+    public function testInvalidSave()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $repository->save(new \stdClass);
+    }
+
     public function testSave()
     {
         $entity = new EntityDocumentStub;
@@ -257,7 +273,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $repository->removeOneBy([]);
     }
 
-    public function testRemove()
+    public function testRemoveByCriteria()
     {
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
@@ -269,6 +285,40 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $repository = new RepositoryStub($manager, [new EntityDocumentStub]);
 
         $repository->remove([]);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessageRegExp /^Managed object must be a /
+     */
+    public function testInvalidRemove()
+    {
+        $entity = new \stdClass;
+
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $repository->remove($entity);
+    }
+
+    public function testRemove()
+    {
+        $entity = new EntityDocumentStub;
+
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $manager->expects(static::once())->method('remove')->with(self::equalTo($entity));
+        $manager->expects(static::once())->method('flush');
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $repository->remove($entity);
     }
 
     public function testCount()

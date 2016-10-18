@@ -19,6 +19,52 @@ use Doctrine\Common\Persistence\ObjectRepository;
 interface Repository extends ObjectRepository
 {
     /**
+     * Returns the class name of the object managed by the repository.
+     *
+     * @return string
+     */
+    public function getClassName();
+
+    /**
+     * Disable event subscriber.
+     *
+     * @param string $subscriberClass
+     */
+    public function disableEventSubscriber($subscriberClass);
+
+    /**
+     * Restore disabled event subscribers.
+     */
+    public function restoreEventSubscribers();
+
+    /**
+     * Disable all listeners for an event.
+     *
+     * @param string $event
+     */
+    public function disableEventListeners($event);
+
+    /**
+     * Disable listener for an event.
+     *
+     * @param string $event
+     * @param string $subscriberClass
+     */
+    public function disableEventListener($event, $subscriberClass);
+
+    /**
+     * Restore all disabled listeners.
+     */
+    public function restoreAllEventListeners();
+
+    /**
+     * Restore disabled listeners for an event.
+     *
+     * @param string $event
+     */
+    public function restoreEventListeners($event);
+
+    /**
      * Set page class name.
      *
      * @return string
@@ -84,17 +130,16 @@ interface Repository extends ObjectRepository
     /**
      * Remove first object filtered by a set of criteria.
      *
-     * @param array      $criteria
-     * @param array|null $orderBy
-     * @param bool       $flush
+     * @param array $criteria
+     * @param bool  $flush
      */
-    public function removeOneBy(array $criteria, array $orderBy = null, $flush = true);
+    public function removeOneBy(array $criteria, $flush = true);
 
     /**
      * Remove an object.
      *
-     * @param \stdClass|string $object
-     * @param bool             $flush
+     * @param \stdClass|array $object
+     * @param bool            $flush
      */
     public function remove($object, $flush = true);
 
