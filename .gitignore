@@ -2,5 +2,7 @@
 composer.lock
 vendor/
 .yo-rc.json
-*.cache
+.php_cs.cache
+humbuglog.json
+humbuglog.txt
 build/
