@@ -110,7 +110,7 @@ class MongoDBRepository extends DocumentRepository implements Repository
 
         $queryBuilder = $this->createQueryBuilder();
 
-        /** @var array $criteria */
+        /* @var array $criteria */
         foreach ($criteria as $field => $value) {
             if (is_array($value)) {
                 $queryBuilder->addAnd($queryBuilder->expr()->field($field)->in($value));

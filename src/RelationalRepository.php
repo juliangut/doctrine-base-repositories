@@ -24,15 +24,26 @@ class RelationalRepository extends EntityRepository implements Repository
     use RepositoryTrait;
 
     /**
+     * Class alias.
+     *
+     * @var string
+     */
+    protected $classAlias;
+
+    /**
      * Get class alias.
      *
      * @return string
      */
     protected function getClassAlias()
     {
-        $className = explode('\\', $this->getClassName());
+        if ($this->classAlias === null) {
+            $className = explode('\\', $this->getClassName());
 
-        return strtoupper(substr(end($className), 0, 1));
+            $this->classAlias = strtoupper(end($className)[0]);
+        }
+
+        return $this->classAlias;
     }
 
     /**
@@ -132,7 +143,7 @@ class RelationalRepository extends EntityRepository implements Repository
         $entityAlias = $this->getClassAlias();
         $queryBuilder = $this->createQueryBuilder($entityAlias);
 
-        /** @var array $criteria */
+        /* @var array $criteria */
         foreach ($criteria as $field => $value) {
             if (is_null($value)) {
                 $queryBuilder->andWhere(sprintf('%s.%s IS NULL', $entityAlias, $field));
