@@ -196,7 +196,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager);
 
-        static::assertInstanceOf(EntityDocumentStub::class, $repository->findOneByOrCreateNew([]));
+        static::assertInstanceOf(EntityDocumentStub::class, $repository->findOneByOrGetNew([]));
     }
 
     /**
@@ -212,7 +212,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager);
 
-        $repository->save(new \stdClass);
+        $repository->add(new \stdClass);
     }
 
     public function testSave()
@@ -228,7 +228,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager);
 
-        $repository->save($entity);
+        $repository->add($entity);
     }
 
     public function testRemoveAll()
@@ -273,20 +273,6 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $repository->removeOneBy([]);
     }
 
-    public function testRemoveByCriteria()
-    {
-        $manager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $manager->expects(static::once())->method('remove');
-        $manager->expects(static::once())->method('flush');
-        /* @var EntityManager $manager */
-
-        $repository = new RepositoryStub($manager, [new EntityDocumentStub]);
-
-        $repository->remove([]);
-    }
-
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessageRegExp /^Managed object must be a /
@@ -306,6 +292,22 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testRemove()
+    {
+        $entity = new EntityDocumentStub;
+
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $manager->expects(static::once())->method('remove')->with(self::equalTo($entity));
+        $manager->expects(static::once())->method('flush');
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager, [$entity]);
+
+        $repository->remove(0);
+    }
+
+    public function testRemoveObject()
     {
         $entity = new EntityDocumentStub;
 

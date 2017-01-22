@@ -51,7 +51,7 @@ trait RepositoryTrait
      */
     protected function canBeManaged($object)
     {
-        return is_a($object, $this->getClassName());
+        return is_object($object) && is_a($object, $this->getClassName());
     }
 
     /**
@@ -236,12 +236,12 @@ trait RepositoryTrait
     /**
      * {@inheritdoc}
      */
-    public function findOneByOrCreateNew($criteria)
+    public function findOneByOrGetNew($criteria)
     {
         $object = $this->findOneBy($criteria);
 
         if ($object === null) {
-            $object = $this->createNew();
+            $object = $this->getNew();
         }
 
         return $object;
@@ -250,7 +250,7 @@ trait RepositoryTrait
     /**
      * {@inheritdoc}
      */
-    public function createNew()
+    public function getNew()
     {
         $className = $this->getClassName();
 
@@ -262,15 +262,21 @@ trait RepositoryTrait
      *
      * @throws \InvalidArgumentException
      */
-    public function save($object, $flush = true)
+    public function add($objects, $flush = true)
     {
-        if (!$this->canBeManaged($object)) {
-            throw new \InvalidArgumentException(sprintf('Managed object must be a %s', $this->getClassName()));
+        if (!is_array($objects)) {
+            $objects = [$objects];
         }
 
         $manager = $this->getManager();
 
-        $manager->persist($object);
+        foreach ($objects as $object) {
+            if (!$this->canBeManaged($object)) {
+                throw new \InvalidArgumentException(sprintf('Managed object must be a %s', $this->getClassName()));
+            }
+
+            $manager->persist($object);
+        }
 
         if ($flush === true) {
             $manager->flush();
@@ -332,25 +338,25 @@ trait RepositoryTrait
      *
      * @throws \InvalidArgumentException
      */
-    public function remove($object, $flush = true)
+    public function remove($objects, $flush = true)
     {
         $manager = $this->getManager();
 
-        if (!is_object($object)) {
-            $object = $this->find($object);
+        if (!is_object($objects) && !is_array($objects)) {
+            $objects = $this->find($objects);
         }
 
-        if ($object !== null) {
-            if (!is_array($object)) {
-                $object = [$object];
+        if ($objects !== null) {
+            if (!is_array($objects)) {
+                $objects = [$objects];
             }
 
-            foreach ($object as $obj) {
-                if (!$this->canBeManaged($obj)) {
+            foreach ($objects as $object) {
+                if (!$this->canBeManaged($object)) {
                     throw new \InvalidArgumentException(sprintf('Managed object must be a %s', $this->getClassName()));
                 }
 
-                $manager->remove($obj);
+                $manager->remove($object);
             }
 
             if ($flush === true) {

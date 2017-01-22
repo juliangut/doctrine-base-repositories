@@ -19,7 +19,7 @@ use Doctrine\Common\Persistence\ObjectRepository;
 interface Repository extends ObjectRepository
 {
     /**
-     * Returns the class name of the object managed by the repository.
+     * Returns the fully qualified class name of the objects managed by the repository.
      *
      * @return string
      */
@@ -95,22 +95,22 @@ interface Repository extends ObjectRepository
      *
      * @return \stdClass
      */
-    public function findOneByOrCreateNew($criteria);
+    public function findOneByOrGetNew($criteria);
 
     /**
      * Get a new object instance.
      *
      * @return \stdClass
      */
-    public function createNew();
+    public function getNew();
 
     /**
-     * Save object.
+     * Add objects.
      *
-     * @param \stdClass $object
-     * @param bool      $flush
+     * @param \stdClass|\stdClass[] $object
+     * @param bool                  $flush
      */
-    public function save($object, $flush = true);
+    public function add($objects, $flush = true);
 
     /**
      * Remove all objects.
@@ -136,12 +136,12 @@ interface Repository extends ObjectRepository
     public function removeOneBy(array $criteria, $flush = true);
 
     /**
-     * Remove an object.
+     * Remove objects.
      *
-     * @param \stdClass|array $object
-     * @param bool            $flush
+     * @param \stdClass|\stdClass[]|string|int $objects
+     * @param bool                             $flush
      */
-    public function remove($object, $flush = true);
+    public function remove($objects, $flush = true);
 
     /**
      * Get all objects count.
