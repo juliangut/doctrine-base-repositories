@@ -13,8 +13,8 @@ namespace Jgut\Doctrine\Repository;
 
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
-use Jgut\Doctrine\Repository\Pager\DefaultPage;
-use Jgut\Doctrine\Repository\Pager\Page;
+use Jgut\Doctrine\Repository\Pager\DefaultPager;
+use Jgut\Doctrine\Repository\Pager\Pager;
 
 /**
  * Repository trait.
@@ -36,11 +36,11 @@ trait RepositoryTrait
     protected $disabledListeners = [];
 
     /**
-     * Page class name.
+     * Pager class name.
      *
      * @var string
      */
-    protected $pageClassName = DefaultPage::class;
+    protected $pagerClassName = DefaultPager::class;
 
     /**
      * Check if the object is of the proper type.
@@ -208,9 +208,9 @@ trait RepositoryTrait
     /**
      * {@inheritdoc}
      */
-    public function getPageClassName()
+    public function getPagerClassName()
     {
-        return $this->pageClassName;
+        return $this->pagerClassName;
     }
 
     /**
@@ -218,19 +218,19 @@ trait RepositoryTrait
      *
      * @throws \InvalidArgumentException
      */
-    public function setPageClassName($className)
+    public function setPagerClassName($className)
     {
         $reflectionClass = new \ReflectionClass($className);
 
-        if (!$reflectionClass->implementsInterface(Page::class)) {
+        if (!$reflectionClass->implementsInterface(Pager::class)) {
             throw new \InvalidArgumentException(sprintf(
                 'Invalid page class "%s". It must be a %s.',
                 $className,
-                Page::class
+                Pager::class
             ));
         }
 
-        $this->pageClassName = $className;
+        $this->pagerClassName = $className;
     }
 
     /**

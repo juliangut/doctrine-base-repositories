@@ -46,11 +46,11 @@ class CouchDBRepository extends DocumentRepository implements Repository
      * @param int        $limit
      * @param int        $offset
      *
-     * @return \Jgut\Doctrine\Repository\Pager\Page
+     * @return \Jgut\Doctrine\Repository\Pager\Pager
      */
     public function findPagedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0)
     {
-        $pageClassName = $this->getPageClassName();
+        $pageClassName = $this->getPagerClassName();
 
         if (!is_array($criteria)) {
             $criteria = [$criteria];

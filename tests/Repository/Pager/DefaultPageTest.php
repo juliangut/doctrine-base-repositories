@@ -11,7 +11,7 @@
 
 namespace Jgut\Doctrine\Repository\Tests\Pager;
 
-use Jgut\Doctrine\Repository\Pager\DefaultPage;
+use Jgut\Doctrine\Repository\Pager\DefaultPager;
 
 /**
  * Default pager tests.
@@ -26,7 +26,7 @@ class DefaultPageTest extends \PHPUnit_Framework_TestCase
      */
     public function testBadPageLowerLimit()
     {
-        new DefaultPage([], 0);
+        new DefaultPager([], 0);
     }
 
     /**
@@ -35,7 +35,7 @@ class DefaultPageTest extends \PHPUnit_Framework_TestCase
      */
     public function testBadPageUpperLimit()
     {
-        new DefaultPage([], 2);
+        new DefaultPager([], 2);
     }
 
     /**
@@ -44,12 +44,12 @@ class DefaultPageTest extends \PHPUnit_Framework_TestCase
      */
     public function testBadPageSize()
     {
-        new DefaultPage([], 0, 0);
+        new DefaultPager([], 0, 0);
     }
 
     public function testPage()
     {
-        $page = new DefaultPage(['a', 'b', 'c', 'd'], 1, 4, 12);
+        $page = new DefaultPager(['a', 'b', 'c', 'd'], 1, 4, 12);
 
         static::assertEquals(4, $page->getPageSize());
         static::assertEquals(12, $page->getTotalCount());

@@ -21,8 +21,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Jgut\Doctrine\Repository\CouchDBRepository;
 use Jgut\Doctrine\Repository\MongoDBRepository;
-use Jgut\Doctrine\Repository\Pager\DefaultPage;
-use Jgut\Doctrine\Repository\Pager\Page;
+use Jgut\Doctrine\Repository\Pager\DefaultPager;
+use Jgut\Doctrine\Repository\Pager\Pager;
 use Jgut\Doctrine\Repository\RelationalRepository;
 use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\EventStub;
@@ -164,11 +164,11 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager);
 
-        static::assertEquals(DefaultPage::class, $repository->getPageClassName());
+        static::assertEquals(DefaultPager::class, $repository->getPagerClassName());
 
-        $repository->setPageClassName(Page::class);
+        $repository->setPagerClassName(Pager::class);
 
-        static::assertEquals(Page::class, $repository->getPageClassName());
+        static::assertEquals(Pager::class, $repository->getPagerClassName());
     }
 
     /**
@@ -184,7 +184,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager);
 
-        $repository->setPageClassName(EventStub::class);
+        $repository->setPagerClassName(EventStub::class);
     }
 
     public function testFindOneOrCreate()

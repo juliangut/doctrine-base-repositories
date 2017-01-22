@@ -15,7 +15,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
-use Jgut\Doctrine\Repository\Pager\Page;
+use Jgut\Doctrine\Repository\Pager\Pager;
 use Jgut\Doctrine\Repository\RelationalRepository;
 
 /**
@@ -87,7 +87,7 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RelationalRepository($manager, new ClassMetadata('RepositoryEntity'));
 
-        static::assertInstanceOf(Page::class, $repository->findPagedBy($queryBuilder, ['fakeField' => 'ASC']));
+        static::assertInstanceOf(Pager::class, $repository->findPagedBy($queryBuilder, ['fakeField' => 'ASC']));
     }
 
     public function testCount()

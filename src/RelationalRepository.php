@@ -72,7 +72,7 @@ class RelationalRepository extends EntityRepository implements Repository
      *
      * @throws \InvalidArgumentException
      *
-     * @return \Jgut\Doctrine\Repository\Pager\Page
+     * @return \Jgut\Doctrine\Repository\Pager\Pager
      */
     public function findPagedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0)
     {
@@ -90,7 +90,7 @@ class RelationalRepository extends EntityRepository implements Repository
         $queryBuilder->setFirstResult($offset);
         $queryBuilder->setMaxResults($limit);
 
-        $pageClassName = $this->getPageClassName();
+        $pageClassName = $this->getPagerClassName();
 
         return new $pageClassName(
             $queryBuilder->getQuery()->getResult(),

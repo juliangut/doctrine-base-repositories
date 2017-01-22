@@ -18,7 +18,7 @@ use Doctrine\ODM\MongoDB\Query\Expr;
 use Doctrine\ODM\MongoDB\Query\Query;
 use Doctrine\ODM\MongoDB\UnitOfWork;
 use Jgut\Doctrine\Repository\MongoDBRepository;
-use Jgut\Doctrine\Repository\Pager\Page;
+use Jgut\Doctrine\Repository\Pager\Pager;
 use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;
 
 /**
@@ -101,7 +101,7 @@ class MongoDBRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $repository = new MongoDBRepository($manager, $uow, new ClassMetadata(EntityDocumentStub::class));
 
-        static::assertInstanceOf(Page::class, $repository->findPagedBy($queryBuilder, ['fakeField' => 'ASC']));
+        static::assertInstanceOf(Pager::class, $repository->findPagedBy($queryBuilder, ['fakeField' => 'ASC']));
     }
 
     public function testCount()

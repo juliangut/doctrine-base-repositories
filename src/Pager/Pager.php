@@ -12,9 +12,9 @@
 namespace Jgut\Doctrine\Repository\Pager;
 
 /**
- * Page interface.
+ * Pager interface.
  */
-interface Page extends \Countable, \IteratorAggregate
+interface Pager extends \Countable, \IteratorAggregate
 {
     /**
      * Page constructor.

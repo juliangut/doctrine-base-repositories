@@ -49,7 +49,7 @@ class MongoDBRepository extends DocumentRepository implements Repository
      *
      * @throws \InvalidArgumentException
      *
-     * @return \Jgut\Doctrine\Repository\Pager\Page
+     * @return \Jgut\Doctrine\Repository\Pager\Pager
      */
     public function findPagedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0)
     {
@@ -62,7 +62,7 @@ class MongoDBRepository extends DocumentRepository implements Repository
         $queryBuilder->skip($offset);
         $queryBuilder->limit($limit);
 
-        $pageClassName = $this->getPageClassName();
+        $pageClassName = $this->getPagerClassName();
 
         return new $pageClassName(
             $queryBuilder->getQuery()->execute(),

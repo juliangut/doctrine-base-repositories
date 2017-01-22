@@ -14,9 +14,9 @@ namespace Jgut\Doctrine\Repository\Pager;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Default page.
+ * Default pager.
  */
-class DefaultPage extends ArrayCollection implements Page
+class DefaultPager extends ArrayCollection implements Pager
 {
     /**
      * Current page.

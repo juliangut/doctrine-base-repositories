@@ -65,18 +65,18 @@ interface Repository extends ObjectRepository
     public function restoreEventListeners($event);
 
     /**
-     * Set page class name.
+     * Get page class name.
      *
      * @return string
      */
-    public function getPageClassName();
+    public function getPagerClassName();
 
     /**
-     * Get page class name.
+     * Set page class name.
      *
      * @param string $className
      */
-    public function setPageClassName($className);
+    public function setPagerClassName($className);
 
     /**
      * Return paged elements filtered by criteria.
@@ -86,7 +86,7 @@ interface Repository extends ObjectRepository
      * @param int                                                                  $limit
      * @param int                                                                  $offset
      *
-     * @return \Jgut\Doctrine\Repository\Pager\Page
+     * @return \Jgut\Doctrine\Repository\Pager\Pager
      */
     public function findPagedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0);
 

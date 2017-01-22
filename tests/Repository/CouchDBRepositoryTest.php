@@ -14,7 +14,7 @@ namespace Jgut\Doctrine\Repository\Tests;
 use Doctrine\ODM\CouchDB\DocumentManager;
 use Doctrine\ODM\CouchDB\Mapping\ClassMetadata;
 use Jgut\Doctrine\Repository\CouchDBRepository;
-use Jgut\Doctrine\Repository\Pager\Page;
+use Jgut\Doctrine\Repository\Pager\Pager;
 
 /**
  * CouchDB repository tests.
@@ -44,7 +44,7 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $repository = $this->getMockBuilder(CouchDBRepository::class)
             ->setConstructorArgs([$manager, new ClassMetadata('RepositoryDocument')])
-            ->setMethodsExcept(['findPagedBy', 'getPageClassName'])
+            ->setMethodsExcept(['findPagedBy', 'getPagerClassName'])
             ->getMock();
         $repository->expects(static::once())
             ->method('findBy')
@@ -54,7 +54,7 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
             ->will(static::returnValue(10));
         /* @var CouchDBRepository $repository */
 
-        static::assertInstanceOf(Page::class, $repository->findPagedBy(''));
+        static::assertInstanceOf(Pager::class, $repository->findPagedBy(''));
     }
 
     public function testCount()
