@@ -121,7 +121,7 @@ Mind that CouchDB configuration does not support setting repository factory. [ju
 
 #### Creating
 
-##### createNew
+##### getNew
 
 Creates a new empty object directly from repository.
 
@@ -131,10 +131,10 @@ Creates a new empty object directly from repository.
 /* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
-$object = $repository->createNew();
+$object = $repository->getNew();
 ```
 
-##### findOneByOrCreateNew
+##### findOneByOrGetNew
 
 Returns an object based on criteria or a new empty object if could not be found   
 
@@ -144,12 +144,12 @@ Returns an object based on criteria or a new empty object if could not be found
 /* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
-$object = $repository->findOneByorCreateNew(['slug' => 'my_slug']);
+$object = $repository->findOneByorGetNew(['slug' => 'my_slug']);
 ```
 
-#### Saving
+#### Adding
 
-##### save
+##### add
 
 Will persist the entity and flush all together.
 
@@ -159,14 +159,14 @@ Will persist the entity and flush all together.
 /* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
-$repository->save(new ObjectClass());
+$repository->add(new ObjectClass());
 ```
 
 #### Removing
 
 ##### remove
 
-In the same fashion as `save` this will remove the entity and flush the action.
+In the same fashion as `add` this will remove the entity and flush the action.
 
 ```php
 /* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
@@ -228,7 +228,7 @@ _CountBy accepts an instance of \Doctrine\ORM\QueryBuilder and \Doctrine\ODM\Mon
 
 #### Paginating
 
-Returns the same results that `findBy` would return but within a `\Jgut\Doctrine\Repository\Pager\Page` object with pagination information. 
+Returns the same results that `findBy` would return but within a `\Jgut\Doctrine\Repository\Pager\Pager` object with pagination information. 
 
 ```php
 /* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
