@@ -159,7 +159,10 @@ class RelationalRepository extends EntityRepository implements Repository
     }
 
     /**
-     * {@inheritdoc}
+     * Adds support for magic finders and removers.
+     *
+     * @param string $method
+     * @param array  $arguments
      *
      * @throws \BadMethodCallException
      *
@@ -175,7 +178,14 @@ class RelationalRepository extends EntityRepository implements Repository
             $method = 'removeOneBy';
         } else {
             // @codeCoverageIgnoreStart
-            return parent::__call($method, $arguments);
+            try {
+                return parent::__call($method, $arguments);
+            } catch (\BadMethodCallException $exception) {
+                throw new \BadMethodCallException(sprintf(
+                    'Undefined method "%s". Method name must start with "findBy", "findOneBy", "removeBy" or "removeOneBy"!',
+                    $method
+                ));
+            }
             // @codeCoverageIgnoreEnd
         }
 

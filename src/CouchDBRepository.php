@@ -77,7 +77,7 @@ class CouchDBRepository extends DocumentRepository implements Repository
     }
 
     /**
-     * Adds support for magic finders.
+     * Adds support for magic finders and removers.
      *
      * @param string $method
      * @param array  $arguments
@@ -88,7 +88,13 @@ class CouchDBRepository extends DocumentRepository implements Repository
      */
     public function __call($method, $arguments)
     {
-        if (strpos($method, 'removeBy') === 0) {
+        if (strpos($method, 'findBy') === 0) {
+            $byField = substr($method, 6, strlen($method));
+            $method = 'findBy';
+        } elseif (strpos($method, 'findOneBy') === 0) {
+            $byField = substr($method, 9, strlen($method));
+            $method = 'findOneBy';
+        } elseif (strpos($method, 'removeBy') === 0) {
             $byField = substr($method, 8, strlen($method));
             $method = 'removeBy';
         } elseif (strpos($method, 'removeOneBy') === 0) {
@@ -96,7 +102,7 @@ class CouchDBRepository extends DocumentRepository implements Repository
             $method = 'removeOneBy';
         } else {
             throw new \BadMethodCallException(sprintf(
-                'Undefined method: "%s". The method name must start with "findBy", "findOneBy"!',
+                'Undefined method "%s". Method name must start with "findBy", "findOneBy", "removeBy" or "removeOneBy"!',
                 $method
             ));
         }
