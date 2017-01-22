@@ -170,7 +170,10 @@ class RelationalRepository extends EntityRepository implements Repository
      */
     public function __call($method, $arguments)
     {
-        if (strpos($method, 'removeBy') === 0) {
+        if (strpos($method, 'findPagedBy') === 0) {
+            $byField = substr($method, 11, strlen($method));
+            $method = 'findPagedBy';
+        } elseif (strpos($method, 'removeBy') === 0) {
             $byField = substr($method, 8, strlen($method));
             $method = 'removeBy';
         } elseif (strpos($method, 'removeOneBy') === 0) {
@@ -182,13 +185,14 @@ class RelationalRepository extends EntityRepository implements Repository
                 return parent::__call($method, $arguments);
             } catch (\BadMethodCallException $exception) {
                 throw new \BadMethodCallException(sprintf(
-                    'Undefined method "%s". Method name must start with "findBy", "findOneBy", "removeBy" or "removeOneBy"!',
+                    'Undefined method "%s". Method name must start with '
+                    .'"findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
                     $method
                 ));
             }
             // @codeCoverageIgnoreEnd
         }
 
-        return $this->removeByCall($method, lcfirst(Inflector::classify($byField)), $arguments);
+        return $this->magicByCall($method, lcfirst(Inflector::classify($byField)), $arguments);
     }
 }

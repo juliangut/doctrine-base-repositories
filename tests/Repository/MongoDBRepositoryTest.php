@@ -163,7 +163,7 @@ class MongoDBRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \BadMethodCallException
-     * @expectedExceptionMessageRegExp /^You need to pass a parameter to "removeByParameter"$/
+     * @expectedExceptionMessageRegExp /^You need to pass a parameter to .+::removeByParameter$/
      */
     public function testCallNoArguments()
     {
@@ -184,7 +184,7 @@ class MongoDBRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \BadMethodCallException
-     * @expectedExceptionMessageRegExp /^Invalid remove by call/
+     * @expectedExceptionMessageRegExp /^Invalid call to .+::removeOneBy/
      */
     public function testCallNoField()
     {
@@ -201,6 +201,7 @@ class MongoDBRepositoryTest extends \PHPUnit_Framework_TestCase
         $metadata = $this->getMockBuilder(ClassMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $metadata->name = EntityDocumentStub::class;
         $metadata->expects(static::once())->method('hasField')->will(static::returnValue(false));
         $metadata->expects(static::once())->method('hasAssociation')->will(static::returnValue(false));
         /* @var ClassMetadata $metadata */

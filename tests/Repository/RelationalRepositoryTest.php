@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 use Jgut\Doctrine\Repository\Pager\Pager;
 use Jgut\Doctrine\Repository\RelationalRepository;
+use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;
 
 /**
  * Relational repository tests.
@@ -32,9 +33,9 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         /* @var EntityManager $manager */
 
-        $repository = new RelationalRepository($manager, new ClassMetadata('RepositoryEntity'));
+        $repository = new RelationalRepository($manager, new ClassMetadata(EntityDocumentStub::class));
 
-        static::assertEquals('RepositoryEntity', $repository->getClassName());
+        static::assertEquals(EntityDocumentStub::class, $repository->getClassName());
     }
 
     /**
@@ -47,7 +48,7 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         /* @var EntityManager $manager */
 
-        $repository = new RelationalRepository($manager, new ClassMetadata('RepositoryEntity'));
+        $repository = new RelationalRepository($manager, new ClassMetadata(EntityDocumentStub::class));
 
         $repository->findPagedBy('');
     }
@@ -85,7 +86,7 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
             ->will(static::returnValue($query));
         /* @var QueryBuilder $queryBuilder */
 
-        $repository = new RelationalRepository($manager, new ClassMetadata('RepositoryEntity'));
+        $repository = new RelationalRepository($manager, new ClassMetadata(EntityDocumentStub::class));
 
         static::assertInstanceOf(Pager::class, $repository->findPagedBy($queryBuilder, ['fakeField' => 'ASC']));
     }
@@ -117,7 +118,7 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
             ->will(static::returnValue($queryBuilder));
         /* @var EntityManager $manager */
 
-        $repository = new RelationalRepository($manager, new ClassMetadata('RepositoryEntity'));
+        $repository = new RelationalRepository($manager, new ClassMetadata(EntityDocumentStub::class));
 
         static::assertEquals(10, $repository->countBy($queryBuilder));
         static::assertEquals(10, $repository->countBy(['fakeField' => 'fakeValue', 'nullFakeField' => null]));
@@ -125,7 +126,7 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \BadMethodCallException
-     * @expectedExceptionMessageRegExp /^You need to pass a parameter to "removeByParameter"$/
+     * @expectedExceptionMessageRegExp /^You need to pass a parameter to .+::removeByParameter$/
      */
     public function testCallNoArguments()
     {
@@ -134,14 +135,14 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         /* @var EntityManager $manager */
 
-        $repository = new RelationalRepository($manager, new ClassMetadata('RepositoryEntity'));
+        $repository = new RelationalRepository($manager, new ClassMetadata(EntityDocumentStub::class));
 
         $repository->removeByParameter();
     }
 
     /**
      * @expectedException \BadMethodCallException
-     * @expectedExceptionMessageRegExp /^Invalid remove by call/
+     * @expectedExceptionMessageRegExp /^Invalid call to .+::removeOneBy/
      */
     public function testCallNoField()
     {
@@ -153,6 +154,7 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
         $metadata = $this->getMockBuilder(ClassMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $metadata->name = EntityDocumentStub::class;
         $metadata->expects(static::once())->method('hasField')->will(static::returnValue(false));
         $metadata->expects(static::once())->method('hasAssociation')->will(static::returnValue(false));
         /* @var ClassMetadata $metadata */

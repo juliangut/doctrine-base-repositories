@@ -94,6 +94,9 @@ class CouchDBRepository extends DocumentRepository implements Repository
         } elseif (strpos($method, 'findOneBy') === 0) {
             $byField = substr($method, 9, strlen($method));
             $method = 'findOneBy';
+        } elseif (strpos($method, 'findPagedBy') === 0) {
+            $byField = substr($method, 11, strlen($method));
+            $method = 'findPagedBy';
         } elseif (strpos($method, 'removeBy') === 0) {
             $byField = substr($method, 8, strlen($method));
             $method = 'removeBy';
@@ -102,11 +105,12 @@ class CouchDBRepository extends DocumentRepository implements Repository
             $method = 'removeOneBy';
         } else {
             throw new \BadMethodCallException(sprintf(
-                'Undefined method "%s". Method name must start with "findBy", "findOneBy", "removeBy" or "removeOneBy"!',
+                'Undefined method "%s". Method name must start with '
+                .'"findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
                 $method
             ));
         }
 
-        return $this->removeByCall($method, lcfirst(Inflector::classify($byField)), $arguments);
+        return $this->magicByCall($method, lcfirst(Inflector::classify($byField)), $arguments);
     }
 }

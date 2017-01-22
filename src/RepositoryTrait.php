@@ -393,11 +393,12 @@ trait RepositoryTrait
      *
      * @return array|object
      */
-    protected function removeByCall($method, $fieldName, $arguments)
+    protected function magicByCall($method, $fieldName, $arguments)
     {
         if (count($arguments) === 0) {
             throw new \BadMethodCallException(sprintf(
-                'You need to pass a parameter to "%s"',
+                'You need to pass a parameter to %s::%s',
+                $this->getClassName(),
                 $method . ucfirst($fieldName)
             ));
         }
@@ -416,10 +417,10 @@ trait RepositoryTrait
         }
 
         throw new \BadMethodCallException(sprintf(
-            'Invalid remove by call %s::%s (%s)',
+            'Invalid call to %s::%s. Field "%s" does not exist',
             $this->getClassName(),
-            $fieldName,
-            $method . ucfirst($fieldName)
+            $method,
+            $fieldName
         ));
     }
 

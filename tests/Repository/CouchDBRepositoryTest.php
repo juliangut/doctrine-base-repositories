@@ -15,6 +15,7 @@ use Doctrine\ODM\CouchDB\DocumentManager;
 use Doctrine\ODM\CouchDB\Mapping\ClassMetadata;
 use Jgut\Doctrine\Repository\CouchDBRepository;
 use Jgut\Doctrine\Repository\Pager\Pager;
+use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;
 
 /**
  * CouchDB repository tests.
@@ -30,9 +31,9 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         /* @var DocumentManager $manager */
 
-        $repository = new CouchDBRepository($manager, new ClassMetadata('RepositoryDocument'));
+        $repository = new CouchDBRepository($manager, new ClassMetadata(EntityDocumentStub::class));
 
-        static::assertEquals('RepositoryDocument', $repository->getClassName());
+        static::assertEquals(EntityDocumentStub::class, $repository->getClassName());
     }
 
     public function testFindPaged()
@@ -43,7 +44,7 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
         /* @var DocumentManager $manager */
 
         $repository = $this->getMockBuilder(CouchDBRepository::class)
-            ->setConstructorArgs([$manager, new ClassMetadata('RepositoryDocument')])
+            ->setConstructorArgs([$manager, new ClassMetadata(EntityDocumentStub::class)])
             ->setMethodsExcept(['findPagedBy', 'getPagerClassName'])
             ->getMock();
         $repository->expects(static::once())
@@ -65,7 +66,7 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
         /* @var DocumentManager $manager */
 
         $repository = $this->getMockBuilder(CouchDBRepository::class)
-            ->setConstructorArgs([$manager, new ClassMetadata('RepositoryDocument')])
+            ->setConstructorArgs([$manager, new ClassMetadata(EntityDocumentStub::class)])
             ->setMethodsExcept(['countBy'])
             ->getMock();
         $repository->expects(static::once())
@@ -78,7 +79,7 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \BadMethodCallException
-     * @expectedExceptionMessageRegExp /^Undefined method: "noMethod"/
+     * @expectedExceptionMessageRegExp /^Undefined method "noMethod"/
      */
     public function testCallNoMethod()
     {
@@ -87,14 +88,14 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         /* @var DocumentManager $manager */
 
-        $repository = new CouchDBRepository($manager, new ClassMetadata('RepositoryDocument'));
+        $repository = new CouchDBRepository($manager, new ClassMetadata(EntityDocumentStub::class));
 
         $repository->noMethod();
     }
 
     /**
      * @expectedException \BadMethodCallException
-     * @expectedExceptionMessageRegExp /^You need to pass a parameter to "removeByParameter"$/
+     * @expectedExceptionMessageRegExp /^You need to pass a parameter to .+::removeByParameter$/
      */
     public function testCallNoArguments()
     {
@@ -103,14 +104,14 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         /* @var DocumentManager $manager */
 
-        $repository = new CouchDBRepository($manager, new ClassMetadata('RepositoryDocument'));
+        $repository = new CouchDBRepository($manager, new ClassMetadata(EntityDocumentStub::class));
 
         $repository->removeByParameter();
     }
 
     /**
      * @expectedException \BadMethodCallException
-     * @expectedExceptionMessageRegExp /^Invalid remove by call/
+     * @expectedExceptionMessageRegExp /^Invalid call to RepositoryDocument::removeOneBy/
      */
     public function testCallNoField()
     {
@@ -122,6 +123,7 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
         $metadata = $this->getMockBuilder(ClassMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $metadata->name = 'RepositoryDocument';
         $metadata->expects(static::once())
             ->method('hasField')
             ->will(static::returnValue(false));
