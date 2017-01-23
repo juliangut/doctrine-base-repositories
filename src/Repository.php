@@ -19,6 +19,20 @@ use Doctrine\Common\Persistence\ObjectRepository;
 interface Repository extends ObjectRepository
 {
     /**
+     * Get automatic manager flushing.
+     *
+     * @return bool
+     */
+    public function isAutoFlush();
+
+    /**
+     * Set automatic manager flushing.
+     *
+     * @param bool $autoFlush
+     */
+    public function setAutoFlush($autoFlush = false);
+
+    /**
      * Returns the fully qualified class name of the objects managed by the repository.
      *
      * @return string

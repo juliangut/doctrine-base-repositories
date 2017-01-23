@@ -13,13 +13,27 @@ namespace Jgut\Doctrine\Repository\Traits;
 
 /**
  * Repository trait.
- *
- * @method find
- * @method findBy
- * @method findOneBy
  */
 trait RepositoryTrait
 {
+    protected $autoFlush = false;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAutoFlush()
+    {
+        return $this->autoFlush;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAutoFlush($autoFlush = true)
+    {
+        $this->autoFlush = $autoFlush === true;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -49,7 +63,7 @@ trait RepositoryTrait
      *
      * @throws \InvalidArgumentException
      */
-    public function add($objects, $flush = true)
+    public function add($objects, $flush = false)
     {
         if (!is_array($objects)) {
             $objects = [$objects];
@@ -65,7 +79,7 @@ trait RepositoryTrait
             $manager->persist($object);
         }
 
-        if ($flush === true) {
+        if ($flush === true || $this->autoFlush === true) {
             $manager->flush();
         }
     }
@@ -73,7 +87,7 @@ trait RepositoryTrait
     /**
      * {@inheritdoc}
      */
-    public function removeAll($flush = true)
+    public function removeAll($flush = false)
     {
         $manager = $this->getManager();
 
@@ -81,7 +95,7 @@ trait RepositoryTrait
             $manager->remove($object);
         }
 
-        if ($flush === true) {
+        if ($flush === true || $this->autoFlush === true) {
             $manager->flush();
         }
     }
@@ -89,7 +103,7 @@ trait RepositoryTrait
     /**
      * {@inheritdoc}
      */
-    public function removeBy(array $criteria, $flush = true)
+    public function removeBy(array $criteria, $flush = false)
     {
         $manager = $this->getManager();
 
@@ -97,7 +111,7 @@ trait RepositoryTrait
             $manager->remove($object);
         }
 
-        if ($flush === true) {
+        if ($flush === true || $this->autoFlush === true) {
             $manager->flush();
         }
     }
@@ -105,7 +119,7 @@ trait RepositoryTrait
     /**
      * {@inheritdoc}
      */
-    public function removeOneBy(array $criteria, $flush = true)
+    public function removeOneBy(array $criteria, $flush = false)
     {
         $object = $this->findOneBy($criteria);
 
@@ -114,7 +128,7 @@ trait RepositoryTrait
 
             $manager->remove($object);
 
-            if ($flush === true) {
+            if ($flush === true || $this->autoFlush === true) {
                 $manager->flush();
             }
         }
@@ -125,7 +139,7 @@ trait RepositoryTrait
      *
      * @throws \InvalidArgumentException
      */
-    public function remove($objects, $flush = true)
+    public function remove($objects, $flush = false)
     {
         $manager = $this->getManager();
 
@@ -146,7 +160,7 @@ trait RepositoryTrait
                 $manager->remove($object);
             }
 
-            if ($flush === true) {
+            if ($flush === true || $this->autoFlush === true) {
                 $manager->flush();
             }
         }

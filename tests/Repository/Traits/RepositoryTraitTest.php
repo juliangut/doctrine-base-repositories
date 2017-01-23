@@ -22,6 +22,22 @@ use Jgut\Doctrine\Repository\Tests\Stubs\RepositoryStub;
  */
 class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 {
+    public function testAutoFlush()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        self::assertFalse($repository->isAutoFlush());
+
+        $repository->setAutoFlush(true);
+
+        self::assertTrue($repository->isAutoFlush());
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessageRegExp /^Managed object must be a /
@@ -50,6 +66,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager);
+        $repository->setAutoFlush(true);
 
         $repository->add($entity);
     }
@@ -65,7 +82,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager, [new EntityDocumentStub, new EntityDocumentStub]);
 
-        $repository->removeAll();
+        $repository->removeAll(true);
     }
 
     public function testRemoveBy()
@@ -79,7 +96,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager, [new EntityDocumentStub, new EntityDocumentStub]);
 
-        $repository->removeBy([]);
+        $repository->removeBy([], true);
     }
 
     public function testRemoveOneBy()
@@ -93,7 +110,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager, [new EntityDocumentStub, new EntityDocumentStub]);
 
-        $repository->removeOneBy([]);
+        $repository->removeOneBy([], true);
     }
 
     /**
@@ -111,7 +128,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager);
 
-        $repository->remove($entity);
+        $repository->remove($entity, true);
     }
 
     public function testRemove()
@@ -127,7 +144,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager, [$entity]);
 
-        $repository->remove(0);
+        $repository->remove(0, true);
     }
 
     public function testRemoveObject()
@@ -143,7 +160,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager);
 
-        $repository->remove($entity);
+        $repository->remove($entity, true);
     }
 
     public function testCount()
