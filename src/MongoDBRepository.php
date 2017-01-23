@@ -15,6 +15,9 @@ use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use Jgut\Doctrine\Repository\Traits\EventsTrait;
+use Jgut\Doctrine\Repository\Traits\PagerTrait;
+use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
 
 /**
  * MongoDB document repository.
@@ -22,6 +25,8 @@ use Doctrine\ODM\MongoDB\Query\Builder;
 class MongoDBRepository extends DocumentRepository implements Repository
 {
     use RepositoryTrait;
+    use EventsTrait;
+    use PagerTrait;
 
     /**
      * {@inheritdoc}
@@ -149,8 +154,8 @@ class MongoDBRepository extends DocumentRepository implements Repository
                 return parent::__call($method, $arguments);
             } catch (\BadMethodCallException $exception) {
                 throw new \BadMethodCallException(sprintf(
-                    'Undefined method "%s". Method name must start with '
-                    .'"findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
+                    'Undefined method "%s". Method name must start with'
+                    . '"findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
                     $method
                 ));
             }

@@ -15,6 +15,9 @@ use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Jgut\Doctrine\Repository\Traits\EventsTrait;
+use Jgut\Doctrine\Repository\Traits\PagerTrait;
+use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
 
 /**
  * Relational entity repository.
@@ -22,6 +25,8 @@ use Doctrine\ORM\QueryBuilder;
 class RelationalRepository extends EntityRepository implements Repository
 {
     use RepositoryTrait;
+    use EventsTrait;
+    use PagerTrait;
 
     /**
      * Class alias.
@@ -185,8 +190,8 @@ class RelationalRepository extends EntityRepository implements Repository
                 return parent::__call($method, $arguments);
             } catch (\BadMethodCallException $exception) {
                 throw new \BadMethodCallException(sprintf(
-                    'Undefined method "%s". Method name must start with '
-                    .'"findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
+                    'Undefined method "%s". Method name must start with'
+                    . '"findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
                     $method
                 ));
             }

@@ -14,6 +14,9 @@ namespace Jgut\Doctrine\Repository;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\CouchDB\DocumentRepository;
+use Jgut\Doctrine\Repository\Traits\EventsTrait;
+use Jgut\Doctrine\Repository\Traits\PagerTrait;
+use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
 
 /**
  * CouchDB document repository.
@@ -21,6 +24,8 @@ use Doctrine\ODM\CouchDB\DocumentRepository;
 class CouchDBRepository extends DocumentRepository implements Repository
 {
     use RepositoryTrait;
+    use EventsTrait;
+    use PagerTrait;
 
     /**
      * {@inheritdoc}
@@ -105,8 +110,8 @@ class CouchDBRepository extends DocumentRepository implements Repository
             $method = 'removeOneBy';
         } else {
             throw new \BadMethodCallException(sprintf(
-                'Undefined method "%s". Method name must start with '
-                .'"findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
+                'Undefined method "%s". Method name must start with'
+                . '"findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
                 $method
             ));
         }

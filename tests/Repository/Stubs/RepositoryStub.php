@@ -13,7 +13,9 @@ namespace Jgut\Doctrine\Repository\Tests\Stubs;
 
 use Doctrine\ORM\EntityManager;
 use Jgut\Doctrine\Repository\Repository;
-use Jgut\Doctrine\Repository\RepositoryTrait;
+use Jgut\Doctrine\Repository\Traits\EventsTrait;
+use Jgut\Doctrine\Repository\Traits\PagerTrait;
+use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
 
 /**
  * Repository stub.
@@ -21,6 +23,8 @@ use Jgut\Doctrine\Repository\RepositoryTrait;
 class RepositoryStub implements Repository
 {
     use RepositoryTrait;
+    use EventsTrait;
+    use PagerTrait;
 
     /**
      * @var EntityManager
