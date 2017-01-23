@@ -37,50 +37,75 @@ class DefaultPager extends ArrayCollection implements Pager
      *
      * @var int
      */
-    protected $pageSize;
+    protected $pageCount;
 
     /**
      * Total number of elements.
      *
      * @var int
      */
-    protected $totalSize;
+    protected $totalCount;
 
     /**
      * {@inheritdoc}
      *
      * @throws \OutOfBoundsException
      */
-    public function __construct(array $elements, $page = 1, $pageSize = 10, $totalSize = 0)
+    public function __construct(array $elements, $currentPage = 1, $pageCount = 10, $totalCount = 0)
     {
-        if ((int) $pageSize < 1) {
-            throw new \OutOfBoundsException(sprintf('Page size must be at least 1. %d given', $pageSize));
+        $this->setCurrentPage($currentPage);
+        $this->setPageCount($pageCount);
+
+        $elements = array_slice($elements, 0, $this->pageCount);
+
+        if ((int) $totalCount < 1) {
+            $totalCount = count($elements);
         }
-        $this->pageSize = (int) $pageSize;
+        $this->totalCount = (int) $totalCount;
 
-        if ((int) $page < 1) {
-            throw new \OutOfBoundsException(sprintf('Page can not be lower than 1. %s given', $page));
-        }
-        $this->currentPage = (int) $page;
-
-        $elements = array_slice($elements, 0, $this->pageSize);
-
-        if ((int) $totalSize < 1) {
-            $totalSize = count($elements);
-        }
-        $this->totalSize = (int) $totalSize;
-
-        $this->totalPages = max(1, (int) ceil($this->totalSize / $this->pageSize));
+        $this->totalPages = max(1, (int) ceil($this->totalCount / $this->pageCount));
 
         if ($this->currentPage > $this->totalPages) {
             throw new \OutOfBoundsException(sprintf(
-                'Page can not be higher than %d. %d given',
+                'Current page can not be higher than %d. %d given',
                 $this->totalPages,
                 $this->currentPage
             ));
         }
 
         parent::__construct($elements);
+    }
+
+    /**
+     * Set current page.
+     *
+     * @param int $currentPage
+     *
+     * @throws \OutOfBoundsException
+     */
+    protected function setCurrentPage($currentPage)
+    {
+        if ((int) $currentPage < 1) {
+            throw new \OutOfBoundsException(sprintf('Current page can not be lower than 1. %s given', $currentPage));
+        }
+
+        $this->currentPage = (int) $currentPage;
+    }
+
+    /**
+     * Set pager page size.
+     *
+     * @param int $pageCount
+     *
+     * @throws \OutOfBoundsException
+     */
+    protected function setPageCount($pageCount)
+    {
+        if ((int) $pageCount < 1) {
+            throw new \OutOfBoundsException(sprintf('Page count must be at least 1. %d given', $pageCount));
+        }
+
+        $this->pageCount = (int) $pageCount;
     }
 
     /**
@@ -96,7 +121,7 @@ class DefaultPager extends ArrayCollection implements Pager
      */
     public function getCurrentPageOffsetStart()
     {
-        return ($this->currentPage - 1) * $this->pageSize;
+        return ($this->currentPage - 1) * $this->pageCount;
     }
 
     /**
@@ -104,7 +129,7 @@ class DefaultPager extends ArrayCollection implements Pager
      */
     public function getCurrentPageOffsetEnd()
     {
-        return min($this->totalSize, $this->getCurrentPageOffsetStart() + $this->pageSize);
+        return min($this->totalCount, $this->getCurrentPageOffsetStart() + $this->pageCount);
     }
 
     /**
@@ -142,9 +167,9 @@ class DefaultPager extends ArrayCollection implements Pager
     /**
      * {@inheritdoc}
      */
-    public function getPageSize()
+    public function getPageCount()
     {
-        return $this->pageSize;
+        return $this->pageCount;
     }
 
     /**
@@ -160,6 +185,6 @@ class DefaultPager extends ArrayCollection implements Pager
      */
     public function getTotalCount()
     {
-        return $this->totalSize;
+        return $this->totalCount;
     }
 }

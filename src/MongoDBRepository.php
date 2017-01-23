@@ -82,6 +82,8 @@ class MongoDBRepository extends DocumentRepository implements Repository
      *
      * @param array|Builder $criteria
      *
+     * @throws \InvalidArgumentException
+     *
      * @return int
      */
     public function countBy($criteria)

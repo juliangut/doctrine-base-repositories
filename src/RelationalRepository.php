@@ -110,6 +110,8 @@ class RelationalRepository extends EntityRepository implements Repository
      *
      * @param array|QueryBuilder $criteria
      *
+     * @throws \InvalidArgumentException
+     *
      * @return int
      */
     public function countBy($criteria)

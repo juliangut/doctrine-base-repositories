@@ -20,11 +20,11 @@ interface Pager extends \Countable, \IteratorAggregate
      * Page constructor.
      *
      * @param array $elements
-     * @param int   $page
-     * @param int   $pageSize
-     * @param int   $totalSize
+     * @param int   $currentPage
+     * @param int   $pageCount
+     * @param int   $totalCount
      */
-    public function __construct(array $elements, $page = 1, $pageSize = 10, $totalSize = 0);
+    public function __construct(array $elements, $currentPage = 1, $pageCount = 10, $totalCount = 0);
 
     /**
      * Get current page.
@@ -80,7 +80,7 @@ interface Pager extends \Countable, \IteratorAggregate
      *
      * @return int
      */
-    public function getPageSize();
+    public function getPageCount();
 
     /**
      * Get total number of pages.

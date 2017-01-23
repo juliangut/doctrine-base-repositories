@@ -22,7 +22,7 @@ class DefaultPageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException \OutOfBoundsException
-     * @expectedExceptionMessageRegExp /^Page can not be lower than 1. 0 given/
+     * @expectedExceptionMessageRegExp /^Current page can not be lower than 1. 0 given/
      */
     public function testBadPageLowerLimit()
     {
@@ -31,7 +31,7 @@ class DefaultPageTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \OutOfBoundsException
-     * @expectedExceptionMessageRegExp /^Page can not be higher than 1. 2 given/
+     * @expectedExceptionMessageRegExp /^Current page can not be higher than 1. 2 given/
      */
     public function testBadPageUpperLimit()
     {
@@ -40,18 +40,18 @@ class DefaultPageTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \OutOfBoundsException
-     * @expectedExceptionMessageRegExp /^Page size must be at least 1. 0 given/
+     * @expectedExceptionMessageRegExp /^Page count must be at least 1. 0 given/
      */
-    public function testBadPageSize()
+    public function testBadPageCount()
     {
-        new DefaultPager([], 0, 0);
+        new DefaultPager([], 1, 0);
     }
 
     public function testPage()
     {
         $page = new DefaultPager(['a', 'b', 'c', 'd'], 1, 4, 12);
 
-        static::assertEquals(4, $page->getPageSize());
+        static::assertEquals(4, $page->getPageCount());
         static::assertEquals(12, $page->getTotalCount());
 
         static::assertEquals(1, $page->getCurrentPage());
