@@ -175,29 +175,31 @@ class RelationalRepository extends EntityRepository implements Repository
      */
     public function __call($method, $arguments)
     {
-        if (strpos($method, 'findPagedBy') === 0) {
-            $byField = substr($method, 11, strlen($method));
-            $method = 'findPagedBy';
-        } elseif (strpos($method, 'removeBy') === 0) {
-            $byField = substr($method, 8, strlen($method));
-            $method = 'removeBy';
-        } elseif (strpos($method, 'removeOneBy') === 0) {
-            $byField = substr($method, 11, strlen($method));
-            $method = 'removeOneBy';
-        } else {
-            // @codeCoverageIgnoreStart
-            try {
-                return parent::__call($method, $arguments);
-            } catch (\BadMethodCallException $exception) {
-                throw new \BadMethodCallException(sprintf(
-                    'Undefined method "%s". Method name must start with'
-                    . '"findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
-                    $method
-                ));
+        $magicMethods = [
+            'findPagedBy',
+            'removeBy',
+            'removeOneBy',
+        ];
+
+        foreach ($magicMethods as $magicMethod) {
+            if (strpos($method, $magicMethod) === 0) {
+                $field = substr($method, strlen($magicMethod));
+                $method = substr($method, 0, strlen($magicMethod));
+
+                return $this->magicByCall($method, lcfirst(Inflector::classify($field)), $arguments);
             }
-            // @codeCoverageIgnoreEnd
         }
 
-        return $this->magicByCall($method, lcfirst(Inflector::classify($byField)), $arguments);
+        // @codeCoverageIgnoreStart
+        try {
+            return parent::__call($method, $arguments);
+        } catch (\BadMethodCallException $exception) {
+            throw new \BadMethodCallException(sprintf(
+                'Undefined method "%s". Method name must start with'
+                . ' "findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
+                $method
+            ));
+        }
+        // @codeCoverageIgnoreEnd
     }
 }

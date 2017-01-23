@@ -93,29 +93,27 @@ class CouchDBRepository extends DocumentRepository implements Repository
      */
     public function __call($method, $arguments)
     {
-        if (strpos($method, 'findBy') === 0) {
-            $byField = substr($method, 6, strlen($method));
-            $method = 'findBy';
-        } elseif (strpos($method, 'findOneBy') === 0) {
-            $byField = substr($method, 9, strlen($method));
-            $method = 'findOneBy';
-        } elseif (strpos($method, 'findPagedBy') === 0) {
-            $byField = substr($method, 11, strlen($method));
-            $method = 'findPagedBy';
-        } elseif (strpos($method, 'removeBy') === 0) {
-            $byField = substr($method, 8, strlen($method));
-            $method = 'removeBy';
-        } elseif (strpos($method, 'removeOneBy') === 0) {
-            $byField = substr($method, 11, strlen($method));
-            $method = 'removeOneBy';
-        } else {
-            throw new \BadMethodCallException(sprintf(
-                'Undefined method "%s". Method name must start with'
-                . '"findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
-                $method
-            ));
+        $magicMethods = [
+            'findBy',
+            'findOneBy',
+            'findPagedBy',
+            'removeBy',
+            'removeOneBy',
+        ];
+
+        foreach ($magicMethods as $magicMethod) {
+            if (strpos($method, $magicMethod) === 0) {
+                $field = substr($method, strlen($magicMethod));
+                $method = substr($method, 0, strlen($magicMethod));
+
+                return $this->magicByCall($method, lcfirst(Inflector::classify($field)), $arguments);
+            }
         }
 
-        return $this->magicByCall($method, lcfirst(Inflector::classify($byField)), $arguments);
+        throw new \BadMethodCallException(sprintf(
+            'Undefined method "%s". Method name must start with'
+            . ' "findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
+            $method
+        ));
     }
 }

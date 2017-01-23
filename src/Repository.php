@@ -107,7 +107,7 @@ interface Repository extends ObjectRepository
     /**
      * Add objects.
      *
-     * @param \stdClass|\stdClass[] $object
+     * @param \stdClass|\stdClass[] $objects
      * @param bool                  $flush
      */
     public function add($objects, $flush = true);
