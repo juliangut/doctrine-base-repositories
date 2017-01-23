@@ -151,7 +151,7 @@ $object = $repository->findOneByorGetNew(['slug' => 'my_slug']);
 
 ##### add
 
-Will persist the entity and flush all together.
+Will persist the entity into the manager.
 
 ```php
 /* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
@@ -166,7 +166,7 @@ $repository->add(new ObjectClass());
 
 ##### remove
 
-In the same fashion as `add` this will remove the entity and flush the action.
+In the same fashion as `add` this will remove the entity.
 
 ```php
 /* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
@@ -240,7 +240,7 @@ $page = $repository->findPagedBy(['active' => true], ['date' => 'ASC'], 10, 50);
 
 // Assuming there are 100 "active"
 $page->getCurrentPage(); // 5
-$page->getPageSize(); // 10
+$page->getPageCount(); // 10
 $page->getCurrentPageOffsetStart(); // 50
 $page->getCurrentPageOffsetEnd(); // 59
 $page->isFirstPage(); // false
@@ -251,7 +251,7 @@ $page->getTotalPages(); // 10
 $page->getTotalCount(); // 100
 ```
 
-_Accepts an instance of \Doctrine\ORM\QueryBuilder and \Doctrine\ODM\MongoDB\Query\Builder to allow more criteria control_
+_Accepts an instance of \Doctrine\ORM\QueryBuilder or \Doctrine\ODM\MongoDB\Query\Builder to allow more criteria control_
 
 _Mind that pagination on CouchDB is **very** inefficient._
 
