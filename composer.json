@@ -41,6 +41,7 @@
     "phpmd/phpmd": "^2.0",
     "phpunit/phpunit": "^4.5|^5.0",
     "phpunit/phpunit-mock-objects": "^3.2",
+    "rikbruil/doctrine-specification": "^1.1",
     "sebastian/phpcpd": "^2.0",
     "squizlabs/php_codesniffer": "^2.0"
   },
@@ -48,7 +49,8 @@
     "doctrine/orm": "^2.4",
     "doctrine/mongodb-odm": "^1.1",
     "doctrine/couchdb-odm": "dev-master",
-    "juliangut/doctrine-manager-builder": "^1.3"
+    "juliangut/doctrine-manager-builder": "Repository factory support for CouchDB",
+    "rikbruil/doctrine-specification": "Specification pattern for Doctrine ORM"
   },
   "autoload": {
     "psr-4": {
