@@ -13,6 +13,10 @@ namespace Jgut\Doctrine\Repository\Traits;
 
 /**
  * Repository trait.
+ *
+ * @method find
+ * @method findBy
+ * @method findOneBy
  */
 trait RepositoryTrait
 {
