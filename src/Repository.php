@@ -28,7 +28,7 @@ interface Repository extends ObjectRepository
     /**
      * Disable event subscriber.
      *
-     * @param string $subscriberClass
+     * @param \Doctrine\Common\EventSubscriber|string $subscriberClass
      */
     public function disableEventSubscriber($subscriberClass);
 
@@ -47,8 +47,8 @@ interface Repository extends ObjectRepository
     /**
      * Disable listener for an event.
      *
-     * @param string $event
-     * @param string $subscriberClass
+     * @param string                                  $event
+     * @param \Doctrine\Common\EventSubscriber|string $subscriberClass
      */
     public function disableEventListener($event, $subscriberClass);
 
@@ -93,12 +93,14 @@ interface Repository extends ObjectRepository
     /**
      * Find one object by a set of criteria or create a new one.
      *
+     * @param array|\Doctrine\ORM\QueryBuilder|\Doctrine\ODM\MongoDB\Query\Builder $criteria
+     *
      * @return \stdClass
      */
     public function findOneByOrGetNew($criteria);
 
     /**
-     * Get a new object instance.
+     * Get a new managed object instance.
      *
      * @return \stdClass
      */

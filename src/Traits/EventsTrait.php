@@ -40,27 +40,21 @@ trait EventsTrait
      */
     public function disableEventSubscriber($subscriberClass)
     {
-        if (!is_string($subscriberClass) && !is_a($subscriberClass, EventSubscriber::class)) {
-            throw new \InvalidArgumentException('subscriberClass must be a EventSubscriber');
-        }
+        $subscriberClass = $this->getSubscriberClassName($subscriberClass);
 
-        /* @var \Doctrine\Common\EventManager $eventManager */
+        /* @var EventManager $eventManager */
         $eventManager = $this->getManager()->getEventManager();
 
-        foreach ($eventManager->getListeners() as $subscribers) {
-            $found = false;
-            while (!$found && $subscriber = array_shift($subscribers)) {
+        /* @var EventSubscriber[] $subscribers */
+        foreach ($this->getEventListeners($eventManager) as $subscribers) {
+            while ($subscriber = array_shift($subscribers)) {
                 if ($subscriber instanceof $subscriberClass) {
                     $this->disabledSubscribers[] = $subscriber;
 
                     $eventManager->removeEventSubscriber($subscriber);
 
-                    $found = true;
+                    return;
                 }
-            }
-
-            if ($found) {
-                break;
             }
         }
     }
@@ -70,7 +64,7 @@ trait EventsTrait
      */
     public function restoreEventSubscribers()
     {
-        /* @var \Doctrine\Common\EventManager $eventManager */
+        /* @var EventManager $eventManager */
         $eventManager = $this->getManager()->getEventManager();
 
         foreach ($this->disabledSubscribers as $subscriber) {
@@ -85,13 +79,17 @@ trait EventsTrait
      */
     public function disableEventListeners($event)
     {
-        /* @var \Doctrine\Common\EventManager $eventManager */
+        /* @var EventManager $eventManager */
         $eventManager = $this->getManager()->getEventManager();
 
-        foreach ($this->getEventListeners($eventManager, $event) as $listener) {
-            $this->disabledListeners[$event][] = $listener;
+        if (!array_key_exists($event, $this->disabledListeners)) {
+            $this->disabledListeners[$event] = [];
+        }
 
+        foreach ($this->getEventListeners($eventManager, $event) as $listener) {
             $eventManager->removeEventListener($event, $listener);
+
+            $this->disabledListeners[$event][] = $listener;
         }
     }
 
@@ -102,11 +100,13 @@ trait EventsTrait
      */
     public function disableEventListener($event, $subscriberClass)
     {
-        if (!is_string($subscriberClass) && !is_a($subscriberClass, EventSubscriber::class)) {
-            throw new \InvalidArgumentException('subscriberClass must be a EventSubscriber');
+        $subscriberClass = $this->getSubscriberClassName($subscriberClass);
+
+        if (!array_key_exists($event, $this->disabledListeners)) {
+            $this->disabledListeners[$event] = [];
         }
 
-        /* @var \Doctrine\Common\EventManager $eventManager */
+        /* @var EventManager $eventManager */
         $eventManager = $this->getManager()->getEventManager();
 
         foreach ($this->getEventListeners($eventManager, $event) as $listener) {
@@ -117,27 +117,6 @@ trait EventsTrait
                 break;
             }
         }
-    }
-
-    /**
-     * Get listeners for an event.
-     *
-     * @param EventManager $eventManager
-     * @param string       $event
-     *
-     * @return \Doctrine\Common\EventSubscriber[]
-     */
-    protected function getEventListeners(EventManager $eventManager, $event)
-    {
-        if (!$eventManager->hasListeners($event)) {
-            return [];
-        }
-
-        if (!array_key_exists($event, $this->disabledListeners)) {
-            $this->disabledListeners[$event] = [];
-        }
-
-        return $eventManager->getListeners($event);
     }
 
     /**
@@ -155,11 +134,11 @@ trait EventsTrait
      */
     public function restoreEventListeners($event)
     {
-        if (!array_key_exists($event, $this->disabledListeners)) {
+        if (!array_key_exists($event, $this->disabledListeners) || empty($this->disabledListeners[$event])) {
             return;
         }
 
-        /* @var \Doctrine\Common\EventManager $eventManager */
+        /* @var EventManager $eventManager */
         $eventManager = $this->getManager()->getEventManager();
 
         /* @var EventSubscriber[] $listeners */
@@ -169,7 +148,42 @@ trait EventsTrait
             $eventManager->addEventListener($event, $listener);
         }
 
-        unset($this->disabledListeners[$event]);
+        $this->disabledListeners[$event] = [];
+    }
+
+    /**
+     * Get subscriber class name.
+     *
+     * @param string|EventSubscriber $subscriberClass
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string
+     */
+    protected function getSubscriberClassName($subscriberClass)
+    {
+        if (is_object($subscriberClass) && is_a($subscriberClass, EventSubscriber::class)) {
+            return get_class($subscriberClass);
+        }
+
+        if (!is_string($subscriberClass) || !in_array(EventSubscriber::class, class_implements($subscriberClass))) {
+            throw new \InvalidArgumentException('subscriberClass must be an EventSubscriber');
+        }
+
+        return $subscriberClass;
+    }
+
+    /**
+     * Get event listeners.
+     *
+     * @param EventManager $eventManager
+     * @param string|null  $event
+     *
+     * @return EventSubscriber[]
+     */
+    protected function getEventListeners(EventManager $eventManager, $event = null)
+    {
+        return $event !== null && !$eventManager->hasListeners($event) ? [] : $eventManager->getListeners($event);
     }
 
     /**

@@ -22,6 +22,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Jgut\Doctrine\Repository\CouchDBRepository;
 use Jgut\Doctrine\Repository\MongoDBRepository;
 use Jgut\Doctrine\Repository\RelationalRepository;
+use Jgut\Doctrine\Repository\Tests\Stubs\BlankEventStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\EventStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\RepositoryStub;
@@ -35,13 +36,15 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
 {
     public function testEventSubscribersManagement()
     {
+        $eventSubscriber = new EventStub;
+
         $eventManager = new EventManager;
-        $eventManager->addEventSubscriber(new EventStub);
+        $eventManager->addEventSubscriber($eventSubscriber);
 
         $manager = $this->getMockBuilder(MongoDBDocumentManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(self::exactly(2))
+        $manager->expects(self::exactly(3))
             ->method('getEventManager')
             ->will(static::returnValue($eventManager));
         /* @var MongoDBDocumentManager $manager */
@@ -53,16 +56,19 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new MongoDBRepository($manager, $uow, new MongoDBClassMetadata(EntityDocumentStub::class));
 
-        $repository->disableEventSubscriber(EventStub::class);
+        $repository->disableEventSubscriber($eventSubscriber);
         static::assertCount(0, $eventManager->getListeners('prePersist'));
 
         $repository->restoreEventSubscribers();
+        static::assertCount(1, $eventManager->getListeners('prePersist'));
+
+        $repository->disableEventSubscriber(BlankEventStub::class);
         static::assertCount(1, $eventManager->getListeners('prePersist'));
     }
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage subscriberClass must be a EventSubscriber
+     * @expectedExceptionMessage subscriberClass must be an EventSubscriber
      */
     public function testBadEventSubscriber()
     {
@@ -129,14 +135,14 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RelationalRepository($manager, new ClassMetadata('RepositoryEntity'));
 
-        $repository->disableEventListener('onFlush', $eventSubscriber);
+        $repository->disableEventListener('onFlush', EventStub::class);
         static::assertCount(0, $eventManager->getListeners('onFlush'));
         $repository->restoreEventListeners('onFlush');
     }
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage subscriberClass must be a EventSubscriber
+     * @expectedExceptionMessage subscriberClass must be an EventSubscriber
      */
     public function testBadEventListener()
     {
