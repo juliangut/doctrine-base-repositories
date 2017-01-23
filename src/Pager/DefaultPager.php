@@ -53,7 +53,6 @@ class DefaultPager extends ArrayCollection implements Pager
      */
     public function __construct(array $elements, $currentPage = 1, $pageCount = 10, $totalCount = 0)
     {
-        $this->setCurrentPage($currentPage);
         $this->setPageCount($pageCount);
 
         $elements = array_slice($elements, 0, $this->pageCount);
@@ -62,16 +61,9 @@ class DefaultPager extends ArrayCollection implements Pager
             $totalCount = count($elements);
         }
         $this->totalCount = (int) $totalCount;
-
         $this->totalPages = max(1, (int) ceil($this->totalCount / $this->pageCount));
 
-        if ($this->currentPage > $this->totalPages) {
-            throw new \OutOfBoundsException(sprintf(
-                'Current page can not be higher than %d. %d given',
-                $this->totalPages,
-                $this->currentPage
-            ));
-        }
+        $this->setCurrentPage($currentPage);
 
         parent::__construct($elements);
     }
@@ -87,6 +79,14 @@ class DefaultPager extends ArrayCollection implements Pager
     {
         if ((int) $currentPage < 1) {
             throw new \OutOfBoundsException(sprintf('Current page can not be lower than 1. %s given', $currentPage));
+        }
+
+        if ($currentPage > $this->totalPages) {
+            throw new \OutOfBoundsException(sprintf(
+                'Current page can not be higher than %d. %d given',
+                $this->totalPages,
+                $currentPage
+            ));
         }
 
         $this->currentPage = (int) $currentPage;
