@@ -16,6 +16,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\CouchDB\DocumentRepository;
 use Jgut\Doctrine\Repository\Paginator\CouchDBAdapter;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;
+use Jgut\Doctrine\Repository\Traits\PaginatorTrait;
 use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
 use Zend\Paginator\Paginator;
 
@@ -26,6 +27,7 @@ class CouchDBRepository extends DocumentRepository implements Repository
 {
     use RepositoryTrait;
     use EventsTrait;
+    use PaginatorTrait;
 
     /**
      * {@inheritdoc}
@@ -60,10 +62,7 @@ class CouchDBRepository extends DocumentRepository implements Repository
 
         $adapter = new CouchDBAdapter($this->findBy($criteria, $orderBy));
 
-        $paginator = new Paginator($adapter);
-        $paginator->setItemCountPerPage($limit);
-
-        return $paginator;
+        return $this->getPaginator($adapter, $limit);
     }
 
     /**

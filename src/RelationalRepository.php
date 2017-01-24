@@ -18,6 +18,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator as RelationalPaginator;
 use Jgut\Doctrine\Repository\Paginator\RelationalAdapter;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;
+use Jgut\Doctrine\Repository\Traits\PaginatorTrait;
 use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
 use Zend\Paginator\Paginator;
 
@@ -28,6 +29,7 @@ class RelationalRepository extends EntityRepository implements Repository
 {
     use RepositoryTrait;
     use EventsTrait;
+    use PaginatorTrait;
 
     /**
      * Class alias.
@@ -94,10 +96,7 @@ class RelationalRepository extends EntityRepository implements Repository
 
         $adapter = new RelationalAdapter(new RelationalPaginator($queryBuilder->getQuery()));
 
-        $paginator = new Paginator($adapter);
-        $paginator->setItemCountPerPage($limit);
-
-        return $paginator;
+        return $this->getPaginator($adapter, $limit);
     }
 
     /**

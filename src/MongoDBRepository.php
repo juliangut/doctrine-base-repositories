@@ -17,6 +17,7 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Jgut\Doctrine\Repository\Paginator\MongoDBAdapter;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;
+use Jgut\Doctrine\Repository\Traits\PaginatorTrait;
 use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
 use Zend\Paginator\Paginator;
 
@@ -27,6 +28,7 @@ class MongoDBRepository extends DocumentRepository implements Repository
 {
     use RepositoryTrait;
     use EventsTrait;
+    use PaginatorTrait;
 
     /**
      * {@inheritdoc}
@@ -65,10 +67,7 @@ class MongoDBRepository extends DocumentRepository implements Repository
 
         $adapter = new MongoDBAdapter($queryBuilder->getQuery()->execute());
 
-        $paginator = new Paginator($adapter);
-        $paginator->setItemCountPerPage($limit);
-
-        return $paginator;
+        return $this->getPaginator($adapter, $limit);
     }
 
     /**
