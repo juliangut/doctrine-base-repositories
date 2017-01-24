@@ -79,30 +79,15 @@ interface Repository extends ObjectRepository
     public function restoreEventListeners($event);
 
     /**
-     * Get page class name.
-     *
-     * @return string
-     */
-    public function getPagerClassName();
-
-    /**
-     * Set page class name.
-     *
-     * @param string $className
-     */
-    public function setPagerClassName($className);
-
-    /**
-     * Return paged elements filtered by criteria.
+     * Return paginated elements filtered by criteria.
      *
      * @param array|\Doctrine\ORM\QueryBuilder|\Doctrine\ODM\MongoDB\Query\Builder $criteria
      * @param array|null                                                           $orderBy
      * @param int                                                                  $limit
-     * @param int                                                                  $offset
      *
-     * @return \Jgut\Doctrine\Repository\Pager\Pager
+     * @return \Zend\Paginator\Paginator
      */
-    public function findPagedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0);
+    public function findPaginatedBy($criteria, array $orderBy = null, $limit = 10);
 
     /**
      * Find one object by a set of criteria or create a new one.

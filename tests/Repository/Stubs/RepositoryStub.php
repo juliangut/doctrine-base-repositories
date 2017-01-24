@@ -14,7 +14,6 @@ namespace Jgut\Doctrine\Repository\Tests\Stubs;
 use Doctrine\ORM\EntityManager;
 use Jgut\Doctrine\Repository\Repository;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;
-use Jgut\Doctrine\Repository\Traits\PagerTrait;
 use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
 
 /**
@@ -24,7 +23,6 @@ class RepositoryStub implements Repository
 {
     use RepositoryTrait;
     use EventsTrait;
-    use PagerTrait;
 
     /**
      * @var EntityManager
@@ -72,9 +70,9 @@ class RepositoryStub implements Repository
         return count($this->entities);
     }
 
-    public function findPagedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0)
+    public function findPaginatedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0)
     {
-        // TODO: Implement findPagedBy() method.
+        // TODO: Implement findPaginatedBy() method.
     }
 
     /**

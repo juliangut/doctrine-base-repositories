@@ -15,9 +15,11 @@ use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator as RelationalPaginator;
+use Jgut\Doctrine\Repository\Paginator\RelationalAdapter;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;
-use Jgut\Doctrine\Repository\Traits\PagerTrait;
 use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
+use Zend\Paginator\Paginator;
 
 /**
  * Relational entity repository.
@@ -26,7 +28,6 @@ class RelationalRepository extends EntityRepository implements Repository
 {
     use RepositoryTrait;
     use EventsTrait;
-    use PagerTrait;
 
     /**
      * Class alias.
@@ -73,13 +74,12 @@ class RelationalRepository extends EntityRepository implements Repository
      * @param array|QueryBuilder $criteria
      * @param array|null         $orderBy
      * @param int                $limit
-     * @param int                $offset
      *
      * @throws \InvalidArgumentException
      *
-     * @return \Jgut\Doctrine\Repository\Pager\Pager
+     * @return Paginator
      */
-    public function findPagedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0)
+    public function findPaginatedBy($criteria, array $orderBy = null, $limit = 10)
     {
         $queryBuilder = $this->createQueryBuilderFromCriteria($criteria);
         $entityAlias = count($queryBuilder->getRootAliases())
@@ -92,17 +92,12 @@ class RelationalRepository extends EntityRepository implements Repository
             }
         }
 
-        $queryBuilder->setFirstResult($offset);
-        $queryBuilder->setMaxResults($limit);
+        $adapter = new RelationalAdapter(new RelationalPaginator($queryBuilder->getQuery()));
 
-        $pageClassName = $this->getPagerClassName();
+        $paginator = new Paginator($adapter);
+        $paginator->setItemCountPerPage($limit);
 
-        return new $pageClassName(
-            $queryBuilder->getQuery()->getResult(),
-            ($offset / $limit) + 1,
-            $limit,
-            $this->countBy($criteria)
-        );
+        return $paginator;
     }
 
     /**
@@ -178,7 +173,7 @@ class RelationalRepository extends EntityRepository implements Repository
     public function __call($method, $arguments)
     {
         $magicMethods = [
-            'findPagedBy',
+            'findPaginatedBy',
             'removeBy',
             'removeOneBy',
         ];
@@ -198,7 +193,7 @@ class RelationalRepository extends EntityRepository implements Repository
         } catch (\BadMethodCallException $exception) {
             throw new \BadMethodCallException(sprintf(
                 'Undefined method "%s". Method name must start with'
-                . ' "findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
+                . ' "findBy", "findOneBy", "findPaginatedBy", "removeBy" or "removeOneBy"!',
                 $method
             ));
         }

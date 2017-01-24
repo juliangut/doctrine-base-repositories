@@ -14,9 +14,10 @@ namespace Jgut\Doctrine\Repository;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\CouchDB\DocumentRepository;
+use Jgut\Doctrine\Repository\Paginator\CouchDBAdapter;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;
-use Jgut\Doctrine\Repository\Traits\PagerTrait;
 use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
+use Zend\Paginator\Paginator;
 
 /**
  * CouchDB document repository.
@@ -25,7 +26,6 @@ class CouchDBRepository extends DocumentRepository implements Repository
 {
     use RepositoryTrait;
     use EventsTrait;
-    use PagerTrait;
 
     /**
      * {@inheritdoc}
@@ -49,24 +49,21 @@ class CouchDBRepository extends DocumentRepository implements Repository
      * @param array      $criteria
      * @param array|null $orderBy
      * @param int        $limit
-     * @param int        $offset
      *
-     * @return \Jgut\Doctrine\Repository\Pager\Pager
+     * @return Paginator
      */
-    public function findPagedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0)
+    public function findPaginatedBy($criteria, array $orderBy = null, $limit = 10)
     {
-        $pageClassName = $this->getPagerClassName();
-
         if (!is_array($criteria)) {
             $criteria = [$criteria];
         }
 
-        return new $pageClassName(
-            $this->findBy($criteria, $orderBy, $limit, $offset),
-            ($offset / $limit) + 1,
-            $limit,
-            $this->countBy($criteria)
-        );
+        $adapter = new CouchDBAdapter($this->findBy($criteria, $orderBy));
+
+        $paginator = new Paginator($adapter);
+        $paginator->setItemCountPerPage($limit);
+
+        return $paginator;
     }
 
     /**
@@ -96,7 +93,7 @@ class CouchDBRepository extends DocumentRepository implements Repository
         $magicMethods = [
             'findBy',
             'findOneBy',
-            'findPagedBy',
+            'findPaginatedBy',
             'removeBy',
             'removeOneBy',
         ];
@@ -112,7 +109,7 @@ class CouchDBRepository extends DocumentRepository implements Repository
 
         throw new \BadMethodCallException(sprintf(
             'Undefined method "%s". Method name must start with'
-            . ' "findBy", "findOneBy", "findPagedBy", "removeBy" or "removeOneBy"!',
+            . ' "findBy", "findOneBy", "findPaginatedBy", "removeBy" or "removeOneBy"!',
             $method
         ));
     }

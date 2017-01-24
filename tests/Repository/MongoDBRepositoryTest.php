@@ -11,6 +11,7 @@
 
 namespace Jgut\Doctrine\Repository\Tests;
 
+use Doctrine\ODM\MongoDB\Cursor;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Query\Builder;
@@ -18,8 +19,8 @@ use Doctrine\ODM\MongoDB\Query\Expr;
 use Doctrine\ODM\MongoDB\Query\Query;
 use Doctrine\ODM\MongoDB\UnitOfWork;
 use Jgut\Doctrine\Repository\MongoDBRepository;
-use Jgut\Doctrine\Repository\Pager\Pager;
 use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;
+use Zend\Paginator\Paginator;
 
 /**
  * MongoDB repository tests.
@@ -62,23 +63,21 @@ class MongoDBRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $repository = new MongoDBRepository($manager, $uow, new ClassMetadata(EntityDocumentStub::class));
 
-        $repository->findPagedBy('');
+        $repository->findPaginatedBy('');
     }
 
-    public function testFindPaged()
+    public function testFindPaginated()
     {
+        $cursor = $this->getMockBuilder(Cursor::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()
             ->getMock();
         $query->expects(static::at(0))
             ->method('execute')
-            ->will(static::returnValue(['a', 'b']));
-        $query->expects(static::at(1))
-            ->method('execute')
-            ->will(static::returnSelf());
-        $query->expects(static::once())
-            ->method('count')
-            ->will(static::returnValue(10));
+            ->will(static::returnValue($cursor));
 
         $manager = $this->getMockBuilder(DocumentManager::class)
             ->disableOriginalConstructor()
@@ -89,7 +88,7 @@ class MongoDBRepositoryTest extends \PHPUnit_Framework_TestCase
             ->setConstructorArgs([$manager])
             ->setMethodsExcept(['addAnd', 'refresh', 'sort', 'skip', 'limit'])
             ->getMock();
-        $queryBuilder->expects(static::exactly(2))
+        $queryBuilder->expects(static::once())
             ->method('getQuery')
             ->will(static::returnValue($query));
         /* @var Builder $queryBuilder */
@@ -101,7 +100,7 @@ class MongoDBRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $repository = new MongoDBRepository($manager, $uow, new ClassMetadata(EntityDocumentStub::class));
 
-        static::assertInstanceOf(Pager::class, $repository->findPagedBy($queryBuilder, ['fakeField' => 'ASC']));
+        static::assertInstanceOf(Paginator::class, $repository->findPaginatedBy($queryBuilder, ['fakeField' => 'ASC']));
     }
 
     public function testCount()

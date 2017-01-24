@@ -14,8 +14,8 @@ namespace Jgut\Doctrine\Repository\Tests;
 use Doctrine\ODM\CouchDB\DocumentManager;
 use Doctrine\ODM\CouchDB\Mapping\ClassMetadata;
 use Jgut\Doctrine\Repository\CouchDBRepository;
-use Jgut\Doctrine\Repository\Pager\Pager;
 use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;
+use Zend\Paginator\Paginator;
 
 /**
  * CouchDB repository tests.
@@ -36,7 +36,7 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
         static::assertEquals(EntityDocumentStub::class, $repository->getClassName());
     }
 
-    public function testFindPaged()
+    public function testFindPaginated()
     {
         $manager = $this->getMockBuilder(DocumentManager::class)
             ->disableOriginalConstructor()
@@ -45,17 +45,14 @@ class CouchDBRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $repository = $this->getMockBuilder(CouchDBRepository::class)
             ->setConstructorArgs([$manager, new ClassMetadata(EntityDocumentStub::class)])
-            ->setMethodsExcept(['findPagedBy', 'getPagerClassName'])
+            ->setMethodsExcept(['findPaginatedBy'])
             ->getMock();
         $repository->expects(static::once())
             ->method('findBy')
             ->will(static::returnValue(['a', 'b']));
-        $repository->expects(static::once())
-            ->method('countBy')
-            ->will(static::returnValue(10));
         /* @var CouchDBRepository $repository */
 
-        static::assertInstanceOf(Pager::class, $repository->findPagedBy(''));
+        static::assertInstanceOf(Paginator::class, $repository->findPaginatedBy(''));
     }
 
     public function testCount()

@@ -12,12 +12,14 @@
 namespace Jgut\Doctrine\Repository\Tests;
 
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Jgut\Doctrine\Repository\Pager\Pager;
 use Jgut\Doctrine\Repository\RelationalRepository;
 use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;
+use Zend\Paginator\Paginator;
 
 /**
  * Relational repository tests.
@@ -50,22 +52,31 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RelationalRepository($manager, new ClassMetadata(EntityDocumentStub::class));
 
-        $repository->findPagedBy('');
+        $repository->findPaginatedBy('');
     }
 
-    public function testFindPaged()
+    public function testFindPaginated()
     {
-        $query = $this->getMockBuilder(AbstractQuery::class)
+        $configuration = $this->getMockBuilder(Configuration::class)
             ->disableOriginalConstructor()
+            ->setMethods(['getDefaultQueryHints'])
             ->getMock();
-        $query->expects(static::once())
-            ->method('getResult')
-            ->will(static::returnValue(['a', 'b']));
+        $configuration->expects(static::any())
+            ->method('getDefaultQueryHints')
+            ->will(static::returnValue([]));
+        /* @var Configuration $configuration*/
 
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
+            ->setMethods(['getConfiguration'])
             ->getMock();
+        $manager->expects(static::any())
+            ->method('getConfiguration')
+            ->will(static::returnValue($configuration));
         /* @var EntityManager $manager */
+
+        $query = new Query($manager);
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, true);
 
         $queryBuilder = $this->getMockBuilder(QueryBuilder::class)
             ->setConstructorArgs([$manager])
@@ -81,14 +92,14 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
                 'setMaxResults',
             ])
             ->getMock();
-        $queryBuilder->expects(static::exactly(2))
+        $queryBuilder->expects(static::once())
             ->method('getQuery')
             ->will(static::returnValue($query));
         /* @var QueryBuilder $queryBuilder */
 
         $repository = new RelationalRepository($manager, new ClassMetadata(EntityDocumentStub::class));
 
-        static::assertInstanceOf(Pager::class, $repository->findPagedBy($queryBuilder, ['fakeField' => 'ASC']));
+        static::assertInstanceOf(Paginator::class, $repository->findPaginatedBy($queryBuilder, ['fakeField' => 'ASC']));
     }
 
     public function testCount()
