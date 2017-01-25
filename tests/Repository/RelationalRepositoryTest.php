@@ -55,53 +55,6 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
         $repository->findPaginatedBy('');
     }
 
-    public function testFindPaginated()
-    {
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getDefaultQueryHints'])
-            ->getMock();
-        $configuration->expects(static::any())
-            ->method('getDefaultQueryHints')
-            ->will(static::returnValue([]));
-        /* @var Configuration $configuration*/
-
-        $manager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getConfiguration'])
-            ->getMock();
-        $manager->expects(static::any())
-            ->method('getConfiguration')
-            ->will(static::returnValue($configuration));
-        /* @var EntityManager $manager */
-
-        $query = new Query($manager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, true);
-
-        $queryBuilder = $this->getMockBuilder(QueryBuilder::class)
-            ->setConstructorArgs([$manager])
-            ->setMethodsExcept([
-                'select',
-                'from',
-                'andWhere',
-                'setParameter',
-                'add',
-                'getRootAliases',
-                'addOrderBy',
-                'setFirstResult',
-                'setMaxResults',
-            ])
-            ->getMock();
-        $queryBuilder->expects(static::once())
-            ->method('getQuery')
-            ->will(static::returnValue($query));
-        /* @var QueryBuilder $queryBuilder */
-
-        $repository = new RelationalRepository($manager, new ClassMetadata(EntityDocumentStub::class));
-
-        static::assertInstanceOf(Paginator::class, $repository->findPaginatedBy($queryBuilder, ['fakeField' => 'ASC']));
-    }
-
     public function testCount()
     {
         $query = $this->getMockBuilder(AbstractQuery::class)
