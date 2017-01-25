@@ -35,7 +35,7 @@ class RelationalAdapter implements AdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getItems($offset, $itemCountPerPage)
     {
@@ -48,7 +48,7 @@ class RelationalAdapter implements AdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function count()
     {

@@ -36,7 +36,7 @@ class MongoDBAdapter implements AdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getItems($offset, $itemCountPerPage)
     {
@@ -49,7 +49,7 @@ class MongoDBAdapter implements AdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function count()
     {
