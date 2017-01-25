@@ -9,7 +9,7 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Jgut\Doctrine\Repository\Tests;
+namespace Jgut\Doctrine\Repository\Tests\Traits;
 
 use Doctrine\Common\EventManager;
 use Doctrine\ODM\CouchDB\DocumentManager as CouchDBDocumentManager;

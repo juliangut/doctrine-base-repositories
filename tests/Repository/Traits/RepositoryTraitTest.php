@@ -9,7 +9,7 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Jgut\Doctrine\Repository\Tests;
+namespace Jgut\Doctrine\Repository\Tests\Traits;
 
 use Doctrine\ORM\EntityManager;
 use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;

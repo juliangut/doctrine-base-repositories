@@ -9,7 +9,7 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Jgut\Doctrine\Repository\Tests\Factory;
+namespace Jgut\Doctrine\Repository\Tests\Traits;
 
 use Jgut\Doctrine\Repository\Tests\Stubs\PaginatorTraitStub;
 use Zend\Paginator\Paginator;

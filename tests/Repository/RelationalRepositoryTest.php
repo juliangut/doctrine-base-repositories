@@ -12,14 +12,11 @@
 namespace Jgut\Doctrine\Repository\Tests;
 
 use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Jgut\Doctrine\Repository\RelationalRepository;
 use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;
-use Zend\Paginator\Paginator;
 
 /**
  * Relational repository tests.
@@ -85,6 +82,11 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
         $repository = new RelationalRepository($manager, new ClassMetadata(EntityDocumentStub::class));
 
         static::assertEquals(10, $repository->countBy($queryBuilder));
+
+        $queryBuilder->expects(static::exactly(2))
+            ->method('getRootAliases')
+            ->will(static::returnValue(['a']));
+
         static::assertEquals(10, $repository->countBy(['fakeField' => 'fakeValue', 'nullFakeField' => null]));
     }
 
