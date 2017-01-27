@@ -111,14 +111,14 @@ interface Repository extends ObjectRepository
      * @param \stdClass|\stdClass[] $objects
      * @param bool                  $flush
      */
-    public function add($objects, $flush = true);
+    public function add($objects, $flush = false);
 
     /**
      * Remove all objects.
      *
      * @param bool $flush
      */
-    public function removeAll($flush = true);
+    public function removeAll($flush = false);
 
     /**
      * Remove object filtered by a set of criteria.
@@ -126,7 +126,7 @@ interface Repository extends ObjectRepository
      * @param array $criteria
      * @param bool  $flush
      */
-    public function removeBy(array $criteria, $flush = true);
+    public function removeBy(array $criteria, $flush = false);
 
     /**
      * Remove first object filtered by a set of criteria.
@@ -134,7 +134,7 @@ interface Repository extends ObjectRepository
      * @param array $criteria
      * @param bool  $flush
      */
-    public function removeOneBy(array $criteria, $flush = true);
+    public function removeOneBy(array $criteria, $flush = false);
 
     /**
      * Remove objects.
@@ -142,7 +142,7 @@ interface Repository extends ObjectRepository
      * @param \stdClass|\stdClass[]|string|int $objects
      * @param bool                             $flush
      */
-    public function remove($objects, $flush = true);
+    public function remove($objects, $flush = false);
 
     /**
      * Get all objects count.
