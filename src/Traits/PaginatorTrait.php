@@ -30,7 +30,7 @@ trait PaginatorTrait
     protected function getPaginator(AdapterInterface $adapter, $itemsPerPage)
     {
         $paginator = new Paginator($adapter);
-        $paginator->setItemCountPerPage(max(0, (int) $itemsPerPage));
+        $paginator->setItemCountPerPage(max(-1, (int) $itemsPerPage));
 
         return $paginator;
     }
