@@ -15,7 +15,7 @@ use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ODM\MongoDB\Query\Builder;
-use Jgut\Doctrine\Repository\Paginator\MongoDBAdapter;
+use Jgut\Doctrine\Repository\Pagination\MongoDBAdapter;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;
 use Jgut\Doctrine\Repository\Traits\PaginatorTrait;
 use Jgut\Doctrine\Repository\Traits\RepositoryTrait;

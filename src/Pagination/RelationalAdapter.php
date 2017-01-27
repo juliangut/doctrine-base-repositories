@@ -9,7 +9,7 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Jgut\Doctrine\Repository\Paginator;
+namespace Jgut\Doctrine\Repository\Pagination;
 
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Zend\Paginator\Adapter\AdapterInterface;

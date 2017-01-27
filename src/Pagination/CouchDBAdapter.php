@@ -9,7 +9,7 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Jgut\Doctrine\Repository\Paginator;
+namespace Jgut\Doctrine\Repository\Pagination;
 
 use Zend\Paginator\Adapter\ArrayAdapter;
 

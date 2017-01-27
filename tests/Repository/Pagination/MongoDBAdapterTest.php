@@ -13,7 +13,7 @@ namespace Jgut\Doctrine\Repository\Tests\Paginator;
 
 use Doctrine\MongoDB\EagerCursor;
 use Doctrine\ODM\MongoDB\Cursor;
-use Jgut\Doctrine\Repository\Paginator\MongoDBAdapter;
+use Jgut\Doctrine\Repository\Pagination\MongoDBAdapter;
 
 /**
  * MongoDB paginator adapter tests.

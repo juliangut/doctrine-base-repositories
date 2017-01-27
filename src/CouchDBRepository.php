@@ -14,7 +14,7 @@ namespace Jgut\Doctrine\Repository;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\CouchDB\DocumentRepository;
-use Jgut\Doctrine\Repository\Paginator\CouchDBAdapter;
+use Jgut\Doctrine\Repository\Pagination\CouchDBAdapter;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;
 use Jgut\Doctrine\Repository\Traits\PaginatorTrait;
 use Jgut\Doctrine\Repository\Traits\RepositoryTrait;

@@ -15,7 +15,7 @@ use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Jgut\Doctrine\Repository\Paginator\RelationalAdapter;
+use Jgut\Doctrine\Repository\Pagination\RelationalAdapter;
 
 /**
  * RDBMS paginator adapter tests.
