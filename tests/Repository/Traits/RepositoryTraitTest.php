@@ -38,6 +38,34 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         self::assertTrue($repository->isAutoFlush());
     }
 
+    public function testGetNewByFindOne()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $entity = $repository->findOneByOrGetNew([]);
+
+        static::assertInstanceOf(EntityDocumentStub::class, $entity);
+    }
+
+    public function testFindOneOrGetNew()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $entity = new EntityDocumentStub;
+
+        $repository = new RepositoryStub($manager, [$entity]);
+
+        static::assertEquals($entity, $repository->findOneByOrGetNew([]));
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessageRegExp /^Managed object must be a /
