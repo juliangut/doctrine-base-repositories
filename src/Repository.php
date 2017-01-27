@@ -83,11 +83,11 @@ interface Repository extends ObjectRepository
      *
      * @param array|\Doctrine\ORM\QueryBuilder|\Doctrine\ODM\MongoDB\Query\Builder $criteria
      * @param array|null                                                           $orderBy
-     * @param int                                                                  $limit
+     * @param int                                                                  $itemsPerPage
      *
      * @return \Zend\Paginator\Paginator
      */
-    public function findPaginatedBy($criteria, array $orderBy = null, $limit = 10);
+    public function findPaginatedBy($criteria, array $orderBy = null, $itemsPerPage = 10);
 
     /**
      * Find one object by a set of criteria or create a new one.

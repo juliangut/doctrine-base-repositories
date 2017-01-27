@@ -18,7 +18,6 @@ use Jgut\Doctrine\Repository\Pagination\CouchDBAdapter;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;
 use Jgut\Doctrine\Repository\Traits\PaginatorTrait;
 use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
-use Zend\Paginator\Paginator;
 
 /**
  * CouchDB document repository.
@@ -50,11 +49,11 @@ class CouchDBRepository extends DocumentRepository implements Repository
      *
      * @param array      $criteria
      * @param array|null $orderBy
-     * @param int        $limit
+     * @param int        $itemsPerPage
      *
-     * @return Paginator
+     * @return \Zend\Paginator\Paginator
      */
-    public function findPaginatedBy($criteria, array $orderBy = null, $limit = 10)
+    public function findPaginatedBy($criteria, array $orderBy = null, $itemsPerPage = 10)
     {
         if (!is_array($criteria)) {
             $criteria = [$criteria];
@@ -62,7 +61,7 @@ class CouchDBRepository extends DocumentRepository implements Repository
 
         $adapter = new CouchDBAdapter($this->findBy($criteria, $orderBy));
 
-        return $this->getPaginator($adapter, $limit);
+        return $this->getPaginator($adapter, $itemsPerPage);
     }
 
     /**

@@ -70,7 +70,7 @@ class RepositoryStub implements Repository
         return count($this->entities);
     }
 
-    public function findPaginatedBy($criteria, array $orderBy = null, $limit = 10, $offset = 0)
+    public function findPaginatedBy($criteria, array $orderBy = null, $itemsPerPage = 10)
     {
         // TODO: Implement findPaginatedBy() method.
     }

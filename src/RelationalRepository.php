@@ -20,7 +20,6 @@ use Jgut\Doctrine\Repository\Pagination\RelationalAdapter;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;
 use Jgut\Doctrine\Repository\Traits\PaginatorTrait;
 use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
-use Zend\Paginator\Paginator;
 
 /**
  * Relational entity repository.
@@ -75,13 +74,13 @@ class RelationalRepository extends EntityRepository implements Repository
      *
      * @param array|QueryBuilder $criteria
      * @param array|null         $orderBy
-     * @param int                $limit
+     * @param int                $itemsPerPage
      *
      * @throws \InvalidArgumentException
      *
-     * @return Paginator
+     * @return \Zend\Paginator\Paginator
      */
-    public function findPaginatedBy($criteria, array $orderBy = null, $limit = 10)
+    public function findPaginatedBy($criteria, array $orderBy = null, $itemsPerPage = 10)
     {
         $queryBuilder = $this->createQueryBuilderFromCriteria($criteria);
         $entityAlias = count($queryBuilder->getRootAliases())
@@ -96,7 +95,7 @@ class RelationalRepository extends EntityRepository implements Repository
 
         $adapter = new RelationalAdapter(new RelationalPaginator($queryBuilder->getQuery()));
 
-        return $this->getPaginator($adapter, $limit);
+        return $this->getPaginator($adapter, $itemsPerPage);
     }
 
     /**

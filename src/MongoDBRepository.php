@@ -19,7 +19,6 @@ use Jgut\Doctrine\Repository\Pagination\MongoDBAdapter;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;
 use Jgut\Doctrine\Repository\Traits\PaginatorTrait;
 use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
-use Zend\Paginator\Paginator;
 
 /**
  * MongoDB document repository.
@@ -51,13 +50,13 @@ class MongoDBRepository extends DocumentRepository implements Repository
      *
      * @param array|Builder $criteria
      * @param array|null    $orderBy
-     * @param int           $limit
+     * @param int           $itemsPerPage
      *
      * @throws \InvalidArgumentException
      *
-     * @return Paginator
+     * @return \Zend\Paginator\Paginator
      */
-    public function findPaginatedBy($criteria, array $orderBy = null, $limit = 10)
+    public function findPaginatedBy($criteria, array $orderBy = null, $itemsPerPage = 10)
     {
         $queryBuilder = $this->createQueryBuilderFromCriteria($criteria);
 
@@ -67,7 +66,7 @@ class MongoDBRepository extends DocumentRepository implements Repository
 
         $adapter = new MongoDBAdapter($queryBuilder->getQuery()->execute());
 
-        return $this->getPaginator($adapter, $limit);
+        return $this->getPaginator($adapter, $itemsPerPage);
     }
 
     /**

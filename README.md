@@ -117,7 +117,9 @@ $documentManager->setRepositoryFactory(new CouchDBRepositoryFactory);
 
 Mind that CouchDB configuration does not support setting repository factory. [juliangut/doctrine-manager-builder](https://github.com/juliangut/doctrine-manager-builder) is a mandatory requirement if you want to use CouchDBRepositoryFactory.
 
-### Convenience methods
+### New methods
+
+This are the new methods that `juliangut/doctrine-repositories` repositories brings to the table. 
 
 #### Creating
 
@@ -126,12 +128,9 @@ Mind that CouchDB configuration does not support setting repository factory. [ju
 Creates a new empty object directly from repository.
 
 ```php
-/* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
-/* @var \Jgut\Doctrine\Repository\MongoDBRepository $manager */
-/* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
-$object = $repository->getNew();
+$newObject = $repository->getNew();
 ```
 
 ##### findOneByOrGetNew
@@ -139,12 +138,9 @@ $object = $repository->getNew();
 Returns an object based on criteria or a new empty object if could not be found   
 
 ```php
-/* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
-/* @var \Jgut\Doctrine\Repository\MongoDBRepository $manager */
-/* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
-$object = $repository->findOneByorGetNew(['slug' => 'my_slug']);
+$existingOrNewObject = $repository->findOneByorGetNew(['slug' => 'my_slug']);
 ```
 
 #### Adding
@@ -154,9 +150,6 @@ $object = $repository->findOneByorGetNew(['slug' => 'my_slug']);
 Will persist the entity into the manager.
 
 ```php
-/* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
-/* @var \Jgut\Doctrine\Repository\MongoDBRepository $manager */
-/* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
 $repository->add(new ObjectClass());
@@ -169,9 +162,6 @@ $repository->add(new ObjectClass());
 In the same fashion as `add` this will remove the entity.
 
 ```php
-/* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
-/* @var \Jgut\Doctrine\Repository\MongoDBRepository $manager */
-/* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
 $managedObject = $repository->findById(1);
@@ -184,9 +174,6 @@ $repository->remove($managedObject);
 FindAll and then removes them all.
 
 ```php
-/* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
-/* @var \Jgut\Doctrine\Repository\MongoDBRepository $manager */
-/* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
 $repository->removeAll();
@@ -194,12 +181,9 @@ $repository->removeAll();
 
 ##### removeBy and removeOneBy
 
-As their counter parts findBy and findOneBy but instead of returning the objects it removes them.
+As their counter parts findBy and findOneBy but removing the objects instead of returning them.
 
 ```php
-/* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
-/* @var \Jgut\Doctrine\Repository\MongoDBRepository $manager */
-/* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
 $repository->removeBy(['active' => false]);
@@ -212,48 +196,36 @@ $repository->removeOneById(1);
 
 ##### countAll and countBy
 
-Perform object count in the most efficient way, except for CouchDB ;-(
+Perform object count in the most efficient way possible, except for CouchDB ;-(
 
 ```php
-/* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
-/* @var \Jgut\Doctrine\Repository\MongoDBRepository $manager */
-/* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
 $totalObjects = $repository->countAll();
 $activeObjects = $repository->countBy(['active' => true]);
 ```
 
-_CountBy accepts an instance of \Doctrine\ORM\QueryBuilder and \Doctrine\ODM\MongoDB\Query\Builder to allow more criteria control_
+_CountBy accepts an instance of \Doctrine\ORM\QueryBuilder and \Doctrine\ODM\MongoDB\Query\Builder to allow more criteria control._
 
 #### Paginating
 
-Returns the same results that `findBy` would return but within a `\Jgut\Doctrine\Repository\Pager\Pager` object with pagination information. 
+Returns the same results that `findBy` would return but within a `\Zend\Paginator\Paginator` object with pagination information. 
 
 ```php
-/* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
-/* @var \Jgut\Doctrine\Repository\MongoDBRepository $manager */
-/* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
-$page = $repository->findPagedBy(['active' => true], ['date' => 'ASC'], 10, 50);
+$paginator = $repository->findPagedBy(['active' => true], ['date' => 'ASC'], 10);
 
-// Assuming there are 100 "active"
-$page->getCurrentPage(); // 5
-$page->getPageCount(); // 10
-$page->getCurrentPageOffsetStart(); // 50
-$page->getCurrentPageOffsetEnd(); // 59
-$page->isFirstPage(); // false
-$page->isLastPage(); // false
-$page->getPreviousPage(); // 4
-$page->getNextPage(); // 6
-$page->getTotalPages(); // 10
-$page->getTotalCount(); // 100
+// Assuming there are 80 "active"
+$paginator->getTotalItemCount(); // 80
+$paginator->getCurrentItemCount(); // 10
+$paginator->getCurrentPageNumber(); // 1
+...
 ```
 
 _Accepts an instance of \Doctrine\ORM\QueryBuilder or \Doctrine\ODM\MongoDB\Query\Builder to allow more criteria control_
 
-_Mind that pagination on CouchDB is **very** inefficient._
+_Mind that pagination on CouchDB is **very** inefficient as it fetches all results and then cycles through the returning array._
 
 ### Events managing
 
@@ -264,9 +236,6 @@ It is common to have event subscribers on manager's event manager. This is usual
 You might want to temporarily disable an event subscriber.
 
 ```php
-/* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
-/* @var \Jgut\Doctrine\Repository\MongoDBRepository $manager */
-/* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
 $repository->disableEventSubscriber(\Gedmo\Timestampable\TimestampableListener::class);
@@ -279,9 +248,6 @@ $repository->restoreEventSubscribers();
 You might want to disable all listeners on a certain event.
 
 ```php
-/* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
-/* @var \Jgut\Doctrine\Repository\MongoDBRepository $manager */
-/* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
 $repository->disableEventListeners('onFlush');
@@ -295,9 +261,6 @@ $repository->restoreEventListeners('onFlush');
 You might want to disable certain listeners and not all listeners registered for an event.
 
 ```php
-/* @var \Jgut\Doctrine\Repository\RelationalRepository $manager */
-/* @var \Jgut\Doctrine\Repository\MongoDBRepository $manager */
-/* @var \Jgut\Doctrine\Repository\CouchDBRepository $manager */
 $repository = $manager->getRepository(ObjectClass::class);
 
 $repository->disableEventListener('onFlush', \Gedmo\Loggable/LoggableListener::class);
