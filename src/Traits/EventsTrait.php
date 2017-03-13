@@ -152,11 +152,14 @@ trait EventsTrait
      */
     protected function getSubscriberClassName($subscriberClass)
     {
-        if (is_object($subscriberClass) && is_a($subscriberClass, EventSubscriber::class)) {
+        if (is_object($subscriberClass) && in_array(EventSubscriber::class, class_implements($subscriberClass))) {
             return get_class($subscriberClass);
         }
 
-        if (!is_string($subscriberClass) || !in_array(EventSubscriber::class, class_implements($subscriberClass))) {
+        if (!is_string($subscriberClass)
+            || !class_exists($subscriberClass)
+            || !in_array(EventSubscriber::class, class_implements($subscriberClass))
+        ) {
             throw new \InvalidArgumentException('subscriberClass must be an EventSubscriber');
         }
 
