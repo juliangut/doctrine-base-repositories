@@ -37,6 +37,14 @@ trait RepositoryTrait
     /**
      * {@inheritdoc}
      */
+    public function flush()
+    {
+        $this->getManager()->flush();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function findOneByOrGetNew($criteria)
     {
         $object = $this->findOneBy($criteria);

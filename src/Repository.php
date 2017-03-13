@@ -33,6 +33,11 @@ interface Repository extends ObjectRepository
     public function setAutoFlush($autoFlush = false);
 
     /**
+     * Manager flush.
+     */
+    public function flush();
+
+    /**
      * Returns the fully qualified class name of the objects managed by the repository.
      *
      * @return string
