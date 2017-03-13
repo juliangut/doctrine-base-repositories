@@ -42,16 +42,13 @@ trait EventsTrait
     {
         $subscriberClass = $this->getSubscriberClassName($subscriberClass);
 
-        /* @var EventManager $eventManager */
-        $eventManager = $this->getManager()->getEventManager();
-
         /* @var EventSubscriber[] $subscribers */
-        foreach ($this->getEventListeners($eventManager) as $subscribers) {
+        foreach ($this->getEventListeners() as $subscribers) {
             while ($subscriber = array_shift($subscribers)) {
                 if ($subscriber instanceof $subscriberClass) {
                     $this->disabledSubscribers[] = $subscriber;
 
-                    $eventManager->removeEventSubscriber($subscriber);
+                    $this->getEventManager()->removeEventSubscriber($subscriber);
 
                     return;
                 }
@@ -64,11 +61,8 @@ trait EventsTrait
      */
     public function restoreEventSubscribers()
     {
-        /* @var EventManager $eventManager */
-        $eventManager = $this->getManager()->getEventManager();
-
         foreach ($this->disabledSubscribers as $subscriber) {
-            $eventManager->addEventSubscriber($subscriber);
+            $this->getEventManager()->addEventSubscriber($subscriber);
         }
 
         $this->disabledSubscribers = [];
@@ -79,15 +73,12 @@ trait EventsTrait
      */
     public function disableEventListeners($event)
     {
-        /* @var EventManager $eventManager */
-        $eventManager = $this->getManager()->getEventManager();
-
         if (!array_key_exists($event, $this->disabledListeners)) {
             $this->disabledListeners[$event] = [];
         }
 
-        foreach ($this->getEventListeners($eventManager, $event) as $listener) {
-            $eventManager->removeEventListener($event, $listener);
+        foreach ($this->getEventListeners($event) as $listener) {
+            $this->getEventManager()->removeEventListener($event, $listener);
 
             $this->disabledListeners[$event][] = $listener;
         }
@@ -106,14 +97,11 @@ trait EventsTrait
             $this->disabledListeners[$event] = [];
         }
 
-        /* @var EventManager $eventManager */
-        $eventManager = $this->getManager()->getEventManager();
-
-        foreach ($this->getEventListeners($eventManager, $event) as $listener) {
+        foreach ($this->getEventListeners($event) as $listener) {
             if ($listener instanceof $subscriberClass) {
                 $this->disabledListeners[$event][] = $listener;
 
-                $eventManager->removeEventListener($event, $listener);
+                $this->getEventManager()->removeEventListener($event, $listener);
                 break;
             }
         }
@@ -124,8 +112,13 @@ trait EventsTrait
      */
     public function restoreAllEventListeners()
     {
-        foreach (array_keys($this->disabledListeners) as $event) {
-            $this->restoreEventListeners($event);
+        foreach ($this->disabledListeners as $event => $listeners) {
+            /* @var EventSubscriber[] $listeners */
+            foreach ($listeners as $listener) {
+                $this->getEventManager()->addEventListener($event, $listener);
+            }
+
+            $this->disabledListeners[$event] = [];
         }
     }
 
@@ -138,14 +131,11 @@ trait EventsTrait
             return;
         }
 
-        /* @var EventManager $eventManager */
-        $eventManager = $this->getManager()->getEventManager();
-
         /* @var EventSubscriber[] $listeners */
         $listeners = $this->disabledListeners[$event];
 
         foreach ($listeners as $listener) {
-            $eventManager->addEventListener($event, $listener);
+            $this->getEventManager()->addEventListener($event, $listener);
         }
 
         $this->disabledListeners[$event] = [];
@@ -174,22 +164,36 @@ trait EventsTrait
     }
 
     /**
+     * Get registered events.
+     *
+     * @return array
+     */
+    public function getRegisteredEvents()
+    {
+        return array_keys($this->getEventManager()->getListeners());
+    }
+
+    /**
      * Get event listeners.
      *
-     * @param EventManager $eventManager
-     * @param string|null  $event
+     * @param string|null $event
      *
      * @return EventSubscriber[]
      */
-    protected function getEventListeners(EventManager $eventManager, $event = null)
+    protected function getEventListeners($event = null)
     {
+        $eventManager = $this->getEventManager();
+
         return $event !== null && !$eventManager->hasListeners($event) ? [] : $eventManager->getListeners($event);
     }
 
     /**
-     * Get object manager.
+     * Get event manager.
      *
-     * @return \Doctrine\ORM\EntityManager|\Doctrine\ODM\MongoDB\DocumentManager|\Doctrine\ODM\CouchDB\DocumentManager
+     * @return EventManager
      */
-    abstract protected function getManager();
+    protected function getEventManager()
+    {
+        return $this->getManager()->getEventManager();
+    }
 }

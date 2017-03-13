@@ -44,7 +44,7 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMockBuilder(MongoDBDocumentManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(self::exactly(3))
+        $manager->expects(self::any())
             ->method('getEventManager')
             ->will(static::returnValue($eventManager));
         /* @var MongoDBDocumentManager $manager */
@@ -66,15 +66,32 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
         static::assertCount(1, $eventManager->getListeners('prePersist'));
     }
 
+    public function testSubscribedEvents()
+    {
+        $eventSubscriber = new EventStub();
+
+        $eventManager = new EventManager;
+        $eventManager->addEventSubscriber($eventSubscriber);
+
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $manager->expects(self::any())
+            ->method('getEventManager')
+            ->will(static::returnValue($eventManager));
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        self::assertEquals($eventSubscriber->getSubscribedEvents(), $repository->getRegisteredEvents());
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage subscriberClass must be an EventSubscriber
      */
     public function testBadEventSubscriber()
     {
-        $eventManager = new EventManager;
-        $eventManager->addEventSubscriber(new EventStub);
-
         /* @var EntityManager $manager */
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
@@ -87,15 +104,13 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
 
     public function testEventListenersManagement()
     {
-        $eventSubscriber = new EventStub;
-
         $eventManager = new EventManager;
-        $eventManager->addEventSubscriber($eventSubscriber);
+        $eventManager->addEventSubscriber(new EventStub());
 
         $manager = $this->getMockBuilder(CouchDBDocumentManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(self::exactly(5))
+        $manager->expects(self::any())
             ->method('getEventManager')
             ->will(static::returnValue($eventManager));
         /* @var CouchDBDocumentManager $manager */
@@ -120,15 +135,13 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
 
     public function testEventListenerManagement()
     {
-        $eventSubscriber = new EventStub;
-
         $eventManager = new EventManager;
-        $eventManager->addEventSubscriber($eventSubscriber);
+        $eventManager->addEventSubscriber(new EventStub());
 
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(self::exactly(2))
+        $manager->expects(self::any())
             ->method('getEventManager')
             ->will(static::returnValue($eventManager));
         /* @var EntityManager $manager */
@@ -147,7 +160,7 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
     public function testBadEventListener()
     {
         $eventManager = new EventManager;
-        $eventManager->addEventSubscriber(new EventStub);
+        $eventManager->addEventSubscriber(new EventStub());
 
         /* @var EntityManager $manager */
         $manager = $this->getMockBuilder(EntityManager::class)

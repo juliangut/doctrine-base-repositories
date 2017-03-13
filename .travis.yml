@@ -39,7 +39,7 @@ install:
   - if [[ $TEST_VERSION == true ]]; then travis_retry composer require satooshi/php-coveralls:dev-master $COMPOSER_FLAGS --no-interaction --no-scripts --no-progress ; fi
 
 script:
-  - if [[ $TEST_VERSION == true ]]; then composer qa & composer phpunit-clover ; fi
+  - if [[ $TEST_VERSION == true ]]; then composer qa && composer phpunit-clover ; fi
   - if [[ $TEST_VERSION != true ]]; then composer phpunit ; fi
 
 after_script:
