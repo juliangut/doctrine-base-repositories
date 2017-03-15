@@ -1,4 +1,4 @@
-[![PHP version](https://img.shields.io/badge/PHP-%3E%3D5.6-8892BF.svg?style=flat-square)](http://php.net)
+[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.0-8892BF.svg?style=flat-square)](http://php.net)
 [![Latest Version](https://img.shields.io/packagist/vpre/juliangut/doctrine-repositories.svg?style=flat-square)](https://packagist.org/packages/juliangut/doctrine-repositories)
 [![License](https://img.shields.io/github/license/juliangut/doctrine-repositories.svg?style=flat-square)](https://github.com/juliangut/doctrine-repositories/blob/master/LICENSE)
 
