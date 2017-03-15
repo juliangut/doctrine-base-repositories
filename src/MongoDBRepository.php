@@ -11,7 +11,6 @@
 
 namespace Jgut\Doctrine\Repository;
 
-use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ODM\MongoDB\Query\Builder;
@@ -119,45 +118,5 @@ class MongoDBRepository extends DocumentRepository implements Repository
         }
 
         return $queryBuilder;
-    }
-
-    /**
-     * Adds support for magic finders and removers.
-     *
-     * @param string $method
-     * @param array  $arguments
-     *
-     * @throws \BadMethodCallException
-     *
-     * @return array|object
-     */
-    public function __call($method, $arguments)
-    {
-        $magicMethods = [
-            'findPaginatedBy',
-            'removeBy',
-            'removeOneBy',
-        ];
-
-        foreach ($magicMethods as $magicMethod) {
-            if (strpos($method, $magicMethod) === 0) {
-                $field = substr($method, strlen($magicMethod));
-                $method = substr($method, 0, strlen($magicMethod));
-
-                return $this->magicByCall($method, lcfirst(Inflector::classify($field)), $arguments);
-            }
-        }
-
-        // @codeCoverageIgnoreStart
-        try {
-            return parent::__call($method, $arguments);
-        } catch (\BadMethodCallException $exception) {
-            throw new \BadMethodCallException(sprintf(
-                'Undefined method "%s". Method name must start with'
-                . ' "findBy", "findOneBy", "findPaginatedBy", "removeBy" or "removeOneBy"!',
-                $method
-            ));
-        }
-        // @codeCoverageIgnoreEnd
     }
 }

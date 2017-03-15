@@ -39,6 +39,7 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Criteria must be an array of query fields or a Doctrine\ORM\QueryBuilder
      */
     public function testInvalidCriteria()
     {
@@ -88,45 +89,5 @@ class RelationalRepositoryTest extends \PHPUnit_Framework_TestCase
             ->will(static::returnValue(['a']));
 
         static::assertEquals(10, $repository->countBy(['fakeField' => 'fakeValue', 'nullFakeField' => null]));
-    }
-
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessageRegExp /^You need to pass a parameter to .+::removeByParameter$/
-     */
-    public function testCallNoArguments()
-    {
-        $manager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var EntityManager $manager */
-
-        $repository = new RelationalRepository($manager, new ClassMetadata(EntityDocumentStub::class));
-
-        $repository->removeByParameter();
-    }
-
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessageRegExp /^Invalid call to .+::removeOneBy/
-     */
-    public function testCallNoField()
-    {
-        $manager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var EntityManager $manager */
-
-        $metadata = $this->getMockBuilder(ClassMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $metadata->name = EntityDocumentStub::class;
-        $metadata->expects(static::once())->method('hasField')->will(static::returnValue(false));
-        $metadata->expects(static::once())->method('hasAssociation')->will(static::returnValue(false));
-        /* @var ClassMetadata $metadata */
-
-        $repository = new RelationalRepository($manager, $metadata);
-
-        $repository->removeOneByParameter(0);
     }
 }

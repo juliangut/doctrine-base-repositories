@@ -38,6 +38,19 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         self::assertTrue($repository->isAutoFlush());
     }
 
+    public function testFlush()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $manager->expects(static::once())->method('flush');
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $repository->flush();
+    }
+
     public function testGetNewByFindOne()
     {
         $manager = $this->getMockBuilder(EntityManager::class)
@@ -191,7 +204,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $repository->remove($entity, true);
     }
 
-    public function testCount()
+    public function testCountAll()
     {
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
@@ -201,5 +214,53 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $repository = new RepositoryStub($manager, [new EntityDocumentStub, new EntityDocumentStub]);
 
         static::assertEquals(2, $repository->countAll());
+    }
+
+    /**
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessageRegExp /^You need to pass a parameter to .+::removeByParameter$/
+     */
+    public function testCallNoArguments()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $repository->removeByParameter();
+    }
+
+    /**
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessageRegExp /^Undefined method "noMethod"\. Method name must start with one of(,? ".+")+!/
+     */
+    public function testCallNoMethod()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $repository->noMethod(0);
+    }
+
+    /**
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessageRegExp /^Invalid call to .+::removeOneBy\. Field "parameter" does not exist/
+     */
+    public function testCallNoField()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $repository->removeOneByParameter(0);
     }
 }

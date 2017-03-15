@@ -11,6 +11,8 @@
 
 namespace Jgut\Doctrine\Repository\Traits;
 
+use Doctrine\Common\Util\Inflector;
+
 /**
  * Repository trait.
  */
@@ -192,6 +194,44 @@ trait RepositoryTrait
     abstract public function countBy($criteria);
 
     /**
+     * Adds support for magic finders and removers.
+     *
+     * @param string $method
+     * @param array  $arguments
+     *
+     * @throws \BadMethodCallException
+     *
+     * @return array|object
+     */
+    public function __call($method, $arguments)
+    {
+        static $supportedMethods = ['findBy', 'findOneBy', 'findPaginatedBy', 'removeBy', 'removeOneBy'];
+
+        if (count($arguments) === 0) {
+            throw new \BadMethodCallException(sprintf(
+                'You need to pass a parameter to %s::%s',
+                $this->getClassName(),
+                $method
+            ));
+        }
+
+        foreach ($supportedMethods as $supportedMethod) {
+            if (strpos($method, $supportedMethod) === 0) {
+                $field = substr($method, strlen($supportedMethod));
+                $method = substr($method, 0, strlen($supportedMethod));
+
+                return $this->callSupportedMethod($method, Inflector::camelize($field), $arguments);
+            }
+        }
+
+        throw new \BadMethodCallException(sprintf(
+            'Undefined method "%s". Method name must start with one of "%s"!',
+            $method,
+            implode('", "', $supportedMethods)
+        ));
+    }
+
+    /**
      * Internal remove magic finder.
      *
      * @param string $method
@@ -202,16 +242,8 @@ trait RepositoryTrait
      *
      * @return array|object
      */
-    protected function magicByCall($method, $fieldName, $arguments)
+    protected function callSupportedMethod($method, $fieldName, array $arguments)
     {
-        if (count($arguments) === 0) {
-            throw new \BadMethodCallException(sprintf(
-                'You need to pass a parameter to %s::%s',
-                $this->getClassName(),
-                $method . ucfirst($fieldName)
-            ));
-        }
-
         $classMetadata = $this->getClassMetadata();
 
         if ($classMetadata->hasField($fieldName) || $classMetadata->hasAssociation($fieldName)) {

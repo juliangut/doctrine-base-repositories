@@ -11,7 +11,6 @@
 
 namespace Jgut\Doctrine\Repository;
 
-use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\CouchDB\DocumentRepository;
 use Jgut\Doctrine\Repository\Pagination\CouchDBAdapter;
@@ -74,41 +73,5 @@ class CouchDBRepository extends DocumentRepository implements Repository
     public function countBy($criteria)
     {
         return count($this->findBy($criteria));
-    }
-
-    /**
-     * Adds support for magic finders and removers.
-     *
-     * @param string $method
-     * @param array  $arguments
-     *
-     * @throws \BadMethodCallException
-     *
-     * @return array|object
-     */
-    public function __call($method, $arguments)
-    {
-        $magicMethods = [
-            'findBy',
-            'findOneBy',
-            'findPaginatedBy',
-            'removeBy',
-            'removeOneBy',
-        ];
-
-        foreach ($magicMethods as $magicMethod) {
-            if (strpos($method, $magicMethod) === 0) {
-                $field = substr($method, strlen($magicMethod));
-                $method = substr($method, 0, strlen($magicMethod));
-
-                return $this->magicByCall($method, lcfirst(Inflector::classify($field)), $arguments);
-            }
-        }
-
-        throw new \BadMethodCallException(sprintf(
-            'Undefined method "%s". Method name must start with'
-            . ' "findBy", "findOneBy", "findPaginatedBy", "removeBy" or "removeOneBy"!',
-            $method
-        ));
     }
 }

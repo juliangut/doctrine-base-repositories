@@ -48,6 +48,7 @@ class MongoDBRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Criteria must be an array of query fields or a Doctrine\ODM\MongoDB\Query\Builder
      */
     public function testInvalidCriteria()
     {
@@ -158,55 +159,5 @@ class MongoDBRepositoryTest extends \PHPUnit_Framework_TestCase
 
         static::assertEquals(10, $repository->countBy($queryBuilder));
         static::assertEquals(10, $repository->countBy(['fakeField' => 'fakeValue', 'arrayFakeField' => []]));
-    }
-
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessageRegExp /^You need to pass a parameter to .+::removeByParameter$/
-     */
-    public function testCallNoArguments()
-    {
-        $manager = $this->getMockBuilder(DocumentManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var DocumentManager $manager */
-
-        $uow = $this->getMockBuilder(UnitOfWork::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var UnitOfWork $uow */
-
-        $repository = new MongoDBRepository($manager, $uow, new ClassMetadata(EntityDocumentStub::class));
-
-        $repository->removeByParameter();
-    }
-
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessageRegExp /^Invalid call to .+::removeOneBy/
-     */
-    public function testCallNoField()
-    {
-        $manager = $this->getMockBuilder(DocumentManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var DocumentManager $manager */
-
-        $uow = $this->getMockBuilder(UnitOfWork::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var UnitOfWork $uow */
-
-        $metadata = $this->getMockBuilder(ClassMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $metadata->name = EntityDocumentStub::class;
-        $metadata->expects(static::once())->method('hasField')->will(static::returnValue(false));
-        $metadata->expects(static::once())->method('hasAssociation')->will(static::returnValue(false));
-        /* @var ClassMetadata $metadata */
-
-        $repository = new MongoDBRepository($manager, $uow, $metadata);
-
-        $repository->removeOneByParameter(0);
     }
 }

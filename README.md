@@ -214,7 +214,8 @@ Returns the same results that `findBy` would return but within a `\Zend\Paginato
 ```php
 $repository = $manager->getRepository(ObjectClass::class);
 
-$paginator = $repository->findPagedBy(['active' => true], ['date' => 'ASC'], 10);
+$paginator = $repository->findPaginatedBy(['active' => true], ['date' => 'ASC'], 10);
+$paginator = $repository->findPaginatedByActive(true, ['date' => 'ASC'], 10);
 
 // Assuming there are 80 "active"
 $paginator->getTotalItemCount(); // 80
