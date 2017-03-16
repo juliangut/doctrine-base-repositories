@@ -12,8 +12,9 @@
 namespace Jgut\Doctrine\Repository;
 
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\MongoDB\EagerCursor;
+use Doctrine\ODM\MongoDB\Cursor;
 use Doctrine\ODM\MongoDB\DocumentRepository;
-use Doctrine\ODM\MongoDB\Query\Builder;
 use Jgut\Doctrine\Repository\Pagination\MongoDBAdapter;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;
 use Jgut\Doctrine\Repository\Traits\PaginatorTrait;
@@ -47,76 +48,29 @@ class MongoDBRepository extends DocumentRepository implements Repository
     /**
      * {@inheritdoc}
      *
-     * @param array|Builder $criteria
-     * @param array|null    $orderBy
-     * @param int           $itemsPerPage
-     *
-     * @throws \InvalidArgumentException
+     * @param array $criteria
+     * @param array $orderBy
+     * @param int   $itemsPerPage
      *
      * @return \Zend\Paginator\Paginator
      */
-    public function findPaginatedBy($criteria, array $orderBy = null, $itemsPerPage = 10)
+    public function findPaginatedBy($criteria, array $orderBy = [], $itemsPerPage = 10)
     {
-        $queryBuilder = $this->createQueryBuilderFromCriteria($criteria);
-
-        if (is_array($orderBy)) {
-            $queryBuilder->sort($orderBy);
-        }
-
-        $adapter = new MongoDBAdapter($queryBuilder->getQuery()->execute());
-
-        return $this->getPaginator($adapter, $itemsPerPage);
+        return $this->getPaginator(
+            new MongoDBAdapter($this->getDocumentPersister()->loadAll($criteria, $orderBy)),
+            $itemsPerPage
+        );
     }
 
     /**
      * {@inheritdoc}
      *
-     * @param array|Builder $criteria
-     *
-     * @throws \InvalidArgumentException
+     * @param array $criteria
      *
      * @return int
      */
     public function countBy($criteria)
     {
-        return (int) $this->createQueryBuilderFromCriteria($criteria)
-            ->refresh()
-            ->getQuery()
-            ->execute()
-            ->count();
-    }
-
-    /**
-     * Create query builder based on provided simple criteria.
-     *
-     * @param array|Builder $criteria
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return Builder
-     */
-    protected function createQueryBuilderFromCriteria($criteria)
-    {
-        if ($criteria instanceof Builder) {
-            return $criteria;
-        } elseif (!is_array($criteria)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Criteria must be an array of query fields or a %s',
-                Builder::class
-            ));
-        }
-
-        $queryBuilder = $this->createQueryBuilder();
-
-        /* @var array $criteria */
-        foreach ($criteria as $field => $value) {
-            if (is_array($value)) {
-                $queryBuilder->addAnd($queryBuilder->expr()->field($field)->in($value));
-            } else {
-                $queryBuilder->addAnd($queryBuilder->expr()->field($field)->equals($value));
-            }
-        }
-
-        return $queryBuilder;
+        return $this->getDocumentPersister()->loadAll($criteria)->count();
     }
 }

@@ -86,13 +86,13 @@ interface Repository extends ObjectRepository
     /**
      * Return paginated elements filtered by criteria.
      *
-     * @param array|\Doctrine\ORM\QueryBuilder|\Doctrine\ODM\MongoDB\Query\Builder $criteria
-     * @param array|null                                                           $orderBy
-     * @param int                                                                  $itemsPerPage
+     * @param array|\Doctrine\ORM\QueryBuilder $criteria
+     * @param array                            $orderBy
+     * @param int                              $itemsPerPage
      *
      * @return \Zend\Paginator\Paginator
      */
-    public function findPaginatedBy($criteria, array $orderBy = null, $itemsPerPage = 10);
+    public function findPaginatedBy($criteria, array $orderBy = [], $itemsPerPage = 10);
 
     /**
      * Find one object by a set of criteria or create a new one.
@@ -159,7 +159,7 @@ interface Repository extends ObjectRepository
     /**
      * Get object count filtered by a set of criteria.
      *
-     * @param array|\Doctrine\ORM\QueryBuilder|\Doctrine\ODM\MongoDB\Query\Builder $criteria
+     * @param array|\Doctrine\ORM\QueryBuilder $criteria
      *
      * @return int
      */

@@ -46,13 +46,13 @@ class CouchDBRepository extends DocumentRepository implements Repository
     /**
      * {@inheritdoc}
      *
-     * @param array      $criteria
-     * @param array|null $orderBy
-     * @param int        $itemsPerPage
+     * @param array $criteria
+     * @param array $orderBy
+     * @param int   $itemsPerPage
      *
      * @return \Zend\Paginator\Paginator
      */
-    public function findPaginatedBy($criteria, array $orderBy = null, $itemsPerPage = 10)
+    public function findPaginatedBy($criteria, array $orderBy = [], $itemsPerPage = 10)
     {
         if (!is_array($criteria)) {
             $criteria = [$criteria];

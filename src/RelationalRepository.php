@@ -79,7 +79,7 @@ class RelationalRepository extends EntityRepository implements Repository
      *
      * @return \Zend\Paginator\Paginator
      */
-    public function findPaginatedBy($criteria, array $orderBy = null, $itemsPerPage = 10)
+    public function findPaginatedBy($criteria, array $orderBy = [], $itemsPerPage = 10)
     {
         $queryBuilder = $this->createQueryBuilderFromCriteria($criteria);
         $entityAlias = count($queryBuilder->getRootAliases())
