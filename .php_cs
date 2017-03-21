@@ -1,11 +1,11 @@
 <?php
 
 /*
- * doctrine-repositories (https://github.com/juliangut/doctrine-repositories).
+ * doctrine-base-repositories (https://github.com/juliangut/doctrine-base-repositories).
  * Doctrine2 utility repositories.
  *
  * @license MIT
- * @link https://github.com/juliangut/doctrine-repositories
+ * @link https://github.com/juliangut/doctrine-base-repositories
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
@@ -15,11 +15,11 @@ use PhpCsFixer\Fixer\Comment\HeaderCommentFixer;
 use PhpCsFixer\FixerInterface;
 
 $header = <<<'HEADER'
-doctrine-repositories (https://github.com/juliangut/doctrine-repositories).
+doctrine-base-repositories (https://github.com/juliangut/doctrine-base-repositories).
 Doctrine2 utility repositories.
 
 @license MIT
-@link https://github.com/juliangut/doctrine-repositories
+@link https://github.com/juliangut/doctrine-base-repositories
 @author Julián Gutiérrez <juliangut@gmail.com>
 HEADER;
 

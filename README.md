@@ -1,16 +1,16 @@
 [![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.0-8892BF.svg?style=flat-square)](http://php.net)
-[![Latest Version](https://img.shields.io/packagist/vpre/juliangut/doctrine-repositories.svg?style=flat-square)](https://packagist.org/packages/juliangut/doctrine-repositories)
-[![License](https://img.shields.io/github/license/juliangut/doctrine-repositories.svg?style=flat-square)](https://github.com/juliangut/doctrine-repositories/blob/master/LICENSE)
+[![Latest Version](https://img.shields.io/packagist/vpre/juliangut/doctrine-base-repositories.svg?style=flat-square)](https://packagist.org/packages/juliangut/doctrine-base-repositories)
+[![License](https://img.shields.io/github/license/juliangut/doctrine-base-repositories.svg?style=flat-square)](https://github.com/juliangut/doctrine-base-repositories/blob/master/LICENSE)
 
-[![Build Status](https://img.shields.io/travis/juliangut/doctrine-repositories.svg?style=flat-square)](https://travis-ci.org/juliangut/doctrine-repositories)
+[![Build Status](https://img.shields.io/travis/juliangut/doctrine-base-repositories.svg?style=flat-square)](https://travis-ci.org/juliangut/doctrine-base-repositories)
 [![Style Check](https://styleci.io/repos/69763902/shield)](https://styleci.io/repos/69763902)
-[![Code Quality](https://img.shields.io/scrutinizer/g/juliangut/doctrine-repositories.svg?style=flat-square)](https://scrutinizer-ci.com/g/juliangut/doctrine-repositories)
-[![Code Coverage](https://img.shields.io/coveralls/juliangut/doctrine-repositories.svg?style=flat-square)](https://coveralls.io/github/juliangut/doctrine-repositories)
+[![Code Quality](https://img.shields.io/scrutinizer/g/juliangut/doctrine-base-repositories.svg?style=flat-square)](https://scrutinizer-ci.com/g/juliangut/doctrine-base-repositories)
+[![Code Coverage](https://img.shields.io/coveralls/juliangut/doctrine-base-repositories.svg?style=flat-square)](https://coveralls.io/github/juliangut/doctrine-base-repositories)
 
-[![Total Downloads](https://img.shields.io/packagist/dt/juliangut/doctrine-repositories.svg?style=flat-square)](https://packagist.org/packages/juliangut/doctrine-repositories)
-[![Monthly Downloads](https://img.shields.io/packagist/dm/juliangut/doctrine-repositories.svg?style=flat-square)](https://packagist.org/packages/juliangut/doctrine-repositories)
+[![Total Downloads](https://img.shields.io/packagist/dt/juliangut/doctrine-base-repositories.svg?style=flat-square)](https://packagist.org/packages/juliangut/doctrine-base-repositories)
+[![Monthly Downloads](https://img.shields.io/packagist/dm/juliangut/doctrine-base-repositories.svg?style=flat-square)](https://packagist.org/packages/juliangut/doctrine-base-repositories)
 
-# doctrine-repositories
+# doctrine-base-repositories
 
 Doctrine2 utility repositories
 
@@ -19,7 +19,7 @@ Doctrine2 utility repositories
 ### Composer
 
 ```
-composer require juliangut/doctrine-repositories
+composer require juliangut/doctrine-base-repositories
 ```
 
 If using MongoDB on PHP >= 7.0
@@ -119,7 +119,7 @@ Mind that CouchDB configuration does not support setting repository factory. [ju
 
 ### New methods
 
-This are the new methods that `juliangut/doctrine-repositories` repositories brings to the table. 
+This are the new methods that `juliangut/doctrine-base-repositories` repositories brings to the table. 
 
 #### Creating
 
@@ -272,10 +272,10 @@ $repository->restoreEventListener('onFlush');
 
 ## Contributing
 
-Found a bug or have a feature request? [Please open a new issue](https://github.com/juliangut/doctrine-repositories/issues). Have a look at existing issues before.
+Found a bug or have a feature request? [Please open a new issue](https://github.com/juliangut/doctrine-base-repositories/issues). Have a look at existing issues before.
 
-See file [CONTRIBUTING.md](https://github.com/juliangut/doctrine-repositories/blob/master/CONTRIBUTING.md)
+See file [CONTRIBUTING.md](https://github.com/juliangut/doctrine-base-repositories/blob/master/CONTRIBUTING.md)
 
 ## License
 
-See file [LICENSE](https://github.com/juliangut/doctrine-repositories/blob/master/LICENSE) included with the source code for a copy of the license terms.
+See file [LICENSE](https://github.com/juliangut/doctrine-base-repositories/blob/master/LICENSE) included with the source code for a copy of the license terms.

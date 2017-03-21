@@ -1,15 +1,11 @@
 {
-  "name": "juliangut/doctrine-repositories",
+  "name": "juliangut/doctrine-base-repositories",
   "description": "Doctrine2 utility repositories",
   "keywords": [
     "Doctrine2",
-    "entity repository",
-    "document repository",
-    "ORM",
-    "MongoDB",
-    "CouchDB"
+    "repository"
   ],
-  "homepage": "https://github.com/juliangut/doctrine-repositories",
+  "homepage": "https://github.com/juliangut/doctrine-base-repositories",
   "license": "MIT",
   "authors": [
     {
@@ -20,8 +16,8 @@
     }
   ],
   "support": {
-    "source": "https://github.com/juliangut/doctrine-repositories",
-    "issues": "https://github.com/juliangut/doctrine-repositories/issues"
+    "source": "https://github.com/juliangut/doctrine-base-repositories",
+    "issues": "https://github.com/juliangut/doctrine-base-repositories/issues"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,

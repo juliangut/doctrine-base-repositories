@@ -21,7 +21,7 @@
          verbose="true"
 >
     <testsuites>
-        <testsuite name="doctrine-repositories test suite">
+        <testsuite name="doctrine-base-repositories test suite">
             <directory suffix="Test.php">tests/Repository/</directory>
         </testsuite>
     </testsuites>
