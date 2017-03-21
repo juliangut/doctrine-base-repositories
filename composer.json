@@ -42,7 +42,7 @@
     "phpmd/phpmd": "^2.0",
     "phpunit/phpunit": "^4.5|^5.0",
     "phpunit/phpunit-mock-objects": "^3.2",
-    "rikbruil/doctrine-specification": "^1.1",
+    "rikbruil/doctrine-specification": "^1.2",
     "sebastian/phpcpd": "^2.0",
     "squizlabs/php_codesniffer": "^2.0"
   },

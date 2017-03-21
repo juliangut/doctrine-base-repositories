@@ -21,15 +21,18 @@ use Jgut\Doctrine\Repository\Pagination\RelationalAdapter;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;
 use Jgut\Doctrine\Repository\Traits\PaginatorTrait;
 use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
+use Rb\Specification\Doctrine\SpecificationAwareInterface;
+use Rb\Specification\Doctrine\SpecificationRepositoryTrait;
 
 /**
  * Relational entity repository.
  */
-class RelationalRepository extends EntityRepository implements Repository
+class RelationalRepository extends EntityRepository implements Repository, SpecificationAwareInterface
 {
     use RepositoryTrait;
     use EventsTrait;
     use PaginatorTrait;
+    use SpecificationRepositoryTrait;
 
     /**
      * Class alias.
