@@ -9,6 +9,8 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Jgut\Doctrine\Repository\Tests\Factory;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
@@ -44,7 +46,7 @@ class MongoDBRepositoryFactoryTest extends \PHPUnit_Framework_TestCase
             ->will(static::returnValue($classMetadata));
         /* @var DocumentManager $manager */
 
-        $factory = new MongoDBRepositoryFactory;
+        $factory = new MongoDBRepositoryFactory();
 
         $repository = $factory->getRepository($manager, EntityDocumentStub::class);
 

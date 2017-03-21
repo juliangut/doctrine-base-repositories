@@ -9,6 +9,8 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Jgut\Doctrine\Repository\Pagination;
 
 use Doctrine\ORM\Tools\Pagination\Paginator;

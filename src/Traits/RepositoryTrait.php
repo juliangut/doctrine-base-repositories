@@ -9,6 +9,8 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Jgut\Doctrine\Repository\Traits;
 
 use Doctrine\Common\Util\Inflector;
@@ -65,7 +67,7 @@ trait RepositoryTrait
     {
         $className = $this->getClassName();
 
-        return new $className;
+        return new $className();
     }
 
     /**

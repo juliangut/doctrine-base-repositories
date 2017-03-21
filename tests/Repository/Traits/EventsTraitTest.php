@@ -9,6 +9,8 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Jgut\Doctrine\Repository\Tests\Traits;
 
 use Doctrine\Common\EventManager;
@@ -36,9 +38,9 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
 {
     public function testEventSubscribersManagement()
     {
-        $eventSubscriber = new EventStub;
+        $eventSubscriber = new EventStub();
 
-        $eventManager = new EventManager;
+        $eventManager = new EventManager();
         $eventManager->addEventSubscriber($eventSubscriber);
 
         $manager = $this->getMockBuilder(MongoDBDocumentManager::class)
@@ -70,7 +72,7 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
     {
         $eventSubscriber = new EventStub();
 
-        $eventManager = new EventManager;
+        $eventManager = new EventManager();
         $eventManager->addEventSubscriber($eventSubscriber);
 
         $manager = $this->getMockBuilder(EntityManager::class)
@@ -99,12 +101,12 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager);
 
-        $repository->disableEventSubscriber(new \stdClass);
+        $repository->disableEventSubscriber(new \stdClass());
     }
 
     public function testEventListenersManagement()
     {
-        $eventManager = new EventManager;
+        $eventManager = new EventManager();
         $eventManager->addEventSubscriber(new EventStub());
 
         $manager = $this->getMockBuilder(CouchDBDocumentManager::class)
@@ -135,7 +137,7 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
 
     public function testEventListenerManagement()
     {
-        $eventManager = new EventManager;
+        $eventManager = new EventManager();
         $eventManager->addEventSubscriber(new EventStub());
 
         $manager = $this->getMockBuilder(EntityManager::class)
@@ -159,7 +161,7 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
      */
     public function testBadEventListener()
     {
-        $eventManager = new EventManager;
+        $eventManager = new EventManager();
         $eventManager->addEventSubscriber(new EventStub());
 
         /* @var EntityManager $manager */
@@ -169,6 +171,6 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager);
 
-        $repository->disableEventListener('onFlush', new \stdClass);
+        $repository->disableEventListener('onFlush', new \stdClass());
     }
 }

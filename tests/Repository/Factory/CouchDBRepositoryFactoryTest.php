@@ -9,6 +9,8 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Jgut\Doctrine\Repository\Tests\Factory;
 
 use Doctrine\ODM\CouchDB\Mapping\ClassMetadata;
@@ -35,7 +37,7 @@ class CouchDBRepositoryFactoryTest extends \PHPUnit_Framework_TestCase
             ->will(static::returnValue($classMetadata));
         /* @var DocumentManager $manager */
 
-        $factory = new CouchDBRepositoryFactory;
+        $factory = new CouchDBRepositoryFactory();
 
         $repository = $factory->getRepository($manager, 'RepositoryEntity');
 

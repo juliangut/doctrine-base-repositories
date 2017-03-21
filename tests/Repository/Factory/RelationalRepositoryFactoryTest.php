@@ -9,6 +9,8 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Jgut\Doctrine\Repository\Tests\Factory;
 
 use Doctrine\ORM\EntityManager;
@@ -35,7 +37,7 @@ class RelationalRepositoryFactoryTest extends \PHPUnit_Framework_TestCase
             ->will(static::returnValue($classMetadata));
         /* @var EntityManager $manager */
 
-        $factory = new RelationalRepositoryFactory;
+        $factory = new RelationalRepositoryFactory();
 
         $repository = $factory->getRepository($manager, 'RepositoryEntity');
 

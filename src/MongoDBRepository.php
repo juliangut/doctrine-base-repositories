@@ -9,11 +9,11 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Jgut\Doctrine\Repository;
 
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\MongoDB\EagerCursor;
-use Doctrine\ODM\MongoDB\Cursor;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Jgut\Doctrine\Repository\Pagination\MongoDBAdapter;
 use Jgut\Doctrine\Repository\Traits\EventsTrait;

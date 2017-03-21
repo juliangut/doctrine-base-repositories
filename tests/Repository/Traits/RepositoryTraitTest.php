@@ -9,6 +9,8 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Jgut\Doctrine\Repository\Tests\Traits;
 
 use Doctrine\ORM\EntityManager;
@@ -72,7 +74,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         /* @var EntityManager $manager */
 
-        $entity = new EntityDocumentStub;
+        $entity = new EntityDocumentStub();
 
         $repository = new RepositoryStub($manager, [$entity]);
 
@@ -92,12 +94,12 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager);
 
-        $repository->add(new \stdClass);
+        $repository->add(new \stdClass());
     }
 
     public function testAdd()
     {
-        $entity = new EntityDocumentStub;
+        $entity = new EntityDocumentStub();
 
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
@@ -121,7 +123,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $manager->expects(static::once())->method('flush');
         /* @var EntityManager $manager */
 
-        $repository = new RepositoryStub($manager, [new EntityDocumentStub, new EntityDocumentStub]);
+        $repository = new RepositoryStub($manager, [new EntityDocumentStub(), new EntityDocumentStub()]);
 
         $repository->removeAll(true);
     }
@@ -135,7 +137,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $manager->expects(static::once())->method('flush');
         /* @var EntityManager $manager */
 
-        $repository = new RepositoryStub($manager, [new EntityDocumentStub, new EntityDocumentStub]);
+        $repository = new RepositoryStub($manager, [new EntityDocumentStub(), new EntityDocumentStub()]);
 
         $repository->removeBy([], true);
     }
@@ -149,7 +151,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $manager->expects(static::once())->method('flush');
         /* @var EntityManager $manager */
 
-        $repository = new RepositoryStub($manager, [new EntityDocumentStub, new EntityDocumentStub]);
+        $repository = new RepositoryStub($manager, [new EntityDocumentStub(), new EntityDocumentStub()]);
 
         $repository->removeOneBy([], true);
     }
@@ -160,7 +162,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidRemove()
     {
-        $entity = new \stdClass;
+        $entity = new \stdClass();
 
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
@@ -174,7 +176,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
     public function testRemove()
     {
-        $entity = new EntityDocumentStub;
+        $entity = new EntityDocumentStub();
 
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
@@ -190,7 +192,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
     public function testRemoveObject()
     {
-        $entity = new EntityDocumentStub;
+        $entity = new EntityDocumentStub();
 
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
@@ -211,7 +213,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         /* @var EntityManager $manager */
 
-        $repository = new RepositoryStub($manager, [new EntityDocumentStub, new EntityDocumentStub]);
+        $repository = new RepositoryStub($manager, [new EntityDocumentStub(), new EntityDocumentStub()]);
 
         static::assertEquals(2, $repository->countAll());
     }
