@@ -31,6 +31,7 @@
     "zendframework/zend-paginator": "^2.6"
   },
   "require-dev": {
+    "alcaeus/mongo-php-adapter": "^1.0",
     "doctrine/orm": "^2.4",
     "doctrine/couchdb-odm": "dev-master",
     "doctrine/mongodb-odm": "^1.1",
@@ -46,9 +47,10 @@
     "squizlabs/php_codesniffer": "^2.0"
   },
   "suggest": {
-    "doctrine/orm": "^2.4",
-    "doctrine/mongodb-odm": "^1.1",
-    "doctrine/couchdb-odm": "dev-master",
+    "doctrine/orm": "Doctrine ORM management",
+    "doctrine/mongodb-odm": "Doctrine MongoDB management",
+    "alcaeus/mongo-php-adapter": "MongoDB PHP adapter compatible with PHP7",
+    "doctrine/couchdb-odm": "Doctrine CouchDB management",
     "juliangut/doctrine-manager-builder": "Repository factory support for CouchDB",
     "rikbruil/doctrine-specification": "Specification pattern for Doctrine ORM"
   },

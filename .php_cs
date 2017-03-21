@@ -23,8 +23,6 @@ Doctrine2 utility repositories.
 @author Julián Gutiérrez <juliangut@gmail.com>
 HEADER;
 
-//HeaderCommentFixer::setHeader($header);
-
 $finder = Finder::create()
     ->exclude(['vendor', 'build'])
     ->in(__DIR__);
