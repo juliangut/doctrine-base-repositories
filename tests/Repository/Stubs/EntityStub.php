@@ -9,16 +9,13 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-
-
-
 declare(strict_types=1);
 
 namespace Jgut\Doctrine\Repository\Tests\Stubs;
 
 /**
- * Entity and document stub.
+ * Entity stub.
  */
-class EntityDocumentStub
+class EntityStub
 {
 }

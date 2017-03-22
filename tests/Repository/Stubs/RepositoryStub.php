@@ -9,17 +9,14 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-
-
-
 declare(strict_types=1);
 
 namespace Jgut\Doctrine\Repository\Tests\Stubs;
 
 use Doctrine\ORM\EntityManager;
+use Jgut\Doctrine\Repository\EventsTrait;
 use Jgut\Doctrine\Repository\Repository;
-use Jgut\Doctrine\Repository\Traits\EventsTrait;
-use Jgut\Doctrine\Repository\Traits\RepositoryTrait;
+use Jgut\Doctrine\Repository\RepositoryTrait;
 
 /**
  * Repository stub.
@@ -35,7 +32,7 @@ class RepositoryStub implements Repository
     protected $entityManager;
 
     /**
-     * @var EntityDocumentStub[]
+     * @var EntityStub[]
      */
     protected $entities;
 
@@ -64,7 +61,7 @@ class RepositoryStub implements Repository
      */
     public function getClassName()
     {
-        return EntityDocumentStub::class;
+        return EntityStub::class;
     }
 
     /**

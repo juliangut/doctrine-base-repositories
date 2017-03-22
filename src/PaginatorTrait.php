@@ -9,12 +9,9 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-
-
-
 declare(strict_types=1);
 
-namespace Jgut\Doctrine\Repository\Traits;
+namespace Jgut\Doctrine\Repository;
 
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Paginator;

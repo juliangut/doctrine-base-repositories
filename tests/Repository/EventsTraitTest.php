@@ -9,33 +9,18 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-
-
-
 declare(strict_types=1);
 
-namespace Jgut\Doctrine\Repository\Tests\Traits;
+namespace Jgut\Doctrine\Repository\Tests;
 
 use Doctrine\Common\EventManager;
-use Doctrine\ODM\CouchDB\DocumentManager as CouchDBDocumentManager;
-use Doctrine\ODM\CouchDB\Mapping\ClassMetadata as CouchDBClassMetadata;
-use Doctrine\ODM\MongoDB\DocumentManager as MongoDBDocumentManager;
-use Doctrine\ODM\MongoDB\Mapping\ClassMetadata as MongoDBClassMetadata;
-use Doctrine\ODM\MongoDB\UnitOfWork;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Jgut\Doctrine\Repository\CouchDBRepository;
-use Jgut\Doctrine\Repository\MongoDBRepository;
-use Jgut\Doctrine\Repository\RelationalRepository;
 use Jgut\Doctrine\Repository\Tests\Stubs\BlankEventStub;
-use Jgut\Doctrine\Repository\Tests\Stubs\EntityDocumentStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\EventStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\RepositoryStub;
 
 /**
  * Events trait tests.
- *
- * @group repository
  */
 class EventsTraitTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,20 +31,15 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
         $eventManager = new EventManager();
         $eventManager->addEventSubscriber($eventSubscriber);
 
-        $manager = $this->getMockBuilder(MongoDBDocumentManager::class)
+        $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
         $manager->expects(self::any())
             ->method('getEventManager')
             ->will(static::returnValue($eventManager));
-        /* @var MongoDBDocumentManager $manager */
+        /* @var EntityManager $manager */
 
-        $uow = $this->getMockBuilder(UnitOfWork::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var UnitOfWork $uow */
-
-        $repository = new MongoDBRepository($manager, $uow, new MongoDBClassMetadata(EntityDocumentStub::class));
+        $repository = new RepositoryStub($manager);
 
         $repository->disableEventSubscriber($eventSubscriber);
         static::assertCount(0, $eventManager->getListeners('prePersist'));
@@ -112,15 +92,15 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
         $eventManager = new EventManager();
         $eventManager->addEventSubscriber(new EventStub());
 
-        $manager = $this->getMockBuilder(CouchDBDocumentManager::class)
+        $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
         $manager->expects(self::any())
             ->method('getEventManager')
             ->will(static::returnValue($eventManager));
-        /* @var CouchDBDocumentManager $manager */
+        /* @var EntityManager $manager */
 
-        $repository = new CouchDBRepository($manager, new CouchDBClassMetadata('RepositoryDocument'));
+        $repository = new RepositoryStub($manager);
 
         $repository->disableEventListeners('onFlush');
         static::assertCount(0, $eventManager->getListeners('onFlush'));
@@ -151,7 +131,7 @@ class EventsTraitTest extends \PHPUnit_Framework_TestCase
             ->will(static::returnValue($eventManager));
         /* @var EntityManager $manager */
 
-        $repository = new RelationalRepository($manager, new ClassMetadata('RepositoryEntity'));
+        $repository = new RepositoryStub($manager);
 
         $repository->disableEventListener('onFlush', EventStub::class);
         static::assertCount(0, $eventManager->getListeners('onFlush'));
