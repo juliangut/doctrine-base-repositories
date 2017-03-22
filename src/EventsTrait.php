@@ -36,9 +36,9 @@ trait EventsTrait
     protected $disabledListeners = [];
 
     /**
-     * {@inheritdoc}
+     * Disable event subscriber.
      *
-     * @throws \InvalidArgumentException
+     * @param \Doctrine\Common\EventSubscriber|string $subscriberClass
      */
     public function disableEventSubscriber($subscriberClass)
     {
@@ -59,7 +59,7 @@ trait EventsTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Restore disabled event subscribers.
      */
     public function restoreEventSubscribers()
     {
@@ -71,7 +71,9 @@ trait EventsTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Disable all listeners for an event.
+     *
+     * @param string $event
      */
     public function disableEventListeners($event)
     {
@@ -87,9 +89,10 @@ trait EventsTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Disable listener for an event.
      *
-     * @throws \InvalidArgumentException
+     * @param string                                  $event
+     * @param \Doctrine\Common\EventSubscriber|string $subscriberClass
      */
     public function disableEventListener($event, $subscriberClass)
     {
@@ -110,7 +113,7 @@ trait EventsTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Restore all disabled listeners.
      */
     public function restoreAllEventListeners()
     {
@@ -125,7 +128,9 @@ trait EventsTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Restore disabled listeners for an event.
+     *
+     * @param string $event
      */
     public function restoreEventListeners($event)
     {
@@ -201,4 +206,11 @@ trait EventsTrait
     {
         return $this->getManager()->getEventManager();
     }
+
+    /**
+     * Get object manager.
+     *
+     * @return \Doctrine\ORM\EntityManager|\Doctrine\ODM\MongoDB\DocumentManager|\Doctrine\ODM\CouchDB\DocumentManager
+     */
+    abstract protected function getManager();
 }

@@ -23,7 +23,9 @@ trait RepositoryTrait
     protected $autoFlush = false;
 
     /**
-     * {@inheritdoc}
+     * Get automatic manager flushing.
+     *
+     * @return bool
      */
     public function isAutoFlush()
     {
@@ -31,7 +33,9 @@ trait RepositoryTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Set automatic manager flushing.
+     *
+     * @param bool $autoFlush
      */
     public function setAutoFlush($autoFlush = true)
     {
@@ -39,7 +43,7 @@ trait RepositoryTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Manager flush.
      */
     public function flush()
     {
@@ -47,7 +51,11 @@ trait RepositoryTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Find one object by a set of criteria or create a new one.
+     *
+     * @param array|\Doctrine\ORM\QueryBuilder|\Doctrine\ODM\MongoDB\Query\Builder $criteria
+     *
+     * @return \stdClass
      */
     public function findOneByOrGetNew($criteria)
     {
@@ -61,7 +69,9 @@ trait RepositoryTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Get a new managed object instance.
+     *
+     * @return \stdClass
      */
     public function getNew()
     {
@@ -71,7 +81,10 @@ trait RepositoryTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Add objects.
+     *
+     * @param \stdClass|\stdClass[] $objects
+     * @param bool                  $flush
      *
      * @throws \InvalidArgumentException
      */
@@ -97,7 +110,9 @@ trait RepositoryTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Remove all objects.
+     *
+     * @param bool $flush
      */
     public function removeAll($flush = false)
     {
@@ -113,7 +128,10 @@ trait RepositoryTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Remove object filtered by a set of criteria.
+     *
+     * @param array $criteria
+     * @param bool  $flush
      */
     public function removeBy(array $criteria, $flush = false)
     {
@@ -129,7 +147,10 @@ trait RepositoryTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Remove first object filtered by a set of criteria.
+     *
+     * @param array $criteria
+     * @param bool  $flush
      */
     public function removeOneBy(array $criteria, $flush = false)
     {
@@ -147,7 +168,10 @@ trait RepositoryTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Remove objects.
+     *
+     * @param \stdClass|\stdClass[]|string|int $objects
+     * @param bool                             $flush
      *
      * @throws \InvalidArgumentException
      */
@@ -179,7 +203,9 @@ trait RepositoryTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Get all objects count.
+     *
+     * @return int
      */
     public function countAll()
     {
@@ -280,7 +306,7 @@ trait RepositoryTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Get Class name.
      */
     abstract public function getClassName();
 
