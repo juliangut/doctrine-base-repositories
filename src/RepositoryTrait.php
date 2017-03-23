@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Jgut\Doctrine\Repository;
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\Inflector;
 
 /**
@@ -27,7 +29,7 @@ trait RepositoryTrait
      *
      * @return bool
      */
-    public function isAutoFlush()
+    public function isAutoFlush(): bool
     {
         return $this->autoFlush;
     }
@@ -37,7 +39,7 @@ trait RepositoryTrait
      *
      * @param bool $autoFlush
      */
-    public function setAutoFlush($autoFlush = true)
+    public function setAutoFlush(bool $autoFlush = true)
     {
         $this->autoFlush = $autoFlush === true;
     }
@@ -53,11 +55,11 @@ trait RepositoryTrait
     /**
      * Find one object by a set of criteria or create a new one.
      *
-     * @param array|\Doctrine\ORM\QueryBuilder|\Doctrine\ODM\MongoDB\Query\Builder $criteria
+     * @param array $criteria
      *
-     * @return \stdClass
+     * @return object
      */
-    public function findOneByOrGetNew($criteria)
+    public function findOneByOrGetNew(array $criteria)
     {
         $object = $this->findOneBy($criteria);
 
@@ -71,7 +73,7 @@ trait RepositoryTrait
     /**
      * Get a new managed object instance.
      *
-     * @return \stdClass
+     * @return object
      */
     public function getNew()
     {
@@ -88,7 +90,7 @@ trait RepositoryTrait
      *
      * @throws \InvalidArgumentException
      */
-    public function add($objects, $flush = false)
+    public function add($objects, bool $flush = false)
     {
         if (!is_array($objects)) {
             $objects = [$objects];
@@ -114,7 +116,7 @@ trait RepositoryTrait
      *
      * @param bool $flush
      */
-    public function removeAll($flush = false)
+    public function removeAll(bool $flush = false)
     {
         $manager = $this->getManager();
 
@@ -133,7 +135,7 @@ trait RepositoryTrait
      * @param array $criteria
      * @param bool  $flush
      */
-    public function removeBy(array $criteria, $flush = false)
+    public function removeBy(array $criteria, bool $flush = false)
     {
         $manager = $this->getManager();
 
@@ -152,7 +154,7 @@ trait RepositoryTrait
      * @param array $criteria
      * @param bool  $flush
      */
-    public function removeOneBy(array $criteria, $flush = false)
+    public function removeOneBy(array $criteria, bool $flush = false)
     {
         $object = $this->findOneBy($criteria);
 
@@ -170,12 +172,12 @@ trait RepositoryTrait
     /**
      * Remove objects.
      *
-     * @param \stdClass|\stdClass[]|string|int $objects
-     * @param bool                             $flush
+     * @param object|object[]|string|int $objects
+     * @param bool                       $flush
      *
      * @throws \InvalidArgumentException
      */
-    public function remove($objects, $flush = false)
+    public function remove($objects, bool $flush = false)
     {
         $manager = $this->getManager();
 
@@ -207,7 +209,7 @@ trait RepositoryTrait
      *
      * @return int
      */
-    public function countAll()
+    public function countAll(): int
     {
         return $this->countBy([]);
     }
@@ -215,11 +217,11 @@ trait RepositoryTrait
     /**
      * Get object count filtered by a set of criteria.
      *
-     * @param array|\Doctrine\ORM\QueryBuilder|\Doctrine\ODM\MongoDB\Query\Builder $criteria
+     * @param mixed $criteria
      *
      * @return int
      */
-    abstract public function countBy($criteria);
+    abstract public function countBy($criteria): int;
 
     /**
      * Adds support for magic finders and removers.
@@ -229,9 +231,9 @@ trait RepositoryTrait
      *
      * @throws \BadMethodCallException
      *
-     * @return array|object
+     * @return mixed
      */
-    public function __call($method, $arguments)
+    public function __call(string $method, array $arguments)
     {
         static $supportedMethods = ['findBy', 'findOneBy', 'findPaginatedBy', 'removeBy', 'removeOneBy'];
 
@@ -268,9 +270,9 @@ trait RepositoryTrait
      *
      * @throws \BadMethodCallException
      *
-     * @return array|object
+     * @return mixed
      */
-    protected function callSupportedMethod($method, $fieldName, array $arguments)
+    protected function callSupportedMethod(string $method, string $fieldName, array $arguments)
     {
         $classMetadata = $this->getClassMetadata();
 
@@ -300,27 +302,29 @@ trait RepositoryTrait
      *
      * @return bool
      */
-    protected function canBeManaged($object)
+    protected function canBeManaged($object): bool
     {
         return is_object($object) && is_a($object, $this->getClassName());
     }
 
     /**
      * Get Class name.
+     *
+     * @return string
      */
-    abstract public function getClassName();
+    abstract public function getClassName(): string;
 
     /**
      * Get object manager.
      *
-     * @return \Doctrine\ORM\EntityManager|\Doctrine\ODM\MongoDB\DocumentManager|\Doctrine\ODM\CouchDB\DocumentManager
+     * @return ObjectManager
      */
-    abstract protected function getManager();
+    abstract protected function getManager(): ObjectManager;
 
     /**
      * Get class metadata.
      *
-     * @return \Doctrine\Common\Persistence\Mapping\ClassMetadata
+     * @return ClassMetadata
      */
-    abstract protected function getClassMetadata();
+    abstract protected function getClassMetadata(): ClassMetadata;
 }

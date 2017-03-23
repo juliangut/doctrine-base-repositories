@@ -13,10 +13,12 @@ declare(strict_types=1);
 
 namespace Jgut\Doctrine\Repository\Tests\Stubs;
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManager;
 use Jgut\Doctrine\Repository\EventsTrait;
 use Jgut\Doctrine\Repository\Repository;
 use Jgut\Doctrine\Repository\RepositoryTrait;
+use Zend\Paginator\Paginator;
 
 /**
  * Repository stub.
@@ -51,7 +53,7 @@ class RepositoryStub implements Repository
     /**
      * {@inheritdoc}
      */
-    protected function getManager()
+    protected function getManager(): EntityManager
     {
         return $this->entityManager;
     }
@@ -59,7 +61,7 @@ class RepositoryStub implements Repository
     /**
      * {@inheritdoc}
      */
-    public function getClassName()
+    public function getClassName(): string
     {
         return EntityStub::class;
     }
@@ -67,14 +69,17 @@ class RepositoryStub implements Repository
     /**
      * {@inheritdoc}
      */
-    public function countBy($criteria)
+    public function countBy($criteria): int
     {
         return count($this->entities);
     }
 
-    public function findPaginatedBy($criteria, array $orderBy = null, $itemsPerPage = 10)
+    /**
+     * {@inheritdoc}
+     */
+    public function findPaginatedBy($criteria, array $orderBy = null, int $itemsPerPage = 10): Paginator
     {
-        // TODO: Implement findPaginatedBy() method.
+        // Implementation not needed
     }
 
     /**
@@ -92,7 +97,7 @@ class RepositoryStub implements Repository
     /**
      * {@inheritdoc}
      */
-    public function findAll()
+    public function findAll(): array
     {
         return $this->entities;
     }
@@ -118,7 +123,7 @@ class RepositoryStub implements Repository
      *
      * @return \Doctrine\Common\Persistence\Mapping\ClassMetadata
      */
-    protected function getClassMetadata()
+    protected function getClassMetadata(): ClassMetadata
     {
         return new \Doctrine\ORM\Mapping\ClassMetadataInfo('EntityDocumentStub');
     }

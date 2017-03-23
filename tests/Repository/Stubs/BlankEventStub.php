@@ -20,7 +20,10 @@ use Doctrine\Common\EventSubscriber;
  */
 class BlankEventStub implements EventSubscriber
 {
-    public function getSubscribedEvents()
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubscribedEvents(): array
     {
         return [];
     }

@@ -15,6 +15,7 @@ namespace Jgut\Doctrine\Repository\Tests\Stubs;
 
 use Jgut\Doctrine\Repository\PaginatorTrait;
 use Zend\Paginator\Adapter\ArrayAdapter;
+use Zend\Paginator\Paginator;
 
 /**
  * Paginator trait stub.
@@ -29,9 +30,9 @@ class PaginatorTraitStub
      * @param array $items
      * @param int   $limit
      *
-     * @return \Zend\Paginator\Paginator
+     * @return Paginator
      */
-    public function getPaginated(array $items, $limit)
+    public function getPaginated(array $items, $limit): Paginator
     {
         return $this->getPaginator(new ArrayAdapter($items), $limit);
     }

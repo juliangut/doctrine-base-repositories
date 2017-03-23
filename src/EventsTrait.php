@@ -15,6 +15,7 @@ namespace Jgut\Doctrine\Repository;
 
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Events trait.
@@ -75,7 +76,7 @@ trait EventsTrait
      *
      * @param string $event
      */
-    public function disableEventListeners($event)
+    public function disableEventListeners(string $event)
     {
         if (!array_key_exists($event, $this->disabledListeners)) {
             $this->disabledListeners[$event] = [];
@@ -91,10 +92,12 @@ trait EventsTrait
     /**
      * Disable listener for an event.
      *
-     * @param string                                  $event
-     * @param \Doctrine\Common\EventSubscriber|string $subscriberClass
+     * @param string                 $event
+     * @param string|EventSubscriber $subscriberClass
+     *
+     * @throws \InvalidArgumentException
      */
-    public function disableEventListener($event, $subscriberClass)
+    public function disableEventListener(string $event, $subscriberClass)
     {
         $subscriberClass = $this->getSubscriberClassName($subscriberClass);
 
@@ -132,7 +135,7 @@ trait EventsTrait
      *
      * @param string $event
      */
-    public function restoreEventListeners($event)
+    public function restoreEventListeners(string $event)
     {
         if (!array_key_exists($event, $this->disabledListeners) || empty($this->disabledListeners[$event])) {
             return;
@@ -157,7 +160,7 @@ trait EventsTrait
      *
      * @return string
      */
-    protected function getSubscriberClassName($subscriberClass)
+    protected function getSubscriberClassName($subscriberClass): string
     {
         if (is_object($subscriberClass) && in_array(EventSubscriber::class, class_implements($subscriberClass))) {
             return get_class($subscriberClass);
@@ -178,7 +181,7 @@ trait EventsTrait
      *
      * @return array
      */
-    public function getRegisteredEvents()
+    public function getRegisteredEvents(): array
     {
         return array_keys($this->getEventManager()->getListeners());
     }
@@ -190,7 +193,7 @@ trait EventsTrait
      *
      * @return EventSubscriber[]
      */
-    protected function getEventListeners($event = null)
+    protected function getEventListeners($event = null): array
     {
         $eventManager = $this->getEventManager();
 
@@ -202,7 +205,7 @@ trait EventsTrait
      *
      * @return EventManager
      */
-    protected function getEventManager()
+    protected function getEventManager(): EventManager
     {
         return $this->getManager()->getEventManager();
     }
@@ -210,7 +213,7 @@ trait EventsTrait
     /**
      * Get object manager.
      *
-     * @return \Doctrine\ORM\EntityManager|\Doctrine\ODM\MongoDB\DocumentManager|\Doctrine\ODM\CouchDB\DocumentManager
+     * @return ObjectManager
      */
-    abstract protected function getManager();
+    abstract protected function getManager(): ObjectManager;
 }

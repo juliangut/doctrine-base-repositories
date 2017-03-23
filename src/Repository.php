@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Jgut\Doctrine\Repository;
 
 use Doctrine\Common\Persistence\ObjectRepository;
+use Zend\Paginator\Paginator;
 
 /**
  * Repository interface.
@@ -25,14 +26,14 @@ interface Repository extends ObjectRepository
      *
      * @return bool
      */
-    public function isAutoFlush();
+    public function isAutoFlush(): bool;
 
     /**
      * Set automatic manager flushing.
      *
      * @param bool $autoFlush
      */
-    public function setAutoFlush($autoFlush = false);
+    public function setAutoFlush(bool $autoFlush = false);
 
     /**
      * Manager flush.
@@ -63,15 +64,15 @@ interface Repository extends ObjectRepository
      *
      * @param string $event
      */
-    public function disableEventListeners($event);
+    public function disableEventListeners(string $event);
 
     /**
      * Disable listener for an event.
      *
      * @param string                                  $event
-     * @param \Doctrine\Common\EventSubscriber|string $subscriberClass
+     * @param string|\Doctrine\Common\EventSubscriber $subscriberClass
      */
-    public function disableEventListener($event, $subscriberClass);
+    public function disableEventListener(string $event, $subscriberClass);
 
     /**
      * Restore all disabled listeners.
@@ -83,7 +84,14 @@ interface Repository extends ObjectRepository
      *
      * @param string $event
      */
-    public function restoreEventListeners($event);
+    public function restoreEventListeners(string $event);
+
+    /**
+     * Get registered events.
+     *
+     * @return array
+     */
+    public function getRegisteredEvents(): array;
 
     /**
      * Return paginated elements filtered by criteria.
@@ -92,18 +100,18 @@ interface Repository extends ObjectRepository
      * @param array                            $orderBy
      * @param int                              $itemsPerPage
      *
-     * @return \Zend\Paginator\Paginator
+     * @return Paginator
      */
-    public function findPaginatedBy($criteria, array $orderBy = [], $itemsPerPage = 10);
+    public function findPaginatedBy($criteria, array $orderBy = [], int $itemsPerPage = 10): Paginator;
 
     /**
      * Find one object by a set of criteria or create a new one.
      *
-     * @param array|\Doctrine\ORM\QueryBuilder|\Doctrine\ODM\MongoDB\Query\Builder $criteria
+     * @param array $criteria
      *
      * @return \stdClass
      */
-    public function findOneByOrGetNew($criteria);
+    public function findOneByOrGetNew(array $criteria);
 
     /**
      * Get a new managed object instance.
@@ -118,14 +126,14 @@ interface Repository extends ObjectRepository
      * @param \stdClass|\stdClass[] $objects
      * @param bool                  $flush
      */
-    public function add($objects, $flush = false);
+    public function add($objects, bool $flush = false);
 
     /**
      * Remove all objects.
      *
      * @param bool $flush
      */
-    public function removeAll($flush = false);
+    public function removeAll(bool $flush = false);
 
     /**
      * Remove object filtered by a set of criteria.
@@ -133,7 +141,7 @@ interface Repository extends ObjectRepository
      * @param array $criteria
      * @param bool  $flush
      */
-    public function removeBy(array $criteria, $flush = false);
+    public function removeBy(array $criteria, bool $flush = false);
 
     /**
      * Remove first object filtered by a set of criteria.
@@ -141,7 +149,7 @@ interface Repository extends ObjectRepository
      * @param array $criteria
      * @param bool  $flush
      */
-    public function removeOneBy(array $criteria, $flush = false);
+    public function removeOneBy(array $criteria, bool $flush = false);
 
     /**
      * Remove objects.
@@ -149,21 +157,21 @@ interface Repository extends ObjectRepository
      * @param \stdClass|\stdClass[]|string|int $objects
      * @param bool                             $flush
      */
-    public function remove($objects, $flush = false);
+    public function remove($objects, bool $flush = false);
 
     /**
      * Get all objects count.
      *
      * @return int
      */
-    public function countAll();
+    public function countAll(): int;
 
     /**
      * Get object count filtered by a set of criteria.
      *
-     * @param array|\Doctrine\ORM\QueryBuilder $criteria
+     * @param mixed $criteria
      *
      * @return int
      */
-    public function countBy($criteria);
+    public function countBy($criteria): int;
 }
