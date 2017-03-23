@@ -35,7 +35,6 @@
     "phpmd/phpmd": "^2.0",
     "phpstan/phpstan": "~0.6",
     "phpunit/phpunit": "^4.5|^5.0",
-    "phpunit/phpunit-mock-objects": "^3.2",
     "sebastian/phpcpd": "^2.0",
     "squizlabs/php_codesniffer": "^2.0"
   },
