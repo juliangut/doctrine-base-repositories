@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Doctrine\Repository;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\Inflector;
 
@@ -308,23 +307,16 @@ trait RepositoryTrait
     }
 
     /**
-     * Get Class name.
-     *
-     * @return string
-     */
-    abstract public function getClassName(): string;
-
-    /**
      * Get object manager.
      *
      * @return ObjectManager
      */
-    abstract protected function getManager(): ObjectManager;
+    abstract protected function getManager();
 
     /**
      * Get class metadata.
      *
-     * @return ClassMetadata
+     * @return \Doctrine\Common\Persistence\Mapping\ClassMetadata
      */
-    abstract protected function getClassMetadata(): ClassMetadata;
+    abstract protected function getClassMetadata();
 }

@@ -45,7 +45,7 @@ interface Repository extends ObjectRepository
      *
      * @return string
      */
-    public function getClassName();
+    public function getClassName(): string;
 
     /**
      * Disable event subscriber.
