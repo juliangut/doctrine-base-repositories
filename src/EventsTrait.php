@@ -15,7 +15,6 @@ namespace Jgut\Doctrine\Repository;
 
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Events trait.
@@ -213,7 +212,7 @@ trait EventsTrait
     /**
      * Get object manager.
      *
-     * @return ObjectManager
+     * @return \Doctrine\Common\Persistence\ObjectManager
      */
-    abstract protected function getManager(): ObjectManager;
+    abstract protected function getManager();
 }

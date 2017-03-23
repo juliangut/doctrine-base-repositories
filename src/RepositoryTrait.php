@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Doctrine\Repository;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\Inflector;
 
 /**
@@ -309,7 +308,7 @@ trait RepositoryTrait
     /**
      * Get object manager.
      *
-     * @return ObjectManager
+     * @return \Doctrine\Common\Persistence\ObjectManager
      */
     abstract protected function getManager();
 
