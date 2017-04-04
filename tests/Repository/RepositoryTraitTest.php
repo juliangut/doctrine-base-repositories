@@ -60,9 +60,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository = new RepositoryStub($manager);
 
-        $entity = $repository->findOneByOrGetNew([]);
-
-        static::assertInstanceOf(EntityStub::class, $entity);
+        static::assertInstanceOf(EntityStub::class, $repository->findOneByOrGetNew([]));
     }
 
     public function testFindOneOrGetNew()
@@ -77,6 +75,41 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $repository = new RepositoryStub($manager, [$entity]);
 
         static::assertEquals($entity, $repository->findOneByOrGetNew([]));
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessageRegExp /^Object factory must return an instance of .+\. "boolean" returned$/
+     */
+    public function testInvalidObjectFactory()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $repository->setObjectFactory(function () {
+            return false;
+        });
+
+        $repository->getNew();
+    }
+
+    public function testGetNewByObjectFactory()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+        $repository->setObjectFactory(function () {
+            return new EntityStub();
+        });
+
+        static::assertInstanceOf(EntityStub::class, $repository->getNew());
     }
 
     /**

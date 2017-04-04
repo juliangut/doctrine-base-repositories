@@ -20,7 +20,19 @@ use Doctrine\Common\Util\Inflector;
  */
 trait RepositoryTrait
 {
+    /**
+     * Auto flush changes.
+     *
+     * @var bool
+     */
     protected $autoFlush = false;
+
+    /**
+     * New object factory.
+     *
+     * @var callable
+     */
+    protected $objectFactory;
 
     /**
      * Get automatic manager flushing.
@@ -51,9 +63,21 @@ trait RepositoryTrait
     }
 
     /**
+     * Set object factory.
+     *
+     * @param callable $objectFactory
+     */
+    public function setObjectFactory(callable $objectFactory)
+    {
+        $this->objectFactory = $objectFactory;
+    }
+
+    /**
      * Find one object by a set of criteria or create a new one.
      *
      * @param array $criteria
+     *
+     * @throws \RuntimeException
      *
      * @return object
      */
@@ -71,13 +95,31 @@ trait RepositoryTrait
     /**
      * Get a new managed object instance.
      *
+     * @throws \RuntimeException
+     *
      * @return object
      */
     public function getNew()
     {
         $className = $this->getClassName();
 
-        return new $className();
+        if ($this->objectFactory === null) {
+            return new $className();
+        }
+
+        $object = call_user_func($this->objectFactory);
+
+        if (!is_object($object) || !is_a($object, $className)) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Object factory must return an instance of %s. "%s" returned',
+                    $className,
+                    is_object($object) ? get_class($object) : gettype($object)
+                )
+            );
+        }
+
+        return $object;
     }
 
     /**

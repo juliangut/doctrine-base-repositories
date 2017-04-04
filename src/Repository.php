@@ -41,6 +41,13 @@ interface Repository extends ObjectRepository
     public function flush();
 
     /**
+     * Set object factory.
+     *
+     * @param callable $objectFactory
+     */
+    public function setObjectFactory(callable $objectFactory);
+
+    /**
      * Returns the fully qualified class name of the objects managed by the repository.
      *
      * @return string
