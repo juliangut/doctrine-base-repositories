@@ -109,7 +109,7 @@ trait RepositoryTrait
 
         $object = call_user_func($this->objectFactory);
 
-        if (!is_object($object) || !is_a($object, $className)) {
+        if (!$this->canBeManaged($object)) {
             throw new \RuntimeException(
                 sprintf(
                     'Object factory must return an instance of %s. "%s" returned',
