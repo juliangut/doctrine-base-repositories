@@ -38,30 +38,35 @@ class customRepository extends EntityRepository implements Repository
     use RepositoryTrait;
     use EventsTrait;
     use PaginatorTrait;
-    
-    public function findPaginatedBy($criteria, array $orderBy = [], $itemsPerPage = 10)
-    {
-        // Implement
-    }
 
     public function countBy($criteria)
     {
-        // Implement
+        // Custom implementation
     }
-    
+
+    public function findPaginatedBy($criteria, array $orderBy = [], $itemsPerPage = 10)
+    {
+        // Custom implementation
+    }
+
     protected function getManager()
     {
-        // Implement
+        // Custom implementation
     }
     
     // Custom methods
 }
-
 ```
+
+### Implementations
+
+* ORM (Relational databases) with [doctrine-orm-repositories](https://github.com/juliangut/doctrine-orm-repositories)
+* MongoDB with [doctrine-mongodb-odm-repositories](https://github.com/juliangut/doctrine-mongodb-odm-repositories)
+* CouchDB with [doctrine-couchdb-odm-repositories](https://github.com/juliangut/doctrine-couchdb-odm-repositories)
 
 ## New methods
 
-This are the new methods that `juliangut/doctrine-base-repositories` repositories brings to the table thanks to `RepositoryTrait` 
+These are the new methods that `juliangut/doctrine-base-repositories` brings to the table thanks to `RepositoryTrait` 
 
 ### Creating
 
@@ -138,7 +143,7 @@ $repository->removeOneById(1);
 
 #### countAll and countBy
 
-Perform object count in the most efficient way possible, except for CouchDB ;-(
+Perform object count
 
 ```php
 $repository = $manager->getRepository(ObjectClass::class);
@@ -146,6 +151,8 @@ $repository = $manager->getRepository(ObjectClass::class);
 $totalObjects = $repository->countAll();
 $activeObjects = $repository->countBy(['active' => true]);
 ```
+
+_countBy needs implementation on custom repository_
 
 ## Events managing
 
@@ -207,6 +214,8 @@ $paginator->getCurrentItemCount(); // 10
 $paginator->getCurrentPageNumber(); // 1
 ...
 ```
+
+_needs implementation on custom repository_
 
 ## Contributing
 
