@@ -116,22 +116,22 @@ interface Repository extends ObjectRepository
      *
      * @param array $criteria
      *
-     * @return \stdClass
+     * @return object
      */
     public function findOneByOrGetNew(array $criteria);
 
     /**
      * Get a new managed object instance.
      *
-     * @return \stdClass
+     * @return object
      */
     public function getNew();
 
     /**
      * Add objects.
      *
-     * @param \stdClass|\stdClass[] $objects
-     * @param bool                  $flush
+     * @param object|object[] $objects
+     * @param bool            $flush
      */
     public function add($objects, bool $flush = false);
 
@@ -161,8 +161,8 @@ interface Repository extends ObjectRepository
     /**
      * Remove objects.
      *
-     * @param \stdClass|\stdClass[]|string|int $objects
-     * @param bool                             $flush
+     * @param object|object[]|string|int $objects
+     * @param bool                       $flush
      */
     public function remove($objects, bool $flush = false);
 

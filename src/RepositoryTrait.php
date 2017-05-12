@@ -51,7 +51,7 @@ trait RepositoryTrait
      */
     public function setAutoFlush(bool $autoFlush = true)
     {
-        $this->autoFlush = $autoFlush === true;
+        $this->autoFlush = $autoFlush;
     }
 
     /**
@@ -125,8 +125,8 @@ trait RepositoryTrait
     /**
      * Add objects.
      *
-     * @param \stdClass|\stdClass[] $objects
-     * @param bool                  $flush
+     * @param object|object[] $objects
+     * @param bool            $flush
      *
      * @throws \InvalidArgumentException
      */
@@ -146,9 +146,7 @@ trait RepositoryTrait
             $manager->persist($object);
         }
 
-        if ($flush === true || $this->autoFlush === true) {
-            $manager->flush();
-        }
+        $this->flushObject($objects, $flush);
     }
 
     /**
@@ -160,13 +158,13 @@ trait RepositoryTrait
     {
         $manager = $this->getManager();
 
-        foreach ($this->findAll() as $object) {
+        $objects = $this->findAll();
+
+        foreach ($objects as $object) {
             $manager->remove($object);
         }
 
-        if ($flush === true || $this->autoFlush === true) {
-            $manager->flush();
-        }
+        $this->flushObject($objects, $flush);
     }
 
     /**
@@ -179,13 +177,13 @@ trait RepositoryTrait
     {
         $manager = $this->getManager();
 
-        foreach ($this->findBy($criteria) as $object) {
+        $objects = $this->findBy($criteria);
+
+        foreach ($objects as $object) {
             $manager->remove($object);
         }
 
-        if ($flush === true || $this->autoFlush === true) {
-            $manager->flush();
-        }
+        $this->flushObject($objects, $flush);
     }
 
     /**
@@ -199,13 +197,9 @@ trait RepositoryTrait
         $object = $this->findOneBy($criteria);
 
         if ($object !== null) {
-            $manager = $this->getManager();
+            $this->getManager()->remove($object);
 
-            $manager->remove($object);
-
-            if ($flush === true || $this->autoFlush === true) {
-                $manager->flush();
-            }
+            $this->flushObject($object, $flush);
         }
     }
 
@@ -238,9 +232,7 @@ trait RepositoryTrait
                 $manager->remove($object);
             }
 
-            if ($flush === true || $this->autoFlush === true) {
-                $manager->flush();
-            }
+            $this->flushObject($objects, $flush);
         }
     }
 
@@ -344,7 +336,33 @@ trait RepositoryTrait
      */
     protected function canBeManaged($object): bool
     {
-        return is_object($object) && is_a($object, $this->getClassName());
+        $managedClass = $this->getClassName();
+
+        return $object instanceof $managedClass;
+    }
+
+    /**
+     * Flush managed object.
+     *
+     * @param object|array $object
+     * @param bool         $flush
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function flushObject($objects, bool $flush)
+    {
+        if ($flush || $this->autoFlush) {
+            if (!is_object($objects) && !is_array($objects)) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Invalid flush objects provided. Must be an array or object, "%s" given',
+                        gettype($objects)
+                    )
+                );
+            }
+
+            $this->getManager()->flush($objects);
+        }
     }
 
     /**

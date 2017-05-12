@@ -51,6 +51,22 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $repository->flush();
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid flush objects provided. Must be an array or object, "string" given
+     */
+    public function testFlushObject()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $repository->flushObject('invalid', true);
+    }
+
     public function testGetNewByFindOne()
     {
         $manager = $this->getMockBuilder(EntityManager::class)

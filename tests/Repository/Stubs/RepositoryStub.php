@@ -25,7 +25,9 @@ use Zend\Paginator\Paginator;
  */
 class RepositoryStub implements Repository
 {
-    use RepositoryTrait;
+    use RepositoryTrait {
+        flushObject as traitFlushObject;
+    }
     use EventsTrait;
 
     /**
@@ -125,6 +127,17 @@ class RepositoryStub implements Repository
      */
     protected function getClassMetadata(): ClassMetadata
     {
-        return new \Doctrine\ORM\Mapping\ClassMetadataInfo('EntityDocumentStub');
+        return new \Doctrine\ORM\Mapping\ClassMetadataInfo(self::class);
+    }
+
+    /**
+     * Flush object(s).
+     *
+     * @param object|object[] $objects
+     * @param bool            $flush
+     */
+    public function flushObject($objects, bool $flush)
+    {
+        $this->traitFlushObject($objects, $flush);
     }
 }
