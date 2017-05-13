@@ -345,7 +345,7 @@ trait RepositoryTrait
             $manager->$action($object);
         }
 
-        $this->doFlush($objects, $flush instanceof \Traversable ? iterator_to_array($flush) : $flush);
+        $this->doFlush($objects instanceof \Traversable ? iterator_to_array($objects) : $objects, $flush);
     }
 
     /**
