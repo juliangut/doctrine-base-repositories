@@ -43,28 +43,13 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(static::once())->method('flush');
+        $manager->expects(static::once())
+            ->method('flush');
         /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager);
 
         $repository->flush();
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid flush objects provided. Must be an array or object, "string" given
-     */
-    public function testFlushObject()
-    {
-        $manager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var EntityManager $manager */
-
-        $repository = new RepositoryStub($manager);
-
-        $repository->flushObject('invalid', true);
     }
 
     public function testGetNewByFindOne()
@@ -151,8 +136,11 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(static::once())->method('persist')->with(self::equalTo($entity));
-        $manager->expects(static::once())->method('flush');
+        $manager->expects(static::once())
+            ->method('persist')
+            ->with(self::equalTo($entity));
+        $manager->expects(static::once())
+            ->method('flush');
         /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager);
@@ -166,8 +154,10 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(self::exactly(2))->method('remove');
-        $manager->expects(static::once())->method('flush');
+        $manager->expects(self::exactly(2))
+            ->method('remove');
+        $manager->expects(static::once())
+            ->method('flush');
         /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager, [new EntityStub(), new EntityStub()]);
@@ -180,8 +170,10 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(self::exactly(2))->method('remove');
-        $manager->expects(static::once())->method('flush');
+        $manager->expects(self::exactly(2))
+            ->method('remove');
+        $manager->expects(static::once())
+            ->method('flush');
         /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager, [new EntityStub(), new EntityStub()]);
@@ -194,8 +186,10 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(static::once())->method('remove');
-        $manager->expects(static::once())->method('flush');
+        $manager->expects(static::once())
+            ->method('remove');
+        $manager->expects(static::once())
+            ->method('flush');
         /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager, [new EntityStub(), new EntityStub()]);
@@ -228,8 +222,11 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(static::once())->method('remove')->with(self::equalTo($entity));
-        $manager->expects(static::once())->method('flush');
+        $manager->expects(static::once())
+            ->method('remove')
+            ->with(self::equalTo($entity));
+        $manager->expects(static::once())
+            ->method('flush');
         /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager, [$entity]);
@@ -244,13 +241,50 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects(static::once())->method('remove')->with(self::equalTo($entity));
-        $manager->expects(static::once())->method('flush');
+        $manager->expects(static::once())
+            ->method('remove')
+            ->with(self::equalTo($entity));
+        $manager->expects(static::once())
+            ->method('flush');
         /* @var EntityManager $manager */
 
         $repository = new RepositoryStub($manager);
 
         $repository->remove($entity, true);
+    }
+
+    public function testRefreshObject()
+    {
+        $entity = new EntityStub();
+
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $manager->expects(static::once())
+            ->method('refresh')
+            ->with(self::equalTo($entity));
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $repository->refresh($entity);
+    }
+
+    public function testDetachObject()
+    {
+        $entity = new EntityStub();
+
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $manager->expects(static::once())
+            ->method('detach')
+            ->with(self::equalTo($entity));
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $repository->detach($entity);
     }
 
     public function testCountAll()
@@ -267,7 +301,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \BadMethodCallException
-     * @expectedExceptionMessageRegExp /^You need to pass a parameter to .+::removeByParameter$/
+     * @expectedExceptionMessageRegExp /^You need to call .+::removeByParameter with a parameter$/
      */
     public function testCallNoArguments()
     {
@@ -283,7 +317,7 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \BadMethodCallException
-     * @expectedExceptionMessageRegExp /^Undefined method "noMethod"\. Method name must start with one of(,? ".+")+!/
+     * @expectedExceptionMessageRegExp /^Undefined method "noMethod"\. Method call must start with one of(,? ".+")+!/
      */
     public function testCallNoMethod()
     {

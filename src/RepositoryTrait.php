@@ -20,6 +20,8 @@ use Doctrine\Common\Util\Inflector;
  */
 trait RepositoryTrait
 {
+    protected static $supportedMethods = ['findBy', 'findOneBy', 'findPaginatedBy', 'removeBy', 'removeOneBy'];
+
     /**
      * Auto flush changes.
      *
@@ -125,28 +127,14 @@ trait RepositoryTrait
     /**
      * Add objects.
      *
-     * @param object|object[] $objects
-     * @param bool            $flush
+     * @param object|object[]|\Traversable $objects
+     * @param bool                         $flush
      *
      * @throws \InvalidArgumentException
      */
     public function add($objects, bool $flush = false)
     {
-        if (!is_array($objects)) {
-            $objects = [$objects];
-        }
-
-        $manager = $this->getManager();
-
-        foreach ($objects as $object) {
-            if (!$this->canBeManaged($object)) {
-                throw new \InvalidArgumentException(sprintf('Managed object must be a %s', $this->getClassName()));
-            }
-
-            $manager->persist($object);
-        }
-
-        $this->flushObject($objects, $flush);
+        $this->runManagerAction($objects, 'persist', $flush);
     }
 
     /**
@@ -156,15 +144,7 @@ trait RepositoryTrait
      */
     public function removeAll(bool $flush = false)
     {
-        $manager = $this->getManager();
-
-        $objects = $this->findAll();
-
-        foreach ($objects as $object) {
-            $manager->remove($object);
-        }
-
-        $this->flushObject($objects, $flush);
+        $this->runManagerAction($this->findAll(), 'remove', $flush);
     }
 
     /**
@@ -175,15 +155,7 @@ trait RepositoryTrait
      */
     public function removeBy(array $criteria, bool $flush = false)
     {
-        $manager = $this->getManager();
-
-        $objects = $this->findBy($criteria);
-
-        foreach ($objects as $object) {
-            $manager->remove($object);
-        }
-
-        $this->flushObject($objects, $flush);
+        $this->runManagerAction($this->findBy($criteria), 'remove', $flush);
     }
 
     /**
@@ -194,46 +166,58 @@ trait RepositoryTrait
      */
     public function removeOneBy(array $criteria, bool $flush = false)
     {
-        $object = $this->findOneBy($criteria);
-
-        if ($object !== null) {
-            $this->getManager()->remove($object);
-
-            $this->flushObject($object, $flush);
-        }
+        $this->runManagerAction($this->findOneBy($criteria), 'remove', $flush);
     }
 
     /**
      * Remove objects.
      *
-     * @param object|object[]|string|int $objects
-     * @param bool                       $flush
+     * @param object|object[]|\Traversable|string|int $objects
+     * @param bool                                    $flush
      *
      * @throws \InvalidArgumentException
      */
     public function remove($objects, bool $flush = false)
     {
-        $manager = $this->getManager();
-
-        if (!is_object($objects) && !is_array($objects)) {
+        if (!is_object($objects) && !is_array($objects) && !$objects instanceof \Traversable) {
             $objects = $this->find($objects);
         }
 
-        if ($objects !== null) {
-            if (!is_array($objects)) {
-                $objects = [$objects];
-            }
+        $this->runManagerAction($objects, 'remove', $flush);
+    }
 
-            foreach ($objects as $object) {
-                if (!$this->canBeManaged($object)) {
-                    throw new \InvalidArgumentException(sprintf('Managed object must be a %s', $this->getClassName()));
-                }
+    /**
+     * Refresh objects.
+     *
+     * @param object|object[]|\Traversable $objects
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function refresh($objects)
+    {
+        $backupAutoFlush = $this->autoFlush;
 
-                $manager->remove($object);
-            }
+        $this->autoFlush = false;
+        $this->runManagerAction($objects, 'refresh', false);
 
-            $this->flushObject($objects, $flush);
-        }
+        $this->autoFlush = $backupAutoFlush;
+    }
+
+    /**
+     * Detach objects.
+     *
+     * @param object|object[]|\Traversable $objects
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function detach($objects)
+    {
+        $backupAutoFlush = $this->autoFlush;
+
+        $this->autoFlush = false;
+        $this->runManagerAction($objects, 'detach', false);
+
+        $this->autoFlush = $backupAutoFlush;
     }
 
     /**
@@ -256,7 +240,7 @@ trait RepositoryTrait
     abstract public function countBy($criteria): int;
 
     /**
-     * Adds support for magic finders and removers.
+     * Adds support for magic methods.
      *
      * @param string $method
      * @param array  $arguments
@@ -267,17 +251,15 @@ trait RepositoryTrait
      */
     public function __call($method, $arguments)
     {
-        static $supportedMethods = ['findBy', 'findOneBy', 'findPaginatedBy', 'removeBy', 'removeOneBy'];
-
         if (count($arguments) === 0) {
             throw new \BadMethodCallException(sprintf(
-                'You need to pass a parameter to %s::%s',
+                'You need to call %s::%s with a parameter',
                 $this->getClassName(),
                 $method
             ));
         }
 
-        foreach ($supportedMethods as $supportedMethod) {
+        foreach (static::$supportedMethods as $supportedMethod) {
             if (strpos($method, $supportedMethod) === 0) {
                 $field = substr($method, strlen($supportedMethod));
                 $method = substr($method, 0, strlen($supportedMethod));
@@ -287,14 +269,14 @@ trait RepositoryTrait
         }
 
         throw new \BadMethodCallException(sprintf(
-            'Undefined method "%s". Method name must start with one of "%s"!',
+            'Undefined method "%s". Method call must start with one of "%s"!',
             $method,
-            implode('", "', $supportedMethods)
+            implode('", "', static::$supportedMethods)
         ));
     }
 
     /**
-     * Internal remove magic finder.
+     * Internal method call.
      *
      * @param string $method
      * @param string $fieldName
@@ -308,23 +290,70 @@ trait RepositoryTrait
     {
         $classMetadata = $this->getClassMetadata();
 
-        if ($classMetadata->hasField($fieldName) || $classMetadata->hasAssociation($fieldName)) {
-            // @codeCoverageIgnoreStart
-            $parameters = array_merge(
-                [$fieldName => $arguments[0]],
-                array_slice($arguments, 1)
-            );
-
-            return call_user_func_array([$this, $method], $parameters);
-            // @codeCoverageIgnoreEnd
+        if (!$classMetadata->hasField($fieldName) && !$classMetadata->hasAssociation($fieldName)) {
+            throw new \BadMethodCallException(sprintf(
+                'Invalid call to %s::%s. Field "%s" does not exist',
+                $this->getClassName(),
+                $method,
+                $fieldName
+            ));
         }
 
-        throw new \BadMethodCallException(sprintf(
-            'Invalid call to %s::%s. Field "%s" does not exist',
-            $this->getClassName(),
-            $method,
-            $fieldName
-        ));
+        // @codeCoverageIgnoreStart
+        $parameters = array_merge(
+            [$fieldName => $arguments[0]],
+            array_slice($arguments, 1)
+        );
+
+        return call_user_func_array([$this, $method], $parameters);
+        // @codeCoverageIgnoreEnd
+    }
+
+    /**
+     * Run manager action.
+     *
+     * @param object|object[]|\Traversable $objects
+     * @param string                       $action
+     * @param bool                         $flush
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function runManagerAction($objects, string $action, bool $flush)
+    {
+        $manager = $this->getManager();
+
+        if (!is_array($objects) && !$objects instanceof \Traversable) {
+            $objects = [$objects];
+        }
+
+        foreach (array_filter($objects) as $object) {
+            if (!$this->canBeManaged($object)) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Managed object must be a %s. "%s" given',
+                        $this->getClassName(),
+                        is_object($object) ? get_class($object) : gettype($object)
+                    )
+                );
+            }
+
+            $manager->$action($object);
+        }
+
+        $this->doFlush($objects, $flush);
+    }
+
+    /**
+     * Flush managed objects.
+     *
+     * @param object|object[] $objects
+     * @param bool            $flush
+     */
+    protected function doFlush($objects, bool $flush)
+    {
+        if ($flush || $this->autoFlush) {
+            $this->getManager()->flush($objects);
+        }
     }
 
     /**
@@ -339,30 +368,6 @@ trait RepositoryTrait
         $managedClass = $this->getClassName();
 
         return $object instanceof $managedClass;
-    }
-
-    /**
-     * Flush managed object.
-     *
-     * @param object|array $object
-     * @param bool         $flush
-     *
-     * @throws \InvalidArgumentException
-     */
-    protected function flushObject($objects, bool $flush)
-    {
-        if ($flush || $this->autoFlush) {
-            if (!is_object($objects) && !is_array($objects)) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'Invalid flush objects provided. Must be an array or object, "%s" given',
-                        gettype($objects)
-                    )
-                );
-            }
-
-            $this->getManager()->flush($objects);
-        }
     }
 
     /**
