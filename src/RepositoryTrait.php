@@ -17,6 +17,11 @@ use Doctrine\Common\Util\Inflector;
 
 /**
  * Repository trait.
+ *
+ * @method mixed find()
+ * @method mixed findAll()
+ * @method mixed findBy()
+ * @method mixed findOneBy()
  */
 trait RepositoryTrait
 {
@@ -323,10 +328,10 @@ trait RepositoryTrait
         $manager = $this->getManager();
 
         if (!is_array($objects) && !$objects instanceof \Traversable) {
-            $objects = [$objects];
+            $objects = array_filter([$objects]);
         }
 
-        foreach (array_filter($objects) as $object) {
+        foreach ($objects as $object) {
             if (!$this->canBeManaged($object)) {
                 throw new \InvalidArgumentException(
                     sprintf(
@@ -340,16 +345,16 @@ trait RepositoryTrait
             $manager->$action($object);
         }
 
-        $this->doFlush($objects, $flush);
+        $this->doFlush($objects, $flush instanceof \Traversable ? iterator_to_array($flush) : $flush);
     }
 
     /**
      * Flush managed objects.
      *
-     * @param object|object[] $objects
-     * @param bool            $flush
+     * @param object[] $objects
+     * @param bool     $flush
      */
-    protected function doFlush($objects, bool $flush)
+    protected function doFlush(array $objects, bool $flush)
     {
         if ($flush || $this->autoFlush) {
             $this->getManager()->flush($objects);
@@ -369,6 +374,13 @@ trait RepositoryTrait
 
         return $object instanceof $managedClass;
     }
+
+    /**
+     * Returns the fully qualified class name of the objects managed by the repository.
+     *
+     * @return string
+     */
+    abstract public function getClassName(): string;
 
     /**
      * Get object manager.
