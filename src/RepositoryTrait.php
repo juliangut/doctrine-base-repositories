@@ -83,16 +83,14 @@ trait RepositoryTrait
      * Find one object by a set of criteria or create a new one.
      *
      * @param array $criteria
-     * @param int   $lockMode
-     * @param int   $lockVersion
      *
      * @throws \RuntimeException
      *
      * @return object
      */
-    public function findOneByOrGetNew(array $criteria, int $lockMode = 0, int $lockVersion = null)
+    public function findOneByOrGetNew(array $criteria)
     {
-        $object = $this->findOneBy($criteria, $lockMode, $lockVersion);
+        $object = $this->findOneBy($criteria);
 
         if ($object === null) {
             $object = $this->getNew();
