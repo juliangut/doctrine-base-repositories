@@ -70,16 +70,6 @@ trait RepositoryTrait
     }
 
     /**
-     * Set object factory.
-     *
-     * @param callable $objectFactory
-     */
-    public function setObjectFactory(callable $objectFactory)
-    {
-        $this->objectFactory = $objectFactory;
-    }
-
-    /**
      * Find one object by a set of criteria or create a new one.
      *
      * @param array $criteria
@@ -108,25 +98,47 @@ trait RepositoryTrait
      */
     public function getNew()
     {
-        $className = $this->getClassName();
-
-        if ($this->objectFactory === null) {
-            return new $className();
-        }
-
-        $object = call_user_func($this->objectFactory);
+        $object = call_user_func($this->getObjectFactory());
 
         if (!$this->canBeManaged($object)) {
             throw new \RuntimeException(
                 sprintf(
                     'Object factory must return an instance of %s. "%s" returned',
-                    $className,
+                    $this->getClassName(),
                     is_object($object) ? get_class($object) : gettype($object)
                 )
             );
         }
 
         return $object;
+    }
+
+    /**
+     * Get object factory.
+     *
+     * @return callable
+     */
+    private function getObjectFactory(): callable
+    {
+        if ($this->objectFactory === null) {
+            $className = $this->getClassName();
+
+            $this->objectFactory = function() use ($className) {
+                return new $className();
+            };
+        }
+
+        return $this->objectFactory;
+    }
+
+    /**
+     * Set object factory.
+     *
+     * @param callable $objectFactory
+     */
+    public function setObjectFactory(callable $objectFactory)
+    {
+        $this->objectFactory = $objectFactory;
     }
 
     /**
