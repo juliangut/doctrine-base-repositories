@@ -161,7 +161,7 @@ trait EventsTrait
      */
     protected function getSubscriberClassName($subscriberClass): string
     {
-        if (is_object($subscriberClass) && in_array(EventSubscriber::class, class_implements($subscriberClass))) {
+        if ($this->isEventSubscriber($subscriberClass)) {
             return get_class($subscriberClass);
         }
 
@@ -173,6 +173,18 @@ trait EventsTrait
         }
 
         return $subscriberClass;
+    }
+
+    /**
+     * Is an event subscriber.
+     *
+     * @param $subscriberClass
+     *
+     * @return bool
+     */
+    private function isEventSubscriber($subscriberClass): bool
+    {
+        return is_object($subscriberClass) && in_array(EventSubscriber::class, class_implements($subscriberClass));
     }
 
     /**

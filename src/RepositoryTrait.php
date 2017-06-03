@@ -123,7 +123,7 @@ trait RepositoryTrait
         if ($this->objectFactory === null) {
             $className = $this->getClassName();
 
-            $this->objectFactory = function() use ($className) {
+            $this->objectFactory = function () use ($className) {
                 return new $className();
             };
         }
