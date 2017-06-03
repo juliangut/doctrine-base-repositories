@@ -25,9 +25,7 @@ use Zend\Paginator\Paginator;
  */
 class RepositoryStub implements Repository
 {
-    use RepositoryTrait {
-        doFlush as traitFlushObject;
-    }
+    use RepositoryTrait;
     use EventsTrait;
 
     /**

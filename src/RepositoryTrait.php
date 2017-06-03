@@ -83,14 +83,16 @@ trait RepositoryTrait
      * Find one object by a set of criteria or create a new one.
      *
      * @param array $criteria
+     * @param int   $lockMode
+     * @param int   $lockVersion
      *
      * @throws \RuntimeException
      *
      * @return object
      */
-    public function findOneByOrGetNew(array $criteria)
+    public function findOneByOrGetNew(array $criteria, int $lockMode = 0, int $lockVersion = null)
     {
-        $object = $this->findOneBy($criteria);
+        $object = $this->findOneBy($criteria, $lockMode, $lockVersion);
 
         if ($object === null) {
             $object = $this->getNew();
@@ -139,7 +141,7 @@ trait RepositoryTrait
      */
     public function add($objects, bool $flush = false)
     {
-        $this->runManagerAction($objects, 'persist', $flush);
+        $this->runManagerAction('persist', $objects, $flush);
     }
 
     /**
@@ -149,7 +151,7 @@ trait RepositoryTrait
      */
     public function removeAll(bool $flush = false)
     {
-        $this->runManagerAction($this->findAll(), 'remove', $flush);
+        $this->runManagerAction('remove', $this->findAll(), $flush);
     }
 
     /**
@@ -160,7 +162,7 @@ trait RepositoryTrait
      */
     public function removeBy(array $criteria, bool $flush = false)
     {
-        $this->runManagerAction($this->findBy($criteria), 'remove', $flush);
+        $this->runManagerAction('remove', $this->findBy($criteria), $flush);
     }
 
     /**
@@ -171,7 +173,7 @@ trait RepositoryTrait
      */
     public function removeOneBy(array $criteria, bool $flush = false)
     {
-        $this->runManagerAction($this->findOneBy($criteria), 'remove', $flush);
+        $this->runManagerAction('remove', $this->findOneBy($criteria), $flush);
     }
 
     /**
@@ -188,7 +190,7 @@ trait RepositoryTrait
             $objects = $this->find($objects);
         }
 
-        $this->runManagerAction($objects, 'remove', $flush);
+        $this->runManagerAction('remove', $objects, $flush);
     }
 
     /**
@@ -203,7 +205,7 @@ trait RepositoryTrait
         $backupAutoFlush = $this->autoFlush;
 
         $this->autoFlush = false;
-        $this->runManagerAction($objects, 'refresh', false);
+        $this->runManagerAction('refresh', $objects, false);
 
         $this->autoFlush = $backupAutoFlush;
     }
@@ -220,7 +222,7 @@ trait RepositoryTrait
         $backupAutoFlush = $this->autoFlush;
 
         $this->autoFlush = false;
-        $this->runManagerAction($objects, 'detach', false);
+        $this->runManagerAction('detach', $objects, false);
 
         $this->autoFlush = $backupAutoFlush;
     }
@@ -266,8 +268,13 @@ trait RepositoryTrait
 
         foreach (static::$supportedMethods as $supportedMethod) {
             if (strpos($method, $supportedMethod) === 0) {
-                $field = substr($method, strlen($supportedMethod));
-                $method = substr($method, 0, strlen($supportedMethod));
+                if ($supportedMethod === 'findOneBy' && preg_match('/OrGetNew$/', $method)) {
+                    $field = substr($method, strlen($supportedMethod), -8);
+                    $method = 'findOneByOrGetNew';
+                } else {
+                    $field = substr($method, strlen($supportedMethod));
+                    $method = $supportedMethod;
+                }
 
                 return $this->callSupportedMethod($method, Inflector::camelize($field), $arguments);
             }
@@ -317,13 +324,13 @@ trait RepositoryTrait
     /**
      * Run manager action.
      *
-     * @param object|object[]|\Traversable $objects
      * @param string                       $action
+     * @param object|object[]|\Traversable $objects
      * @param bool                         $flush
      *
      * @throws \InvalidArgumentException
      */
-    protected function runManagerAction($objects, string $action, bool $flush)
+    protected function runManagerAction(string $action, $objects, bool $flush)
     {
         $manager = $this->getManager();
 
@@ -345,16 +352,16 @@ trait RepositoryTrait
             $manager->$action($object);
         }
 
-        $this->doFlush($objects instanceof \Traversable ? iterator_to_array($objects) : $objects, $flush);
+        $this->flushObjects($objects instanceof \Traversable ? iterator_to_array($objects) : $objects, $flush);
     }
 
     /**
      * Flush managed objects.
      *
-     * @param object[] $objects
-     * @param bool     $flush
+     * @param object|object[] $objects
+     * @param bool            $flush
      */
-    protected function doFlush(array $objects, bool $flush)
+    protected function flushObjects($objects, bool $flush)
     {
         if ($flush || $this->autoFlush) {
             $this->getManager()->flush($objects);

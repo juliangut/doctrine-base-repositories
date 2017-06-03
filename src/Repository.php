@@ -115,10 +115,12 @@ interface Repository extends ObjectRepository
      * Find one object by a set of criteria or create a new one.
      *
      * @param array $criteria
+     * @param int   $lockMode
+     * @param int   $lockVersion
      *
      * @return object
      */
-    public function findOneByOrGetNew(array $criteria);
+    public function findOneByOrGetNew(array $criteria, int $lockMode = 0, int $lockVersion = null);
 
     /**
      * Get a new managed object instance.

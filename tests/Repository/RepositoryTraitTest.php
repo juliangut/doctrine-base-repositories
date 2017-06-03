@@ -346,4 +346,20 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
 
         $repository->removeOneByParameter(0);
     }
+
+    /**
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessageRegExp /^Invalid call to .+::findOneByOrGetNew\. Field "parameter" does not exist/
+     */
+    public function testCallOrNewNoField()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        $repository->findOneByParameterOrGetNew(0);
+    }
 }
