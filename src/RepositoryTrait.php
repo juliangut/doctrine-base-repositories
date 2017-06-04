@@ -288,17 +288,33 @@ trait RepositoryTrait
             ));
         }
 
+        $baseMethod = $this->getSupportedMethod($method);
+
+        if ($baseMethod === 'findOneBy' && preg_match('/OrGetNew$/', $method)) {
+            $field = substr($method, strlen($baseMethod), -8);
+            $method = 'findOneByOrGetNew';
+        } else {
+            $field = substr($method, strlen($baseMethod));
+            $method = $baseMethod;
+        }
+
+        return $this->callSupportedMethod($method, Inflector::camelize($field), $arguments);
+    }
+
+    /**
+     * Get supported magic method.
+     *
+     * @param string $method
+     *
+     * @throws \BadMethodCallException
+     *
+     * @return string
+     */
+    private function getSupportedMethod(string $method): string
+    {
         foreach (static::$supportedMethods as $supportedMethod) {
             if (strpos($method, $supportedMethod) === 0) {
-                if ($supportedMethod === 'findOneBy' && preg_match('/OrGetNew$/', $method)) {
-                    $field = substr($method, strlen($supportedMethod), -8);
-                    $method = 'findOneByOrGetNew';
-                } else {
-                    $field = substr($method, strlen($supportedMethod));
-                    $method = $supportedMethod;
-                }
-
-                return $this->callSupportedMethod($method, Inflector::camelize($field), $arguments);
+                return $supportedMethod;
             }
         }
 
@@ -356,7 +372,7 @@ trait RepositoryTrait
     {
         $manager = $this->getManager();
 
-        if (!is_array($objects) && !$objects instanceof \Traversable) {
+        if (!$this->isTraversable($objects)) {
             $objects = array_filter([$objects]);
         }
 
@@ -385,11 +401,13 @@ trait RepositoryTrait
      */
     protected function flushObjects($objects, bool $flush)
     {
-        if ($objects instanceof \Traversable) {
-            $objects = iterator_to_array($objects);
-        }
-
         if ($flush || $this->autoFlush) {
+            // @codeCoverageIgnoreStart
+            if ($objects instanceof \Traversable) {
+                $objects = iterator_to_array($objects);
+            }
+            // @codeCoverageIgnoreEnd
+
             $this->getManager()->flush($objects);
         }
     }
@@ -428,4 +446,16 @@ trait RepositoryTrait
      * @return \Doctrine\Common\Persistence\Mapping\ClassMetadata
      */
     abstract protected function getClassMetadata();
+
+    /**
+     * Is traversable.
+     *
+     * @param mixed $object
+     *
+     * @return bool
+     */
+    private function isTraversable($object): bool
+    {
+        return is_array($object) || $object instanceof \Traversable;
+    }
 }
