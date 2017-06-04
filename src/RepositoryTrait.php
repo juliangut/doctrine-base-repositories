@@ -25,7 +25,19 @@ use Doctrine\Common\Util\Inflector;
  */
 trait RepositoryTrait
 {
-    protected static $supportedMethods = ['findBy', 'findOneBy', 'findPaginatedBy', 'removeBy', 'removeOneBy'];
+    /**
+     * Supported magic methods.
+     *
+     * @var array
+     */
+    protected static $supportedMethods = [
+        'findBy',
+        'findOneBy',
+        'findPaginatedBy',
+        'removeBy',
+        'removeOneBy',
+        'countBy',
+    ];
 
     /**
      * Auto flush changes.
