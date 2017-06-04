@@ -374,17 +374,21 @@ trait RepositoryTrait
             $manager->$action($object);
         }
 
-        $this->flushObjects($objects instanceof \Traversable ? iterator_to_array($objects) : $objects, $flush);
+        $this->flushObjects($objects, $flush);
     }
 
     /**
      * Flush managed objects.
      *
-     * @param object|object[] $objects
-     * @param bool            $flush
+     * @param object|object[]|\Traversable $objects
+     * @param bool                         $flush
      */
     protected function flushObjects($objects, bool $flush)
     {
+        if ($objects instanceof \Traversable) {
+            $objects = iterator_to_array($objects);
+        }
+
         if ($flush || $this->autoFlush) {
             $this->getManager()->flush($objects);
         }
