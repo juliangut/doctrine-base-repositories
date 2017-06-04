@@ -162,17 +162,10 @@ trait EventsTrait
     protected function getSubscriberClassName($subscriberClass): string
     {
         if ($this->isEventSubscriber($subscriberClass)) {
-            return get_class($subscriberClass);
+            return is_object($subscriberClass) ? get_class($subscriberClass) : $subscriberClass;
         }
 
-        if (!is_string($subscriberClass)
-            || !class_exists($subscriberClass)
-            || !in_array(EventSubscriber::class, class_implements($subscriberClass))
-        ) {
-            throw new \InvalidArgumentException('subscriberClass must be an EventSubscriber');
-        }
-
-        return $subscriberClass;
+        throw new \InvalidArgumentException('subscriberClass must be an EventSubscriber');
     }
 
     /**
@@ -184,7 +177,9 @@ trait EventsTrait
      */
     private function isEventSubscriber($subscriberClass): bool
     {
-        return is_object($subscriberClass) && in_array(EventSubscriber::class, class_implements($subscriberClass));
+        return is_object($subscriberClass) || (is_string($subscriberClass) && class_exists($subscriberClass))
+            ? in_array(EventSubscriber::class, class_implements($subscriberClass))
+            : false;
     }
 
     /**
