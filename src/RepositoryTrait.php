@@ -156,8 +156,8 @@ trait RepositoryTrait
     /**
      * Add objects.
      *
-     * @param object|object[]|\Traversable $objects
-     * @param bool                         $flush
+     * @param object|iterable $objects
+     * @param bool            $flush
      *
      * @throws \InvalidArgumentException
      */
@@ -201,14 +201,14 @@ trait RepositoryTrait
     /**
      * Remove objects.
      *
-     * @param object|object[]|\Traversable|string|int $objects
-     * @param bool                                    $flush
+     * @param object|iterable|string|int $objects
+     * @param bool                       $flush
      *
      * @throws \InvalidArgumentException
      */
     public function remove($objects, bool $flush = false)
     {
-        if (!is_object($objects) && !is_array($objects) && !$objects instanceof \Traversable) {
+        if (!is_object($objects) && !is_iterable($objects)) {
             $objects = $this->find($objects);
         }
 
@@ -218,7 +218,7 @@ trait RepositoryTrait
     /**
      * Refresh objects.
      *
-     * @param object|object[]|\Traversable $objects
+     * @param object|iterable $objects
      *
      * @throws \InvalidArgumentException
      */
@@ -235,7 +235,7 @@ trait RepositoryTrait
     /**
      * Detach objects.
      *
-     * @param object|object[]|\Traversable $objects
+     * @param object|iterable $objects
      *
      * @throws \InvalidArgumentException
      */
@@ -362,9 +362,9 @@ trait RepositoryTrait
     /**
      * Run manager action.
      *
-     * @param string                       $action
-     * @param object|object[]|\Traversable $objects
-     * @param bool                         $flush
+     * @param string          $action
+     * @param object|iterable $objects
+     * @param bool            $flush
      *
      * @throws \InvalidArgumentException
      */
@@ -372,7 +372,7 @@ trait RepositoryTrait
     {
         $manager = $this->getManager();
 
-        if (!$this->isTraversable($objects)) {
+        if (!is_iterable($objects)) {
             $objects = array_filter([$objects]);
         }
 
@@ -390,24 +390,24 @@ trait RepositoryTrait
             $manager->$action($object);
         }
 
+        // @codeCoverageIgnoreStart
+        if ($objects instanceof \Traversable) {
+            $objects = iterator_to_array($objects);
+        }
+        // @codeCoverageIgnoreEnd
+
         $this->flushObjects($objects, $flush);
     }
 
     /**
      * Flush managed objects.
      *
-     * @param object|object[]|\Traversable $objects
-     * @param bool                         $flush
+     * @param array $objects
+     * @param bool  $flush
      */
-    protected function flushObjects($objects, bool $flush)
+    protected function flushObjects(array $objects, bool $flush)
     {
         if ($flush || $this->autoFlush) {
-            // @codeCoverageIgnoreStart
-            if ($objects instanceof \Traversable) {
-                $objects = iterator_to_array($objects);
-            }
-            // @codeCoverageIgnoreEnd
-
             $this->getManager()->flush($objects);
         }
     }
@@ -446,16 +446,4 @@ trait RepositoryTrait
      * @return \Doctrine\Common\Persistence\Mapping\ClassMetadata
      */
     abstract protected function getClassMetadata();
-
-    /**
-     * Is traversable.
-     *
-     * @param mixed $object
-     *
-     * @return bool
-     */
-    private function isTraversable($object): bool
-    {
-        return is_array($object) || $object instanceof \Traversable;
-    }
 }

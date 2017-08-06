@@ -130,8 +130,8 @@ interface Repository extends ObjectRepository
     /**
      * Add objects.
      *
-     * @param object|object[]|\Traversable $objects
-     * @param bool                         $flush
+     * @param object|iterable $objects
+     * @param bool            $flush
      */
     public function add($objects, bool $flush = false);
 
@@ -161,22 +161,22 @@ interface Repository extends ObjectRepository
     /**
      * Remove objects.
      *
-     * @param object|object[]|\Traversable|string|int $objects
-     * @param bool                                    $flush
+     * @param object|iterable|string|int $objects
+     * @param bool                       $flush
      */
     public function remove($objects, bool $flush = false);
 
     /**
      * Refresh objects.
      *
-     * @param object|object[]|\Traversable $objects
+     * @param object|iterable $objects
      */
     public function refresh($objects);
 
     /**
      * Detach objects.
      *
-     * @param object|object[]|\Traversable $objects
+     * @param object|iterable $objects
      */
     public function detach($objects);
 

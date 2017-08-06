@@ -25,6 +25,7 @@
     "php": "^7.0",
     "doctrine/common": "^2.0",
     "doctrine/inflector": "^1.0",
+    "symfony/polyfill-php71": "^1.0",
     "zendframework/zend-paginator": "^2.6"
   },
   "require-dev": {
@@ -56,29 +57,28 @@
   "bin": [
   ],
   "config": {
-    "preferred-install": "dist"
+    "preferred-install": "dist",
+    "sort-packages": true
   },
   "scripts": {
-    "php-lint": "php -l src && php -l tests",
+    "phplint": "php -l src && php -l tests",
     "phpcs": "phpcs --standard=PSR2 src tests",
     "phpcs-lint": "php-cs-fixer fix --dry-run --verbose",
     "phpcpd": "phpcpd src",
-    "phpstan": "phpstan analyse --level 1 src tests",
     "phpmd": "phpmd src text unusedcode,naming,design,controversial,codesize",
-    "phpmetrics": "phpmetrics --failure-condition='average.maintainabilityIndex < 50' src",
-    "phpmetrics-report": "phpmetrics --report-html=build/metrics/index.html --offline src",
+    "phpmetrics-report": "phpmetrics --report-html=build/metrics/index.html --report-violations=build/logs/violations.xml --offline src",
+    "phpstan": "phpstan analyse --level 7 src",
     "phpunit": "phpunit",
     "phpunit-coverage": "phpunit --coverage-html build/coverage",
     "phpunit-clover": "phpunit --coverage-clover build/logs/clover.xml",
     "humbug": "humbug",
     "qa": [
-      "@php-lint",
+      "@phplint",
       "@phpcs",
       "@phpcs-lint",
       "@phpcpd",
       "@phpmd",
-      "@phpstan",
-      "@phpmetrics"
+      "@phpstan"
     ],
     "reports": [
       "@phpmetrics-report",
@@ -87,7 +87,7 @@
     "fix": "php-cs-fixer fix --verbose",
     "security": "composer outdated",
     "test": [
-      "@php-lint",
+      "@qa",
       "@phpunit",
       "@humbug"
     ]
