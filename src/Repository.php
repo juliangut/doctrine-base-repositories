@@ -103,9 +103,9 @@ interface Repository extends ObjectRepository
     /**
      * Return paginated elements filtered by criteria.
      *
-     * @param array|\Doctrine\ORM\QueryBuilder $criteria
-     * @param array                            $orderBy
-     * @param int                              $itemsPerPage
+     * @param array $criteria
+     * @param array $orderBy
+     * @param int   $itemsPerPage
      *
      * @return Paginator
      */
