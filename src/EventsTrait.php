@@ -43,6 +43,7 @@ trait EventsTrait
     public function disableEventSubscriber($subscriberClass)
     {
         $subscriberClass = $this->getSubscriberClassName($subscriberClass);
+        $eventManager = $this->getEventManager();
 
         /* @var EventSubscriber[] $subscribers */
         foreach ($this->getEventListeners() as $subscribers) {
@@ -50,7 +51,7 @@ trait EventsTrait
                 if ($subscriber instanceof $subscriberClass) {
                     $this->disabledSubscribers[] = $subscriber;
 
-                    $this->getEventManager()->removeEventSubscriber($subscriber);
+                    $eventManager->removeEventSubscriber($subscriber);
 
                     return;
                 }
@@ -63,8 +64,10 @@ trait EventsTrait
      */
     public function restoreEventSubscribers()
     {
+        $eventManager = $this->getEventManager();
+
         foreach ($this->disabledSubscribers as $subscriber) {
-            $this->getEventManager()->addEventSubscriber($subscriber);
+            $eventManager->addEventSubscriber($subscriber);
         }
 
         $this->disabledSubscribers = [];
@@ -77,12 +80,14 @@ trait EventsTrait
      */
     public function disableEventListeners(string $event)
     {
+        $eventManager = $this->getEventManager();
+
         if (!array_key_exists($event, $this->disabledListeners)) {
             $this->disabledListeners[$event] = [];
         }
 
         foreach ($this->getEventListeners($event) as $listener) {
-            $this->getEventManager()->removeEventListener($event, $listener);
+            $eventManager->removeEventListener($event, $listener);
 
             $this->disabledListeners[$event][] = $listener;
         }
@@ -104,11 +109,13 @@ trait EventsTrait
             $this->disabledListeners[$event] = [];
         }
 
+        $eventManager = $this->getEventManager();
+
         foreach ($this->getEventListeners($event) as $listener) {
             if ($listener instanceof $subscriberClass) {
                 $this->disabledListeners[$event][] = $listener;
 
-                $this->getEventManager()->removeEventListener($event, $listener);
+                $eventManager->removeEventListener($event, $listener);
                 break;
             }
         }
@@ -119,10 +126,12 @@ trait EventsTrait
      */
     public function restoreAllEventListeners()
     {
+        $eventManager = $this->getEventManager();
+
         foreach ($this->disabledListeners as $event => $listeners) {
             /* @var EventSubscriber[] $listeners */
             foreach ($listeners as $listener) {
-                $this->getEventManager()->addEventListener($event, $listener);
+                $eventManager->addEventListener($event, $listener);
             }
 
             $this->disabledListeners[$event] = [];
@@ -140,11 +149,12 @@ trait EventsTrait
             return;
         }
 
+        $eventManager = $this->getEventManager();
+
         /* @var EventSubscriber[] $listeners */
         $listeners = $this->disabledListeners[$event];
-
         foreach ($listeners as $listener) {
-            $this->getEventManager()->addEventListener($event, $listener);
+            $eventManager->addEventListener($event, $listener);
         }
 
         $this->disabledListeners[$event] = [];
