@@ -16,6 +16,7 @@ namespace Jgut\Doctrine\Repository\Tests\Stubs;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManager;
 use Jgut\Doctrine\Repository\EventsTrait;
+use Jgut\Doctrine\Repository\FiltersTrait;
 use Jgut\Doctrine\Repository\Repository;
 use Jgut\Doctrine\Repository\RepositoryTrait;
 use Zend\Paginator\Paginator;
@@ -27,6 +28,7 @@ class RepositoryStub implements Repository
 {
     use RepositoryTrait;
     use EventsTrait;
+    use FiltersTrait;
 
     /**
      * @var EntityManager
@@ -126,5 +128,13 @@ class RepositoryStub implements Repository
     protected function getClassMetadata(): ClassMetadata
     {
         return new \Doctrine\ORM\Mapping\ClassMetadataInfo(self::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFilterCollection()
+    {
+        return $this->entityManager->getFilters();
     }
 }

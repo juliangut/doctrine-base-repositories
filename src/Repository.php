@@ -101,6 +101,30 @@ interface Repository extends ObjectRepository
     public function getRegisteredEvents(): array;
 
     /**
+     * Disable all filters.
+     */
+    public function disableFilters();
+
+    /**
+     * Disable filter.
+     *
+     * @param string $filter
+     */
+    public function disableFilter(string $filter);
+
+    /**
+     * Restore all disabled filters.
+     */
+    public function restoreFilters();
+
+    /**
+     * Restore disabled filter.
+     *
+     * @param string $filter
+     */
+    public function restoreFilter(string $filter);
+
+    /**
      * Return paginated elements filtered by criteria.
      *
      * @param array $criteria

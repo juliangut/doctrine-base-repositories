@@ -29,6 +29,7 @@ Create your custom repository implementing Repository interface
 ```php
 use Doctrine\ORM\EntityRepository;
 use Jgut\Doctrine\Repository\EventsTrait;
+use Jgut\Doctrine\Repository\FiltersTrait;
 use Jgut\Doctrine\Repository\PaginatorTrait;
 use Jgut\Doctrine\Repository\Repository;
 use Jgut\Doctrine\Repository\RepositoryTrait;
@@ -37,7 +38,13 @@ class customRepository extends EntityRepository implements Repository
 {
     use RepositoryTrait;
     use EventsTrait;
+    use FiltersTrait;
     use PaginatorTrait;
+
+    protected function getFilterCollection()
+    {
+        // Custom implementation
+    }
 
     public function countBy($criteria)
     {
@@ -53,7 +60,7 @@ class customRepository extends EntityRepository implements Repository
     {
         // Custom implementation
     }
-    
+
     // Custom methods
 }
 ```
@@ -197,6 +204,37 @@ $repository->save(new EntityClass());
 $repository->restoreEventListener('onFlush');
 // $repository->restoreAllEventListener();
 ```
+
+## Filters managing
+
+Filters managing is provided by `FiltersTrait`
+
+### Disabling filters
+
+You might want to temporarily disable all filters.
+
+```php
+$repository = $manager->getRepository(ObjectClass::class);
+
+$repository->disableFilters();
+$repository->save(new EntityClass());
+$repository->restoreFilters();
+```
+
+### Disabling a single filter
+
+You might want to disable a single filter.
+
+```php
+$repository = $manager->getRepository(ObjectClass::class);
+
+$repository->disableFilter('locale');
+$repository->save(new EntityClass());
+$repository->restoreFilter('locale');
+// $repository->restoreFilters();
+```
+
+_requires the implementation of getFilterCollection method on custom repository_
 
 ## Paginating
 
