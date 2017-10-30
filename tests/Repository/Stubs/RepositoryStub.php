@@ -79,6 +79,20 @@ class RepositoryStub implements Repository
     /**
      * {@inheritdoc}
      */
+    public function findPaginatedByOrFail(array $criteria, array $orderBy = null, int $itemsPerPage = 10): Paginator
+    {
+        $paginator = $this->findPaginatedBy($criteria, $orderBy, $itemsPerPage);
+
+        if ($paginator->count() === 0) {
+            throw new \DomainException('FindPaginatedBy did not return any results');
+        }
+
+        return $paginator;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function findPaginatedBy($criteria, array $orderBy = null, int $itemsPerPage = 10): Paginator
     {
         // Implementation not needed

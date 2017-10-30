@@ -52,6 +52,66 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $repository->flush();
     }
 
+    public function testFindByOrFail()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $entity = new EntityStub();
+
+        $repository = new RepositoryStub($manager, [$entity]);
+
+        static::assertEquals([$entity], $repository->findByOrFail(['param' => 'value']));
+    }
+
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage FindBy did not return any results
+     */
+    public function testFailingFindByOrFail()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        var_dump($repository->findByOrFail(['param' => 'value']));
+    }
+
+    public function testFindOneByOrFail()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $entity = new EntityStub();
+
+        $repository = new RepositoryStub($manager, [$entity]);
+
+        static::assertEquals($entity, $repository->findOneByOrFail(['param' => 'value']));
+    }
+
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage FindOneBy did not return any results
+     */
+    public function testFailingOneFindByOrFail()
+    {
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager);
+
+        var_dump($repository->findOneByOrFail(['param' => 'value']));
+    }
+
     public function testGetNewByFindOne()
     {
         $manager = $this->getMockBuilder(EntityManager::class)
@@ -297,6 +357,24 @@ class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
         $repository = new RepositoryStub($manager, [new EntityStub(), new EntityStub()]);
 
         static::assertEquals(2, $repository->countAll());
+    }
+
+    /**
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessageRegExp /^Invalid call to .+::findOneByOrFail\. Field "parameter" does not exist/
+     */
+    public function testCallOrFailVariants()
+    {
+        $entity = new EntityStub();
+
+        $manager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var EntityManager $manager */
+
+        $repository = new RepositoryStub($manager, [$entity]);
+
+        $repository->findOneByParameterOrFail(1);
     }
 
     /**

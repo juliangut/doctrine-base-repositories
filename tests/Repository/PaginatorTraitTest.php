@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Doctrine\Repository\Tests;
 
+use Jgut\Doctrine\Repository\Tests\Stubs\EntityStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\PaginatorTraitStub;
 use Zend\Paginator\Paginator;
 
@@ -21,10 +22,30 @@ use Zend\Paginator\Paginator;
  */
 class PaginatorTraitTest extends \PHPUnit_Framework_TestCase
 {
+    public function testFindPaginatedByOrFail()
+    {
+        $entity = new EntityStub();
+
+        $trait = new PaginatorTraitStub([$entity]);
+
+        static::assertInstanceOf(Paginator::class, $trait->findPaginatedByOrFail([], [], 10));
+    }
+
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage FindPaginatedBy did not return any results
+     */
+    public function testFailingFindPaginatedByOrFail()
+    {
+        $trait = new PaginatorTraitStub();
+
+        static::assertInstanceOf(Paginator::class, $trait->findPaginatedByOrFail([], [], 10));
+    }
+
     public function testPaginator()
     {
         $trait = new PaginatorTraitStub();
 
-        static::assertInstanceOf(Paginator::class, $trait->getPaginated([], 10));
+        static::assertInstanceOf(Paginator::class, $trait->findPaginatedBy([], [], 10));
     }
 }

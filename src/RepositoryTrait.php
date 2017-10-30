@@ -40,6 +40,17 @@ trait RepositoryTrait
     ];
 
     /**
+     * Methods that support exception throwing on fail.
+     *
+     * @var array
+     */
+    protected static $falibleMethods = [
+        'findBy',
+        'findOneBy',
+        'findPaginatedBy',
+    ];
+
+    /**
      * Auto flush changes.
      *
      * @var bool
@@ -79,6 +90,49 @@ trait RepositoryTrait
     public function flush()
     {
         $this->getManager()->flush();
+    }
+
+    /**
+     * Find elements or throw an exception if none found.
+     *
+     * @param array      $criteria
+     * @param array|null $orderBy
+     * @param int|null   $limit
+     * @param int|null   $offset
+     *
+     * @throws \DomainException
+     *
+     * @return object[]
+     */
+    public function findByOrFail(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): array
+    {
+        $objects = $this->findBy($criteria, $orderBy, $limit, $offset);
+
+        if (count($objects) === 0) {
+            throw new \DomainException('FindBy did not return any results');
+        }
+
+        return $objects;
+    }
+
+    /**
+     * Find elements or throw an exception if none found.
+     *
+     * @param array $criteria
+     *
+     * @throws \DomainException
+     *
+     * @return object
+     */
+    public function findOneByOrFail(array $criteria)
+    {
+        $object = $this->findOneBy($criteria);
+
+        if ($object === null) {
+            throw new \DomainException('FindOneBy did not return any results');
+        }
+
+        return $object;
     }
 
     /**
@@ -290,7 +344,10 @@ trait RepositoryTrait
 
         $baseMethod = $this->getSupportedMethod($method);
 
-        if ($baseMethod === 'findOneBy' && preg_match('/OrGetNew$/', $method)) {
+        if (in_array($baseMethod, static::$falibleMethods) && preg_match('/OrFail$/', $method)) {
+            $field = substr($method, strlen($baseMethod), -6);
+            $method = $baseMethod . 'OrFail';
+        } elseif ($baseMethod === 'findOneBy' && preg_match('/OrGetNew$/', $method)) {
             $field = substr($method, strlen($baseMethod), -8);
             $method = 'findOneByOrGetNew';
         } else {

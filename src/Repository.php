@@ -125,15 +125,47 @@ interface Repository extends ObjectRepository
     public function restoreFilter(string $filter);
 
     /**
-     * Return paginated elements filtered by criteria.
+     * Find elements or throw an exception if none found.
+     *
+     * @param array      $criteria
+     * @param array|null $orderBy
+     * @param int|null   $limit
+     * @param int|null   $offset
+     *
+     * @return object[]
+     */
+    public function findByOrFail(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): array;
+
+    /**
+     * Find elements or throw an exception if none found.
      *
      * @param array $criteria
-     * @param array $orderBy
-     * @param int   $itemsPerPage
+     *
+     * @return object
+     */
+    public function findOneByOrFail(array $criteria);
+
+    /**
+     * Return paginated elements filtered by criteria.
+     *
+     * @param array      $criteria
+     * @param array|null $orderBy
+     * @param int        $itemsPerPage
      *
      * @return Paginator
      */
-    public function findPaginatedBy($criteria, array $orderBy = [], int $itemsPerPage = 10): Paginator;
+    public function findPaginatedBy($criteria, array $orderBy = null, int $itemsPerPage = 10): Paginator;
+
+    /**
+     * Return paginated elements filtered by criteria or throw an exception if none found.
+     *
+     * @param array      $criteria
+     * @param array|null $orderBy
+     * @param int        $itemsPerPage
+     *
+     * @return Paginator
+     */
+    public function findPaginatedByOrFail(array $criteria, array $orderBy = null, int $itemsPerPage = 10): Paginator;
 
     /**
      * Find one object by a set of criteria or create a new one.

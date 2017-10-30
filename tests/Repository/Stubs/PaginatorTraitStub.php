@@ -25,15 +25,25 @@ class PaginatorTraitStub
     use PaginatorTrait;
 
     /**
-     * Get paginated items.
-     *
-     * @param array $items
-     * @param int   $limit
-     *
-     * @return Paginator
+     * @var EntityStub[]
      */
-    public function getPaginated(array $items, $limit): Paginator
+    protected $entities;
+
+    /**
+     * PaginatorTraitStub constructor.
+     *
+     * @param array $entities
+     */
+    public function __construct(array $entities = [])
     {
-        return $this->getPaginator(new ArrayAdapter($items), $limit);
+        $this->entities = $entities;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findPaginatedBy($criteria, array $orderBy = null, int $itemsPerPage = 10): Paginator
+    {
+        return $this->getPaginator(new ArrayAdapter($this->entities), $itemsPerPage);
     }
 }

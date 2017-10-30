@@ -69,11 +69,24 @@ class customRepository extends EntityRepository implements Repository
 
 * ORM (Relational databases) with [doctrine-orm-repositories](https://github.com/juliangut/doctrine-orm-repositories)
 * MongoDB with [doctrine-mongodb-odm-repositories](https://github.com/juliangut/doctrine-mongodb-odm-repositories)
-* CouchDB with [doctrine-couchdb-odm-repositories](https://github.com/juliangut/doctrine-couchdb-odm-repositories)
+* CouchDB with [doctrine-couchdb-odm-repositories](https://github.com/juliangut/doctrine-couchdb-odm-repositories) _(not maintained)_
 
 ## New methods
 
 These are the new methods that `juliangut/doctrine-base-repositories` brings to the table thanks to `RepositoryTrait` 
+
+### Find or fail
+
+Same functionality as findBy, findOneBy and their "magic" combinations but throwing an exception if nothing is found
+
+```php
+$repository = $manager->getRepository(ObjectClass::class);
+
+$object = $repository->findByOrFail(['slug' => 'my_slug']);
+$object = $repository->findBySlugOrFail('my_slug');
+$object = $repository->findOneByOrFail(['slug' => 'my_slug']);
+$object = $repository->findOneBySlugOrFail('my_slug');
+```
 
 ### Creating
 
@@ -94,7 +107,7 @@ Returns an object based on criteria or a new empty object if could not be found
 ```php
 $repository = $manager->getRepository(ObjectClass::class);
 
-$existingOrNewObject = $repository->findOneByorGetNew(['slug' => 'my_slug']);
+$existingOrNewObject = $repository->findOneByOrGetNew(['slug' => 'my_slug']);
 ```
 
 ### Adding
@@ -157,9 +170,10 @@ $repository = $manager->getRepository(ObjectClass::class);
 
 $totalObjects = $repository->countAll();
 $activeObjects = $repository->countBy(['active' => true]);
+$activeObjects = $repository->countByActive(true);
 ```
 
-_countBy needs implementation on custom repository_
+_countBy method needs implementation on custom repository_
 
 ## Events managing
 
@@ -238,7 +252,7 @@ _requires the implementation of getFilterCollection method on custom repository_
 
 ## Paginating
 
-Returns the same results that `findBy` would return but within a `\Zend\Paginator\Paginator` object with pagination information. Provided by `PaginatorTrait`
+Returns the same results that `findBy` would return but within a `\Zend\Paginator\Paginator` object with pagination information, an exception throwing version is also available. Provided by `PaginatorTrait`
 
 ```php
 $repository = $manager->getRepository(ObjectClass::class);
@@ -251,9 +265,11 @@ $paginator->getTotalItemCount(); // 80
 $paginator->getCurrentItemCount(); // 10
 $paginator->getCurrentPageNumber(); // 1
 ...
+
+$paginator = $repository->findPaginatedByOrFail(['active' => true], ['date' => 'ASC'], 10);
 ```
 
-_needs implementation on custom repository_
+_findPaginatedBy method needs implementation on custom repository_
 
 ## Contributing
 

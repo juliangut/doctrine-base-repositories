@@ -36,4 +36,37 @@ trait PaginatorTrait
 
         return $paginator;
     }
+
+    /**
+     * Return paginated elements filtered by criteria or throw an exception if none found.
+     *
+     * @param array      $criteria
+     * @param array|null $orderBy
+     * @param int        $itemsPerPage
+     *
+     * @throws \DomainException
+     *
+     * @return Paginator
+     */
+    public function findPaginatedByOrFail(array $criteria, array $orderBy = null, int $itemsPerPage = 10): Paginator
+    {
+        $paginator = $this->findPaginatedBy($criteria, $orderBy, $itemsPerPage);
+
+        if ($paginator->count() === 0) {
+            throw new \DomainException('FindPaginatedBy did not return any results');
+        }
+
+        return $paginator;
+    }
+
+    /**
+     * Return paginated elements filtered by criteria.
+     *
+     * @param array      $criteria
+     * @param array|null $orderBy
+     * @param int        $itemsPerPage
+     *
+     * @return Paginator
+     */
+    abstract public function findPaginatedBy($criteria, array $orderBy = null, int $itemsPerPage = 10): Paginator;
 }
