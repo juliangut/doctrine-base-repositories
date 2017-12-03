@@ -15,12 +15,13 @@ namespace Jgut\Doctrine\Repository\Tests;
 
 use Jgut\Doctrine\Repository\Tests\Stubs\EntityStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\PaginatorTraitStub;
+use PHPUnit\Framework\TestCase;
 use Zend\Paginator\Paginator;
 
 /**
  * Paginator trait tests.
  */
-class PaginatorTraitTest extends \PHPUnit_Framework_TestCase
+class PaginatorTraitTest extends TestCase
 {
     public function testFindPaginatedByOrFail()
     {

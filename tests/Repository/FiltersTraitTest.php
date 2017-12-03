@@ -18,11 +18,12 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\FilterCollection;
 use Jgut\Doctrine\Repository\Tests\Stubs\FilterStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\RepositoryStub;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Filters trait tests.
  */
-class FiltersTraitTest extends \PHPUnit_Framework_TestCase
+class FiltersTraitTest extends TestCase
 {
     public function testFiltersManagement()
     {

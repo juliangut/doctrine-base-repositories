@@ -18,10 +18,10 @@ use Doctrine\Common\Util\Inflector;
 /**
  * Repository trait.
  *
- * @method mixed find()
+ * @method mixed find($id, $lockMode = null, $lockVersion = null)
+ * @method mixed findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method mixed findOneBy(array $criteria, array $orderBy = null)
  * @method mixed findAll()
- * @method mixed findBy()
- * @method mixed findOneBy()
  */
 trait RepositoryTrait
 {

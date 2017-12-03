@@ -16,11 +16,12 @@ namespace Jgut\Doctrine\Repository\Tests;
 use Doctrine\ORM\EntityManager;
 use Jgut\Doctrine\Repository\Tests\Stubs\EntityStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\RepositoryStub;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Repository trait tests.
  */
-class RepositoryTraitTest extends \PHPUnit_Framework_TestCase
+class RepositoryTraitTest extends TestCase
 {
     public function testAutoFlush()
     {

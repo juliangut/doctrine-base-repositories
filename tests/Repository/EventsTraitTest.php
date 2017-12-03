@@ -18,11 +18,12 @@ use Doctrine\ORM\EntityManager;
 use Jgut\Doctrine\Repository\Tests\Stubs\BlankEventStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\EventStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\RepositoryStub;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Events trait tests.
  */
-class EventsTraitTest extends \PHPUnit_Framework_TestCase
+class EventsTraitTest extends TestCase
 {
     public function testEventSubscribersManagement()
     {
