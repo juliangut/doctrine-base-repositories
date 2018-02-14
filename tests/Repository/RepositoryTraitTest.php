@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Doctrine\Repository\Tests;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Jgut\Doctrine\Repository\Tests\Stubs\EntityStub;
 use Jgut\Doctrine\Repository\Tests\Stubs\RepositoryStub;
@@ -64,7 +65,11 @@ class RepositoryTraitTest extends TestCase
 
         $repository = new RepositoryStub($manager, [$entity]);
 
-        static::assertEquals([$entity], $repository->findByOrFail(['param' => 'value']));
+        $entities = $repository->findByOrFail(['param' => 'value']);
+
+        static::assertInstanceOf(ArrayCollection::class, $entities);
+        static::assertCount(1, $entities);
+        static::assertSame($entity, $entities[0]);
     }
 
     /**

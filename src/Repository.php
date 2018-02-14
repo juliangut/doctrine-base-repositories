@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Doctrine\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Zend\Paginator\Paginator;
 
@@ -132,9 +133,14 @@ interface Repository extends ObjectRepository
      * @param int|null   $limit
      * @param int|null   $offset
      *
-     * @return object[]
+     * @return ArrayCollection
      */
-    public function findByOrFail(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): array;
+    public function findByOrFail(
+        array $criteria,
+        array $orderBy = null,
+        int $limit = null,
+        int $offset = null
+    ): ArrayCollection;
 
     /**
      * Find elements or throw an exception if none found.
