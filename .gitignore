@@ -1,8 +1,7 @@
 !.gitignore
 composer.lock
+cghooks.lock
 vendor/
-.yo-rc.json
-.php_cs.cache
-humbuglog.json
-humbuglog.txt
+*.cache
+infection-log.*
 build/
