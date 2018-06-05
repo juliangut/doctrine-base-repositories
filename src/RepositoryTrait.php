@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Doctrine\Repository;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\Inflector;
 
 /**
@@ -103,15 +102,11 @@ trait RepositoryTrait
      *
      * @throws FindException
      *
-     * @return ArrayCollection
+     * @return object[]
      */
-    public function findByOrFail(
-        array $criteria,
-        array $orderBy = null,
-        int $limit = null,
-        int $offset = null
-    ): ArrayCollection {
-        $objects = new ArrayCollection($this->findBy($criteria, $orderBy, $limit, $offset));
+    public function findByOrFail(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): array
+    {
+        $objects = $this->findBy($criteria, $orderBy, $limit, $offset);
 
         if (count($objects) === 0) {
             throw new FindException('FindBy did not return any results');
