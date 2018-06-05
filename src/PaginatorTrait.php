@@ -44,7 +44,7 @@ trait PaginatorTrait
      * @param array|null $orderBy
      * @param int        $itemsPerPage
      *
-     * @throws \DomainException
+     * @throws FindException
      *
      * @return Paginator
      */
@@ -53,7 +53,7 @@ trait PaginatorTrait
         $paginator = $this->findPaginatedBy($criteria, $orderBy, $itemsPerPage);
 
         if ($paginator->count() === 0) {
-            throw new \DomainException('FindPaginatedBy did not return any results');
+            throw new FindException('FindPaginatedBy did not return any results');
         }
 
         return $paginator;

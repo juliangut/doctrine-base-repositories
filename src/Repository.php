@@ -133,6 +133,8 @@ interface Repository extends ObjectRepository
      * @param int|null   $limit
      * @param int|null   $offset
      *
+     * @throws FindException
+     *
      * @return ArrayCollection
      */
     public function findByOrFail(
@@ -146,6 +148,8 @@ interface Repository extends ObjectRepository
      * Find elements or throw an exception if none found.
      *
      * @param array $criteria
+     *
+     * @throws FindException
      *
      * @return object
      */
@@ -168,6 +172,8 @@ interface Repository extends ObjectRepository
      * @param array      $criteria
      * @param array|null $orderBy
      * @param int        $itemsPerPage
+     *
+     * @throws FindException
      *
      * @return Paginator
      */

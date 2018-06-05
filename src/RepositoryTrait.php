@@ -101,7 +101,7 @@ trait RepositoryTrait
      * @param int|null   $limit
      * @param int|null   $offset
      *
-     * @throws \DomainException
+     * @throws FindException
      *
      * @return ArrayCollection
      */
@@ -114,7 +114,7 @@ trait RepositoryTrait
         $objects = new ArrayCollection($this->findBy($criteria, $orderBy, $limit, $offset));
 
         if (count($objects) === 0) {
-            throw new \DomainException('FindBy did not return any results');
+            throw new FindException('FindBy did not return any results');
         }
 
         return $objects;
@@ -125,7 +125,7 @@ trait RepositoryTrait
      *
      * @param array $criteria
      *
-     * @throws \DomainException
+     * @throws FindException
      *
      * @return object
      */
@@ -134,7 +134,7 @@ trait RepositoryTrait
         $object = $this->findOneBy($criteria);
 
         if ($object === null) {
-            throw new \DomainException('FindOneBy did not return any results');
+            throw new FindException('FindOneBy did not return any results');
         }
 
         return $object;
