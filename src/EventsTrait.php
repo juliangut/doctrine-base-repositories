@@ -47,7 +47,7 @@ trait EventsTrait
 
         /* @var EventSubscriber[] $subscribers */
         foreach ($this->getEventListeners() as $subscribers) {
-            while ($subscriber = array_shift($subscribers)) {
+            while ($subscriber = \array_shift($subscribers)) {
                 if ($subscriber instanceof $subscriberClass) {
                     $this->disabledSubscribers[] = $subscriber;
 
@@ -82,7 +82,7 @@ trait EventsTrait
     {
         $eventManager = $this->getEventManager();
 
-        if (!array_key_exists($event, $this->disabledListeners)) {
+        if (!\array_key_exists($event, $this->disabledListeners)) {
             $this->disabledListeners[$event] = [];
         }
 
@@ -105,7 +105,7 @@ trait EventsTrait
     {
         $subscriberClass = $this->getSubscriberClassName($subscriberClass);
 
-        if (!array_key_exists($event, $this->disabledListeners)) {
+        if (!\array_key_exists($event, $this->disabledListeners)) {
             $this->disabledListeners[$event] = [];
         }
 
@@ -145,7 +145,7 @@ trait EventsTrait
      */
     public function restoreEventListeners(string $event)
     {
-        if (!array_key_exists($event, $this->disabledListeners) || empty($this->disabledListeners[$event])) {
+        if (!\array_key_exists($event, $this->disabledListeners) || empty($this->disabledListeners[$event])) {
             return;
         }
 
@@ -172,7 +172,7 @@ trait EventsTrait
     protected function getSubscriberClassName($subscriberClass): string
     {
         if ($this->isEventSubscriber($subscriberClass)) {
-            return is_object($subscriberClass) ? get_class($subscriberClass) : $subscriberClass;
+            return \is_object($subscriberClass) ? \get_class($subscriberClass) : $subscriberClass;
         }
 
         throw new \InvalidArgumentException('subscriberClass must be an EventSubscriber');
@@ -187,8 +187,8 @@ trait EventsTrait
      */
     private function isEventSubscriber($subscriberClass): bool
     {
-        return is_object($subscriberClass) || (is_string($subscriberClass) && class_exists($subscriberClass))
-            ? in_array(EventSubscriber::class, class_implements($subscriberClass))
+        return \is_object($subscriberClass) || (\is_string($subscriberClass) && \class_exists($subscriberClass))
+            ? \in_array(EventSubscriber::class, \class_implements($subscriberClass), true)
             : false;
     }
 
@@ -199,7 +199,7 @@ trait EventsTrait
      */
     public function getRegisteredEvents(): array
     {
-        return array_keys($this->getEventManager()->getListeners());
+        return \array_keys($this->getEventManager()->getListeners());
     }
 
     /**

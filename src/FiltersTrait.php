@@ -30,7 +30,7 @@ trait FiltersTrait
      */
     public function disableFilters()
     {
-        foreach (array_keys($this->getFilterCollection()->getEnabledFilters()) as $filter) {
+        foreach (\array_keys($this->getFilterCollection()->getEnabledFilters()) as $filter) {
             $this->disableFilter($filter);
         }
     }
@@ -42,7 +42,7 @@ trait FiltersTrait
      */
     public function disableFilter(string $filter)
     {
-        if (in_array($filter, $this->disabledFilters, true)) {
+        if (\in_array($filter, $this->disabledFilters, true)) {
             return;
         }
 
@@ -72,14 +72,14 @@ trait FiltersTrait
      */
     public function restoreFilter(string $filter)
     {
-        $position = array_search($filter, $this->disabledFilters, true);
+        $position = \array_search($filter, $this->disabledFilters, true);
         if ($position === false) {
             return;
         }
 
         $this->getFilterCollection()->enable($filter);
 
-        array_splice($this->disabledFilters, $position, 1);
+        \array_splice($this->disabledFilters, $position, 1);
     }
 
     /**

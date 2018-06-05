@@ -108,7 +108,7 @@ trait RepositoryTrait
     {
         $objects = $this->findBy($criteria, $orderBy, $limit, $offset);
 
-        if (count($objects) === 0) {
+        if (\count($objects) === 0) {
             throw new FindException('FindBy did not return any results');
         }
 
@@ -164,14 +164,14 @@ trait RepositoryTrait
      */
     public function getNew()
     {
-        $object = call_user_func($this->getObjectFactory());
+        $object = \call_user_func($this->getObjectFactory());
 
         if (!$this->canBeManaged($object)) {
             throw new \RuntimeException(
-                sprintf(
+                \sprintf(
                     'Object factory must return an instance of %s. "%s" returned',
                     $this->getClassName(),
-                    is_object($object) ? get_class($object) : gettype($object)
+                    \is_object($object) ? \get_class($object) : \gettype($object)
                 )
             );
         }
@@ -262,7 +262,7 @@ trait RepositoryTrait
      */
     public function remove($objects, bool $flush = false)
     {
-        if (!is_object($objects) && !is_iterable($objects)) {
+        if (!\is_object($objects) && !is_iterable($objects)) {
             $objects = $this->find($objects);
         }
 
@@ -334,8 +334,8 @@ trait RepositoryTrait
      */
     public function __call($method, $arguments)
     {
-        if (count($arguments) === 0) {
-            throw new \BadMethodCallException(sprintf(
+        if (\count($arguments) === 0) {
+            throw new \BadMethodCallException(\sprintf(
                 'You need to call %s::%s with a parameter',
                 $this->getClassName(),
                 $method
@@ -344,14 +344,14 @@ trait RepositoryTrait
 
         $baseMethod = $this->getSupportedMethod($method);
 
-        if (in_array($baseMethod, static::$falibleMethods) && preg_match('/OrFail$/', $method)) {
-            $field = substr($method, strlen($baseMethod), -6);
+        if (\in_array($baseMethod, static::$falibleMethods, true) && \preg_match('/OrFail$/', $method)) {
+            $field = \substr($method, \strlen($baseMethod), -6);
             $method = $baseMethod . 'OrFail';
-        } elseif ($baseMethod === 'findOneBy' && preg_match('/OrGetNew$/', $method)) {
-            $field = substr($method, strlen($baseMethod), -8);
+        } elseif ($baseMethod === 'findOneBy' && \preg_match('/OrGetNew$/', $method)) {
+            $field = \substr($method, \strlen($baseMethod), -8);
             $method = 'findOneByOrGetNew';
         } else {
-            $field = substr($method, strlen($baseMethod));
+            $field = \substr($method, \strlen($baseMethod));
             $method = $baseMethod;
         }
 
@@ -370,15 +370,15 @@ trait RepositoryTrait
     private function getSupportedMethod(string $method): string
     {
         foreach (static::$supportedMethods as $supportedMethod) {
-            if (strpos($method, $supportedMethod) === 0) {
+            if (\strpos($method, $supportedMethod) === 0) {
                 return $supportedMethod;
             }
         }
 
-        throw new \BadMethodCallException(sprintf(
+        throw new \BadMethodCallException(\sprintf(
             'Undefined method "%s". Method call must start with one of "%s"!',
             $method,
-            implode('", "', static::$supportedMethods)
+            \implode('", "', static::$supportedMethods)
         ));
     }
 
@@ -398,7 +398,7 @@ trait RepositoryTrait
         $classMetadata = $this->getClassMetadata();
 
         if (!$classMetadata->hasField($fieldName) && !$classMetadata->hasAssociation($fieldName)) {
-            throw new \BadMethodCallException(sprintf(
+            throw new \BadMethodCallException(\sprintf(
                 'Invalid call to %s::%s. Field "%s" does not exist',
                 $this->getClassName(),
                 $method,
@@ -407,12 +407,12 @@ trait RepositoryTrait
         }
 
         // @codeCoverageIgnoreStart
-        $parameters = array_merge(
+        $parameters = \array_merge(
             [$fieldName => $arguments[0]],
-            array_slice($arguments, 1)
+            \array_slice($arguments, 1)
         );
 
-        return call_user_func_array([$this, $method], $parameters);
+        return \call_user_func_array([$this, $method], $parameters);
         // @codeCoverageIgnoreEnd
     }
 
@@ -430,16 +430,16 @@ trait RepositoryTrait
         $manager = $this->getManager();
 
         if (!is_iterable($objects)) {
-            $objects = array_filter([$objects]);
+            $objects = \array_filter([$objects]);
         }
 
         foreach ($objects as $object) {
             if (!$this->canBeManaged($object)) {
                 throw new \InvalidArgumentException(
-                    sprintf(
+                    \sprintf(
                         'Managed object must be a %s. "%s" given',
                         $this->getClassName(),
-                        is_object($object) ? get_class($object) : gettype($object)
+                        \is_object($object) ? \get_class($object) : \gettype($object)
                     )
                 );
             }
@@ -449,7 +449,7 @@ trait RepositoryTrait
 
         // @codeCoverageIgnoreStart
         if ($objects instanceof \Traversable) {
-            $objects = iterator_to_array($objects);
+            $objects = \iterator_to_array($objects);
         }
         // @codeCoverageIgnoreEnd
 
